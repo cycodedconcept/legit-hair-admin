@@ -358,7 +358,7 @@ table td {
     width: 100%
 }
 
-.delete-button, .update-button, .f-btn {
+.delete-button, .update-button, .f-btn, .log-btn {
     outline: none !important;
     border: 0;
     box-shadow: none;
@@ -371,6 +371,16 @@ table td {
 
 .update-button {
     background-color: #2D85DE;
+}
+
+.log-btn {
+    width: 100%;
+    background: #FF962E;
+    padding: 18px 20px;
+    font-size: 20px;
+}
+.log-btn:hover {
+    background: #8c5d2d;
 }
 
 
@@ -631,6 +641,35 @@ input {
     color: #3A4250;
 }
 
+.form-item img {
+    width: 25%;
+}
+
+/* otp.css */
+.otp-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+.otp-field {
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+  
+.otp-field:focus {
+    border-color: #FF962E;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+  
+
 @media screen and (max-width: 992px) {
     .dash-cards {
         grid-template-columns: repeat(1, 1fr);
@@ -647,5 +686,13 @@ input {
 
     form {
         width: 100%;
+    }
+
+    .switch-account h5 {
+        font-size: 16px;
+    }
+
+    .form-item img {
+        width: 75%;
     }
 }
