@@ -645,6 +645,10 @@ input {
     width: 25%;
 }
 
+.su-section img {
+    width: 5%;
+}
+
 /* otp.css */
 .otp-container {
     display: flex;

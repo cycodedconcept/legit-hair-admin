@@ -1,20 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { Logo2 } from '../assets/images';
+import { Logo2, Success } from '../assets/images';
 import '../pages/pages.css';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
   const [forget, setForget] = useState(false);
   const [recoverOtp, setRecoverOtp] = useState(false);
+  const [change, setChange] = useState(false);
+  const [success, setSucess] = useState(false);
   const [otp, setOtp] = useState(new Array(4).fill(''));
   const inputs = useRef([]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const togglePasswordVisibility2 = () => {
+    setConfirmPassword(!confirmPassword);
+  };
+
 
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return;
@@ -68,7 +76,7 @@ const Login = () => {
               <div className="my-3" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button type="button" className='f-btn' onClick={() => { setShowLogin(false); setForget(true); }}>Forgot your password?</button>
               </div>
-              <button type="submit" className='log-btn'>Log In</button>
+              <button className='log-btn'>Log In</button>
             </form>
             <div className="switch-account mt-3">
               <h5 style={{ color: '#6C7587' }}>
@@ -123,10 +131,67 @@ const Login = () => {
                   })}
                 </div>
               </div>
-              <button type="submit" className='log-btn'>Continue</button>
+              <button className='log-btn'>Continue</button>
             </form>
           </>
         )}
+
+        {change ? (
+        <>
+        <h2 className='mt-5 text-center'>Reset password</h2>
+            <form className='m-auto'>
+              <div className="form-group mb-3" style={{ position: 'relative' }}>
+                <label htmlFor="exampleInputPassword1">Enter a new password</label>
+                <input type={confirmPassword ? 'text' : 'password'} placeholder='Enter Password' />
+                <span
+                  onClick={togglePasswordVisibility2}
+                  style={{
+                    position: 'absolute',
+                    top: '70%',
+                    right: '10px',
+                    transform: 'translateY(-50%)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {confirmPassword ? <FontAwesomeIcon icon={faEye} style={{ color: '#FF962E' }} /> : <FontAwesomeIcon icon={faEyeSlash} style={{ color: '#FF962E' }} />}
+                </span>
+              </div>
+
+              <div className="form-group mb-3" style={{ position: 'relative' }}>
+                <label htmlFor="exampleInputPassword1">Re-enter password</label>
+                <input type={confirmPassword ? 'text' : 'password'} placeholder='Confirm Password' />
+                <span
+                  onClick={togglePasswordVisibility2}
+                  style={{
+                    position: 'absolute',
+                    top: '70%',
+                    right: '10px',
+                    transform: 'translateY(-50%)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {confirmPassword ? <FontAwesomeIcon icon={faEye} style={{ color: '#FF962E' }} /> : <FontAwesomeIcon icon={faEyeSlash} style={{ color: '#FF962E' }} />}
+                </span>
+              </div>
+              
+              <button className='log-btn'>Continue</button>
+            </form>
+        </>): ('')}
+
+        {success ? (
+          <>
+            <div className="su-section">
+            <img src={ Success } alt=""/>
+            </div>
+            <h2 className='mt-5 text-center'>Sucessfully Changed</h2>
+            <p className='my-5' style={{ color: '#6C7587' }}>
+              Your password has been sucessfully changed you can<br></br> now proceed to login.
+            </p>
+            <form className='m-auto'>
+              <button type="button" className='log-btn'>Continue</button>
+            </form>
+          </>
+        ):('')}    
       </div>
     </React.Fragment>
   );
