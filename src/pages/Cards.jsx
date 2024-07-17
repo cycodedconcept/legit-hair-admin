@@ -1,5 +1,6 @@
 import React from 'react'
-import { Cart, User, Order } from '../assets/images'
+import { Cart, User, Order } from '../assets/images';
+import { BarChart, PieChart } from './Chart';
 
 const Cards = () => {
   const cardItems = [
@@ -54,8 +55,22 @@ const Cards = () => {
   )
   return (
     <React.Fragment>
-      <div className="card-container d-flex justify-content-between mt-5">
+      <div className="dash-cards">
         { cardDisplay }
+        </div>
+      <div className="row mt-5">
+        <div className="col-sm-12 col-md-12 col-lg-7">
+          <BarChart />
+          <div className="row">
+            <div className="col-sm-12 col-md-12 col-lg-6">
+              <PieChart />
+            </div>
+            <div className="col-sm-12 col-md-12 col-lg-6">
+            <PieChart />
+            </div>
+          </div>
+        </div>
+        <div className="col-sm-12 col-md-12 col-lg-5"></div>
       </div>
     </React.Fragment>
   )
