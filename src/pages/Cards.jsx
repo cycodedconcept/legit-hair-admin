@@ -61,11 +61,13 @@ const Cards = () => {
       <div className="row mt-5">
         <div className="col-sm-12 col-md-12 col-lg-7">
           <BarChart />
-          <div className="row">
+          <div className="row mt-5">
             <div className="col-sm-12 col-md-12 col-lg-6">
+              <h5>Customer Volume</h5>
               <PieChart />
             </div>
             <div className="col-sm-12 col-md-12 col-lg-6">
+              <h5>Customer Behavior</h5>
             <PieChart />
             </div>
           </div>
