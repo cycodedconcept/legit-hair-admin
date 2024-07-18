@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Cart, User, Order } from '../assets/images';
-import { BarChart, PieChart } from './Chart';
+import { BarChart, PieChart, Progress } from './Chart';
 
 const Cards = () => {
+  const [progress, setProgress] = useState(15)
   const cardItems = [
     {
       id: 0,
@@ -62,13 +63,13 @@ const Cards = () => {
         <div className="col-sm-12 col-md-12 col-lg-7">
           <BarChart />
           <div className="row mt-5">
-            <div className="col-sm-12 col-md-12 col-lg-6">
-              <h5>Customer Volume</h5>
-              <PieChart />
+            <div className="col-sm-12 col-md-12 col-lg-6 p-2">
+              <h5 className='mb-4'>Customer Volume</h5>
+              <Progress percentage={progress} />
             </div>
-            <div className="col-sm-12 col-md-12 col-lg-6">
-              <h5>Customer Behavior</h5>
-            <PieChart />
+            <div className="col-sm-12 col-md-12 col-lg-6 p-2">
+              <h5 className='mb-3'>Customer Behavior</h5>
+                <PieChart />
             </div>
           </div>
         </div>

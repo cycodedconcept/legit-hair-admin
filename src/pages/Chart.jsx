@@ -1,4 +1,6 @@
 import React from 'react'
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js';
 
@@ -34,7 +36,7 @@ const BarChart = () => {
     };
   
     return <Bar data={data} options={options} />;
-  };
+};
   
   const PieChart = () => {
     const data = {
@@ -61,4 +63,18 @@ const BarChart = () => {
     return <Pie data={data} />;
 };
 
-export { BarChart, PieChart };
+const Progress = ({ percentage }) => {
+    return (
+      <CircularProgressbar  value={percentage}
+      text={`+${percentage}%`}
+      styles={buildStyles({
+        textColor: "#FF962E",
+        pathColor: "#FF962E",
+        trailColor: "#fff",
+        textSize: "12px",
+      })}
+      />
+    );
+}
+
+export { BarChart, PieChart, Progress };
