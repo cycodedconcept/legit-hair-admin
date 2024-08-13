@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Cart, User, Order } from '../assets/images';
 import { BarChart, PieChart, Progress } from './Chart';
+import Wig from './Wig';
 
 const Cards = () => {
   const [progress, setProgress] = useState(15)
@@ -60,7 +61,7 @@ const Cards = () => {
         { cardDisplay }
         </div>
       <div className="row mt-5">
-        <div className="col-sm-12 col-md-12 col-lg-7">
+        <div className="col-sm-12 col-md-12 col-lg-6">
           <BarChart />
           <div className="row mt-5">
             <div className="col-sm-12 col-md-12 col-lg-6 p-2">
@@ -73,7 +74,9 @@ const Cards = () => {
             </div>
           </div>
         </div>
-        <div className="col-sm-12 col-md-12 col-lg-5"></div>
+        <div className="col-sm-12 col-md-12 col-lg-6">
+          <Wig />
+        </div>
       </div>
     </React.Fragment>
   )

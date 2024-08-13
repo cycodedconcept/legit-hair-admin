@@ -358,7 +358,7 @@ table td {
     width: 100%
 }
 
-.delete-button, .update-button, .f-btn, .log-btn {
+.delete-button, .update-button, .f-btn, .log-btn, .exp-btn, .pro-btn {
     outline: none !important;
     border: 0;
     box-shadow: none;
@@ -383,6 +383,21 @@ table td {
     background: #8c5d2d;
 }
 
+.exp-btn {
+    background: #fff;
+    color: #FF962E;
+}
+
+.pro-btn {
+    background: #FF962E;
+}
+.pro-btn:hover {
+    background: #f3a557;
+}
+
+.exp-btn:hover {
+    color: #f4bf8a;
+}
 
 .mymodal {
     /* display: none; */
@@ -562,6 +577,11 @@ input {
     color: #222;
 }
 
+.date-picker {
+    width: 120px;
+    padding: 10px;
+}
+
 .form-group label {
     font-weight: 600;
     color: #6E7680;
@@ -668,6 +688,119 @@ input {
     outline: none;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
+
+.left-content p, .right-section p {
+    margin-bottom: 2px;
+}
+
+.Pending, .Completed {
+    color: #CC5F5F;
+    text-align: center;
+}
+
+.Completed {
+    color: #008000;
+}
+
+.form-input {
+    background: #fff;
+    color: #222;
+    border: 0;
+    outline: none;
+    box-shadow: none;
+}
+
+.search-container,  .search-container2 {
+    position: relative;
+    margin-top: 50px;
+}
+
+.search-container2 {
+    margin: 0;
+}
+
+.search-input {
+    padding: 10px 20px 10px 40px; /* Space for the icon */
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 16px;
+}
+
+.search-input2 {
+    padding: 10px 20px 10px 40px; /* Space for the icon */
+    width: 60%;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 16px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    font-size: 20px;
+    color: #222;
+    cursor: pointer;
+}
+
+
+.pro button {
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #fff;
+    width: auto;
+    outline: none;
+    border: 0;
+    box-shadow: none;
+}
+
+
+.active-item {
+    color: #f3a557;
+    cursor: pointer;
+}
+
+.inactive-item {
+    color: #222;
+}
+
+
+/* styles.css */
+
+.select-wrapper {
+    position: relative;
+    /* width: 300px; */
+    margin: 0 0 0 20px;
+  }
+  
+  .select-input {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #DDE5E9;
+    background: #fff;
+    color: #222;
+    text-align: right;
+    width: 100px;
+    outline: none;
+    box-shadow: none;
+    appearance: none; /* Hide default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  
+  .select-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none; /* Prevent the icon from blocking clicks */
+  }
+  
+
   
 
 @media screen and (max-width: 992px) {
@@ -694,5 +827,9 @@ input {
 
     .form-item img {
         width: 75%;
+    }
+
+    .pro {
+        flex-direction: column;
     }
 }
