@@ -52,14 +52,14 @@ const Sidebar = ({ onButtonClick, activeContent }) => {
     </button>
 })
   return (
-    <React.Fragment>
+    <>
         <div className="sidebar">
             <img src={ Logo } alt="" className='w-75 mx-2 mt-2'/>
             <div className="sidebar-menu">
                 { showMenu }
             </div>
         </div>
-    </React.Fragment>
+    </>
   )
 }
 

@@ -56,7 +56,7 @@ const Cards = () => {
     </div>
   )
   return (
-    <React.Fragment>
+    <>
       <div className="dash-cards">
         { cardDisplay }
         </div>
@@ -78,7 +78,7 @@ const Cards = () => {
           <Wig />
         </div>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

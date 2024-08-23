@@ -45,7 +45,7 @@ const Login = () => {
 //   }, []);
 
   return (
-    <React.Fragment>
+    <>
       <div className="form-item text-center">
         <img src={Logo2} alt="Logo" className='mt-5' />
 
@@ -193,7 +193,7 @@ const Login = () => {
           </>
         ):('')}    
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

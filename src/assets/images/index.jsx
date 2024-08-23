@@ -17,6 +17,7 @@ import Bell from './bell.png';
 import Profile from './profile.png';
 import Exp from './exp.png';
 import Filter from './filter.png';
+import Img from './img.png';
 
 
 
@@ -28,5 +29,6 @@ export {
     Logo2, Success, 
     Wig1, Wig2, Wig3, 
     Wig4, Wig5, Bell,
-    Profile, Exp, Filter
+    Profile, Exp, Filter,
+    Img
 }

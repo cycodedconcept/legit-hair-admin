@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Select from './support/Select';
+import Products from './support/Products';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -26,7 +27,7 @@ const Product = () => {
     </button>
   )
   return (
-    <React.Fragment>
+    <>
       <div className="row">
         <div className="col-sm-12 col-md-12 col-lg-8">
           <div className="search-container">
@@ -61,8 +62,9 @@ const Product = () => {
         </div>
       </div>
 
+      <Products />
       
-    </React.Fragment>
+    </>
   )
 }
 

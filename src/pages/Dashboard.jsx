@@ -19,7 +19,7 @@ const Dashboard = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
   return (
-    <React.Fragment>
+    <>
       <Sidebar onButtonClick={handleButtonClick} activeContent={activeContent}/>
       <div className="main-content mt-5 p-3">
           <header className='d-flex justify-content-between'>
@@ -35,7 +35,7 @@ const Dashboard = () => {
           {activeContent === 'dashboard' && <Cards /> }
           {activeContent === 'product' && <Product /> }
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

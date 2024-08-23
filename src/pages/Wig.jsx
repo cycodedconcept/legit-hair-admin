@@ -90,7 +90,7 @@ const Wig = () => {
        </div>
     )
   return (
-    <React.Fragment>
+    <>
         <div className="wig-top d-flex justify-content-between mb-4">
             <h5>Recent Orders</h5>
             <select name="" id="" className='form-input'>
@@ -100,7 +100,7 @@ const Wig = () => {
             </select>
         </div>
       {listWig}
-    </React.Fragment>
+    </>
   )
 }
 

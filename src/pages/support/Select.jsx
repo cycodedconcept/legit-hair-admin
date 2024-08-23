@@ -19,14 +19,14 @@ const Select = () => {
     <option value={index === sugget ? '' : item}>{item}</option> 
   )
   return (
-    <React.Fragment>
+    <>
       <div className="select-wrapper">
         <img src={Filter} alt="" className='select-icon'/>
         <select value={selectedOption} onChange={handleSelectChange} className="select-input">
             {fil}
         </select>
     </div>
-    </React.Fragment>
+    </>
   )
 }
 
