@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { setLoginFormData, submitForm } from '../features/loginSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { Logo2, Success } from '../assets/images';
 import '../pages/pages.css';
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { login, password, spinItem, error, successful} = useSelector((state) => state.login);
+
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
@@ -40,9 +48,50 @@ const Login = () => {
     }
   };
 
-//   useEffect(() => {
-//     inputs.current[0].focus();
-//   }, []);
+  const logChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(setLoginFormData({ field: name, value }));
+  };
+
+  const adminLogin = (e) => {
+    e.preventDefault();
+
+    if (!login || !password) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Information',
+        text: 'Please fill in both your email and password.',
+        confirmButtonColor: '#FF962E'
+      });
+      return;
+    }
+
+    const formData = { login, password };
+    dispatch(submitForm(formData));
+  };
+
+  useEffect(() => {
+    if (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: error.message || 'An error occurred during login. Please try again.',
+        confirmButtonColor: '#FF962E'
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (successful) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful',
+        text: 'You have been redirected to the dashboard.',
+        confirmButtonColor: '#FF962E'
+      });
+      navigate('/dashboard');
+    }
+  }, [successful, navigate]);
 
   return (
     <>
@@ -52,14 +101,14 @@ const Login = () => {
         {showLogin && (
           <>
             <h2 className='mt-5 text-center'>Login to your account</h2>
-            <form className='m-auto'>
+            <form className='m-auto' onSubmit={adminLogin}>
               <div className="form-group mb-4">
                 <label htmlFor="exampleInputEmail1">Email address</label>
-                <input type="email" placeholder='Johnsonduru@gmail.com' />
+                <input type="email" placeholder='Johnsonduru@gmail.com' value={login} onChange={logChange} name="login"/>
               </div>
               <div className="form-group" style={{ position: 'relative' }}>
                 <label htmlFor="exampleInputPassword1">Password</label>
-                <input type={showPassword ? 'text' : 'password'} placeholder='Enter Password' />
+                <input type={showPassword ? 'text' : 'password'} placeholder='Enter Password' value={password} onChange={logChange} name="password"/>
                 <span
                   onClick={togglePasswordVisibility}
                   style={{
@@ -73,16 +122,30 @@ const Login = () => {
                   {showPassword ? <FontAwesomeIcon icon={faEye} style={{ color: '#FF962E' }} /> : <FontAwesomeIcon icon={faEyeSlash} style={{ color: '#FF962E' }} />}
                 </span>
               </div>
-              <div className="my-3" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              {/* <div className="my-3" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button type="button" className='f-btn' onClick={() => { setShowLogin(false); setForget(true); }}>Forgot your password?</button>
-              </div>
-              <button className='log-btn'>Log In</button>
+              </div> */}
+              <button className='log-btn mt-5'>
+                {
+                  spinItem ?(
+                    <>
+                      <div className="spinner-border spinner-border-sm text-light" role="status">
+                        <span className="sr-only"></span>
+                      </div>
+                      <span>Loading... </span>
+                    </>
+                      
+                  ): (
+                      'Log In'
+                  )
+                }
+              </button>
             </form>
-            <div className="switch-account mt-3">
+            {/* <div className="switch-account mt-3">
               <h5 style={{ color: '#6C7587' }}>
                 Don't have an account? <span style={{ color: '#FF962E' }}>Create an account</span>
               </h5>
-            </div>
+            </div> */}
           </>
         )}
 

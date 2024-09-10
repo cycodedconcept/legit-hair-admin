@@ -1,211 +1,109 @@
-import React from 'react';
-import { FaArrowDown, FaEye, FaEdit, FaTrash } from 'react-icons/fa';
-import { Wig1 } from '../../assets/images';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { 
+    fetchAllProducts, 
+    setPage, 
+    selectProducts, 
+    selectCurrentPage, 
+    selectTotalPages, 
+    selectIsLoading, 
+    selectError 
+} from '../../features/allProductSlice';
 
 const Products = () => {
-    const productData = [
-        {
-            id: 0,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-        {
-            id: 1,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-        {
-            id: 2,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-        {
-            id: 3,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-        {
-            id: 4,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-        {
-            id: 5,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-        {
-            id: 6,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-        {
-            id: 7,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-        {
-            id: 8,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },{
-            id: 9,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },{
-            id: 10,
-            image: Wig1,
-            name: 'Handmade Pouch',
-            variant: '3 Variant',
-            sku: '302012',
-            company: 'Bag & Pouch',
-            stock: '10',
-            price: '$121.00',
-            status: 'closed',
-            added: '29 Dec 2020',
-            icons: [FaArrowDown, FaEdit, FaTrash]
-        },
-    ]
+    const dispatch = useDispatch();
 
-    const sortProduct = productData.map((item) => 
-       <tr key={item.id}>
-           <td>
-               <div className='d-flex'>
-                    <input type="checkbox" name="" id="" className='xform mx-2'/>
-                    <img src={item.image} alt="" className='w-25 h-50'/>
-                    <div>
-                        <p className='m-0 p-0' style={{fontSize: '14px'}}>{item.name}</p>
-                        <small>{item.variant}</small>
-                    </div>
-               </div>
-           </td>
-           <td>{item.sku}</td>
-           <td>{item.company}</td>
-           <td>{item.stock}</td>
-           <td>{item.price}</td>
-           <td>{item.status}</td>
-           <td>{item.added}</td>
-           <td>{item.icons}</td>
-       </tr>
-    )
-  return (
-    <>
-      <table className="table">
-        <thead>
-            <tr>
-            <th>
-                Product <FaArrowDown className="header-icon" />
-            </th>
-            <th>
-                SKU <FaArrowDown className="header-icon" />
-            </th>
-            <th>
-                Company <FaArrowDown className="header-icon" />
-            </th>
-            <th>
-                Stock <FaArrowDown className="header-icon" />
-            </th>
-            <th>
-                Price <FaArrowDown className="header-icon" />
-            </th>
-            <th>
-                Staus <FaArrowDown className="header-icon" />
-            </th>
-            <th>
-                Added <FaArrowDown className="header-icon" />
-            </th>
-            <th>
-                Acton
-            </th>
-            </tr>
-        </thead>
-        <tbody>
-            {sortProduct}
-        </tbody>
-    </table>
+    const products = useSelector(selectProducts);
+    const currentPage = useSelector(selectCurrentPage);
+    const total_pages = useSelector(selectTotalPages);
+    const isLoading = useSelector(selectIsLoading);
+    const error = useSelector(selectError);
 
-    </>
-  )
-}
+    console.log(products)
 
-export default Products
+
+    const token = localStorage.getItem("key");
+
+    useEffect(() => {
+        if (token) {
+            dispatch(fetchAllProducts({ page: currentPage, token }));
+        }
+    }, [dispatch, currentPage, token]);
+
+    console.log(products)
+
+    const handlePageChange = (page) => {
+      if (page !== currentPage) {
+        dispatch(setPage(page));
+      }
+    };
+
+    return (
+      <div>
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div>Error: {error}</div>
+        ) : (
+          <>
+            <div className="table-wrapper">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Product Image</th>
+                    <th>Product Name</th>
+                    <th>Product Price</th>
+                    <th>Product Description</th>
+                    <th>Product Number</th>
+                    <th>Discounts</th>
+                    <th>Total Ratings</th>
+                  </tr>
+                </thead>
+                  <tbody>
+                      {products && products.length > 0 ? (
+                          products.map((product) => (
+                              <tr key={product.id}>
+                                  <td>
+                                      <img
+                                          src={product.images[0]?.filename}
+                                          alt={product.product_name}
+                                          width={100}
+                                      />
+                                  </td>
+                                  <td>{product.product_name}</td>
+                                  <td>{product.price}</td>
+                                  <td>{product.product_description}</td>
+                                  <td>{product.product_number}</td>
+                                  <td>{product.discount}</td>
+                                  <td>{product.total_rating}</td>
+                              </tr>
+                          ))
+                      ) : (
+                          <tr>
+                              <td colSpan="7">No products available</td>
+                          </tr>
+                      )}
+                  </tbody>
+              </table>
+            </div>
+
+            {total_pages > 1 && (
+              <div className="pagination">
+                  {Array.from({ length: total_pages }, (_, i) => (
+                      <button
+                          key={i + 1}
+                          onClick={() => handlePageChange(i + 1)}
+                          disabled={currentPage === i + 1}
+                      >
+                          {i + 1}
+                      </button>
+                  ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    );
+};
+
+export default Products;
