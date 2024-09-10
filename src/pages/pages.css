@@ -568,7 +568,7 @@ form {
     border-radius: 15px;
 }
 
-input {
+input, textarea {
     outline: none !important;
     box-shadow: none !important;
     padding: 14px;

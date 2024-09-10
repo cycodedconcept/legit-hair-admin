@@ -46,7 +46,8 @@ const Products = () => {
           <div>Error: {error}</div>
         ) : (
           <>
-            <div className="table-wrapper">
+          <div className="outer-wrapper">
+          <div className="table-wrapper">
               <table className="table">
                 <thead>
                   <tr>
@@ -86,6 +87,8 @@ const Products = () => {
                   </tbody>
               </table>
             </div>
+          </div>
+            
 
             {total_pages > 1 && (
               <div className="pagination">
@@ -94,6 +97,11 @@ const Products = () => {
                           key={i + 1}
                           onClick={() => handlePageChange(i + 1)}
                           disabled={currentPage === i + 1}
+                          className="mx-1" style={{
+                            backgroundColor: '#FF962E', 
+                            borderRadius: '10px',
+                            border: '0'
+                          }}
                       >
                           {i + 1}
                       </button>

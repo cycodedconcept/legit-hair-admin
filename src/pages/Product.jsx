@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Select from './support/Select';
 import Products from './support/Products';
+import AddProduct from './support/AddProduct';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -63,7 +64,7 @@ const Product = () => {
       </div>
 
       <Products />
-      
+      <AddProduct />
     </>
   )
 }
