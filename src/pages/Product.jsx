@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import Select from './support/Select';
 import Products from './support/Products';
 import AddProduct from './support/AddProduct';
@@ -20,6 +22,7 @@ const Product = () => {
   const [form, setForm] = useState(false);
   const [search, setSearch] = useState(true);
   const [dt, setDt] = useState(true);
+  const [pr, setPr] = useState(false);
 
 
   const changeColor = (index) => {
@@ -32,6 +35,16 @@ const Product = () => {
     setSearch(false)
     setDt(false)
     setForm(true)
+    setPr(true)
+  }
+
+  const original = (e) => {
+    e.preventDefault();
+    setPro(true)
+    setSearch(true)
+    setDt(true)
+    setForm(false)
+    setPr(false)
   }
 
   const getMyStatus = myStatus.map((item, index) => 
@@ -41,6 +54,17 @@ const Product = () => {
   )
   return (
     <>
+    {pr ? (
+      <div className="pro-header d-flex justify-content-between mt-3">
+      <div className='d-flex gap-2 mt-3'>
+        <p style={{color: '#FF962E'}}>Product</p>
+        <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> Add Product</p>
+      </div>
+
+      <button className='pcancel' onClick={original}><FontAwesomeIcon icon={faTimes} style={{color: '#888', marginRight: '8px'}}/>Cancel</button>
+    </div>
+    ): ''}
+    
     {search ? (
       <div className="row">
       <div className="col-sm-12 col-md-12 col-lg-8">

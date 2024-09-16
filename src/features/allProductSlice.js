@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const initialState = {
     products: [], 
+    productDetails: {},
     currentPage: 1,
     per_page: 10,
     pre_page: null,
@@ -35,6 +36,37 @@ export const fetchAllProducts = createAsyncThunk(
         }
     }
 );
+export const getProductDetails = createAsyncThunk(
+    'products/getDetails',
+    async ({id, token}, { rejectWithValue}) => {
+        try {
+            const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/product_details?product_id=${id}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+            return response.data;  
+        } catch (error) {
+          return rejectWithValue(error.response?.data || 'Something went wrong');
+        }
+    }
+)
+
+export const updateProduct = createAsyncThunk(
+    'products/getUpdateProduct',
+    async ({formData, token}, {rejectWithValue}) => {
+        try {
+            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/update_product', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+          return rejectWithValue(error.response?.data || 'Something went wrong');
+        }
+    }
+)
 
 const allProductsSlice = createSlice({
     name: 'allProducts',
@@ -67,7 +99,36 @@ const allProductsSlice = createSlice({
             .addCase(fetchAllProducts.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload || 'Something went wrong';
-            });
+            })
+            .addCase(getProductDetails.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(getProductDetails.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.productDetails = action.payload;
+            })
+            .addCase(getProductDetails.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload || 'Something went wrong';
+            })
+            .addCase(updateProduct.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(updateProduct.fulfilled, (state, action) => {
+                state.isLoading = false;
+                const updatedProduct = action.payload;
+                
+                const index = state.products.findIndex(product => product.id === updatedProduct.id);
+                if (index !== -1) {
+                    state.products[index] = updatedProduct;
+                }
+            })            
+            .addCase(updateProduct.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload || 'Something went wrong';
+            })
     },
 });
 
@@ -98,6 +159,10 @@ export const selectIsLoading = createSelector(
 export const selectError = createSelector(
     [selectAllProducts],
     (allProducts) => allProducts?.error
+);
+export const selectProductDetails = createSelector(
+    [selectAllProducts],
+    (allProducts) => allProducts?.productDetails
 );
 
 export default allProductsSlice.reducer;

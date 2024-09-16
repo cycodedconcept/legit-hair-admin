@@ -16,14 +16,14 @@ const Select = () => {
   ]
 
   const fil = filItem.map((item, index) =>
-    <option value={index === sugget ? '' : item}>{item}</option> 
+    <option key={index} value={index === sugget ? '' : item}>{item}</option> 
   )
   return (
     <>
       <div className="select-wrapper">
         <img src={Filter} alt="" className='select-icon'/>
         <select value={selectedOption} onChange={handleSelectChange} className="select-input">
-            {fil}
+          {fil}
         </select>
     </div>
     </>

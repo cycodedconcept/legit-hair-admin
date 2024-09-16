@@ -11,7 +11,7 @@ import '../pages/pages.css';
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { login, password, spinItem, error, successful} = useSelector((state) => state.login);
+  const { login, password, spinItem, error, successful } = useSelector((state) => state.login);
 
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState(false);

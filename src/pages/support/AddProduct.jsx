@@ -1,9 +1,25 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { createProduct } from '../../features/createProductSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes} from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2';
 import Category from './Category';
 
 const AddProduct = () => {
+    const [productName, setProductName] = useState('');
+    const [price, setPrice] = useState('');
+    const [productDescription, setProductDescription] = useState('');
+    const [discount, setDiscount] = useState('');
+    const [stock, setStock] = useState('');
+    const [categoryId, setCategoryId] = useState('');
+    const [inches, setInches] = useState([{ inche: 0, price: 0, discount: 0 }]);
+    const [images, setImages] = useState([]);
+    const [status, setStatus] = useState('1');
+
+    const dispatch = useDispatch();
+    const { isLoading, error } = useSelector((state) => state.product);
+
     const [inputGroups, setInputGroups] = useState([
         { input1: '', input2: '', input3: '' },
     ]);
@@ -15,62 +31,97 @@ const AddProduct = () => {
 
     const handleRemoveInputGroup = (index) => {
         const newInputGroups = [...inputGroups];
-        newInputGroups.splice(index, 1); // Remove the group at the given index
+        newInputGroups.splice(index, 1);
         setInputGroups(newInputGroups);
+    };
+
+    const token = localStorage.getItem('key');
+    
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    
+        const formData = new FormData();
+        formData.append('product_name', productName);
+        formData.append('price', price);
+        formData.append('product_description', productDescription);
+        formData.append('discount', discount);
+        formData.append('stock', stock);
+        formData.append('category_id', categoryId);
+        formData.append('inches', JSON.stringify(inches)); 
+        images.forEach((file) => formData.append('images', file));
+        formData.append('status', status);
+    
+        dispatch(createProduct({formData, token})).then(() => {
+            Swal.fire({
+                title: "Success",
+                text: "Product created successfully!",
+                icon: "success",
+                button: "OK",
+            }).then(() => {
+                setProductName('');
+                setPrice('');
+                setProductDescription('');
+                setDiscount('');
+                setStock('');
+                setCategoryId('');
+                setInches([{ inche: 0, price: 0, discount: 0 }]);
+                setImages([]);
+                setStatus('1');
+            });
+        }).catch((error) => {
+            console.error(error);
+        });
+    
     };
     
-    const handleInputChange = (index, event) => {
-        const { name, value } = event.target;
-        const newInputGroups = [...inputGroups];
-        newInputGroups[index][name] = value;
-        setInputGroups(newInputGroups);
-    };
   return (
     <>
-       <form className='w-100'>
+      
+       <form className='w-100' onSubmit={handleSubmit}>
            <div className="row">
                <div className="col-sm-12 col-md-12 col-lg-6">
                  <div className="form-group mb-4">
                 <label htmlFor="exampleInputEmail1">Product Name</label>
-                <input type="text" placeholder='legit hair'/>
+                <input type="text" placeholder='legit hair' value={productName} onChange={(e) => setProductName(e.target.value)}/>
                  </div>
                </div>
                <div className="col-sm-12 col-md-12 col-lg-6">
                  <div className="form-group">
                 <label htmlFor="exampleInputPassword1">Price</label>
-                <input type="number" placeholder='40000'/>
+                <input type="number" placeholder='40000' value={price} onChange={(e) => setPrice(e.target.value)}/>
                  </div>
                </div>
                <div className="col-sm-12 col-md-12 col-lg-6">
                <div className="form-group">
                    <label htmlFor="exampleInputPassword1">Product Discount</label>
-                     <input type="number" placeholder='40000'/>
+                     <input type="number" placeholder='40000' value={discount} onChange={(e) => setDiscount(e.target.value)}/>
                  </div>
                  
                </div>
                <div className="col-sm-12 col-md-12 col-lg-6">
                   <div className="form-group">
                      <label htmlFor="exampleInputPassword1">Stock</label>
-                     <input type="number" placeholder='40000'/>
+                     <input type="number" placeholder='40000' value={stock} onChange={(e) => setStock(e.target.value)}/>
                  </div>
                </div>
 
                <div className="col-sm-12 col-md-12 col-lg-6 mt-4">
                   <div className="form-group">
                      <label htmlFor="exampleInputPassword1">Product Images</label>
-                     <input type="file" multiple/>
+                     <input type="file" multiple onChange={(e) => setImages([...e.target.files])}/>
                  </div>
                </div>
                <div className="col-sm-12 col-md-12 col-lg-6 mt-4">
                   <div className="form-group">
                      <label htmlFor="exampleInputPassword1">Status</label>
-                     <input type="text" placeholder='pending'/>
+                     <input type="text" placeholder='pending' value={status} onChange={(e) => setStatus(e.target.value)}/>
                  </div>
                </div>
                <div className="col-sm-12 col-md-12 col-lg-6 mt-4">
                   <div className="form-group">
                    <label htmlFor="exampleInputPassword1">Product Description</label>
-                   <textarea name="" id="" cols="30" rows="5"></textarea>
+                   <textarea name="" id="" cols="30" rows="5" value={productDescription} onChange={(e) => setProductDescription(e.target.value)}></textarea>
                   </div>
                </div>
                <div className="col-sm-12 col-md-12 col-lg-6 mt-4">
@@ -86,29 +137,41 @@ const AddProduct = () => {
                                 border: '0'
                             }}>+</button>
                         </div>
-                      {inputGroups.map((group, index) => (
+                      {inputGroups.map((inch, index) => (
                         <div key={index} style={{ marginBottom: '20px' }} className="d-flex">
                         <input
                             type="text"
                             name="input1"
-                            value={group.input1}
-                            onChange={(event) => handleInputChange(index, event)}
+                            value={inches[index]?.inche || ''} // Ensure you access inches correctly
+                            onChange={(e) => {
+                                const newInches = [...inches];
+                                newInches[index] = { ...newInches[index], inche: parseInt(e.target.value, 10) || 0 }; // Update only the 'inche' field
+                                setInches(newInches); // Set the new inches array
+                            }}
                             placeholder="Inches"
                             className='mx-2'
                         />
                         <input
-                            type="text"
+                            type="number"
                             name="input2"
-                            value={group.input2}
-                            onChange={(event) => handleInputChange(index, event)}
+                            value={inches[index]?.price || ''} // Ensure you access inches correctly
+                            onChange={(e) => {
+                                const newInches = [...inches];
+                                newInches[index] = { ...newInches[index], price: parseInt(e.target.value, 10) || 0 }; // Update only the 'price' field
+                                setInches(newInches); // Set the new inches array
+                            }}             
                             placeholder="Price"
                             className='mx-2'
                         />
                         <input
-                            type="text"
+                            type="number"
                             name="input3"
-                            value={group.input3}
-                            onChange={(event) => handleInputChange(index, event)}
+                            value={inches[index]?.discount || ''} // Ensure you access inches correctly
+                            onChange={(e) => {
+                                const newInches = [...inches];
+                                newInches[index] = { ...newInches[index], discount: parseInt(e.target.value, 10) || 0 }; // Update only the 'discount' field
+                                setInches(newInches); // Set the new inches array
+                            }}
                             placeholder="Discount"
                             className='mx-2'
                         />
@@ -120,14 +183,16 @@ const AddProduct = () => {
                <div className="col-sm-12 col-md-12 col-lg-6 mt-4">
                  <div className="form-group">
                      <label htmlFor="exampleInputPassword1">Categories</label>
-                     <Category />
+                     <Category onCategoryChange={setCategoryId}/>
                  </div>
                </div>
            </div>
             
             
             
-            <button className='log-btn mt-5'>Create Product</button>
+           <button className='log-btn mt-5'>
+                {isLoading ? 'Creating Product...' : 'Create Product'}
+            </button>
         </form>
     </>
   )
