@@ -4,6 +4,7 @@ import axios from 'axios';
 const initialState = {
     products: [], 
     productDetails: {},
+    searchDetails: {},
     currentPage: 1,
     per_page: 10,
     pre_page: null,
@@ -52,6 +53,8 @@ export const getProductDetails = createAsyncThunk(
     }
 )
 
+
+
 export const updateProduct = createAsyncThunk(
     'products/getUpdateProduct',
     async ({formData, token}, {rejectWithValue}) => {
@@ -67,6 +70,33 @@ export const updateProduct = createAsyncThunk(
         }
     }
 )
+
+
+export const fetchDetails = createAsyncThunk(
+    'products/fetchProduct',
+    async ({ token, searchValue, page }, { rejectWithValue }) => {
+      try {
+        console.log("Starting fetchDetails with searchValue:", searchValue);
+        
+        const response = await axios.get(
+          `https://testbackendproject.pluralcode.academy/admin/admin_get_product?search_value=${searchValue}&page=${page}`, 
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        console.log("API response:", response.data);
+        return response.data;
+  
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+  
+        return rejectWithValue(error.response?.data || 'Something went wrong while fetching the product details.');
+      }
+    }
+  );
 
 const allProductsSlice = createSlice({
     name: 'allProducts',
@@ -129,6 +159,28 @@ const allProductsSlice = createSlice({
                 state.isLoading = false;
                 state.error = action.payload || 'Something went wrong';
             })
+            .addCase(fetchDetails.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(fetchDetails.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.data = action.payload;
+            
+                const payload = action.payload;
+            
+                state.searchDetails = payload || {};
+                state.currentPage = payload.page || 1;
+                state.per_page = payload.per_page || 10;
+                state.pre_page = payload.pre_page || null;
+                state.next_page = payload.next_page || null;
+                state.total = payload.total || 0;
+                state.total_pages = payload.total_pages || 0;
+            })            
+            .addCase(fetchDetails.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload || 'Something went wrong';
+            })
     },
 });
 
@@ -163,6 +215,11 @@ export const selectError = createSelector(
 export const selectProductDetails = createSelector(
     [selectAllProducts],
     (allProducts) => allProducts?.productDetails
+);
+
+export const selectSearchDetails = createSelector(
+    [selectAllProducts],
+    (allProducts) => allProducts?.searchDetails
 );
 
 export default allProductsSlice.reducer;

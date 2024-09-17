@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDetails, selectSearchDetails, selectCurrentPage, selectTotalPages,  } from '../features/allProductSlice'
 import Select from './support/Select';
 import Products from './support/Products';
 import AddProduct from './support/AddProduct';
@@ -23,7 +25,21 @@ const Product = () => {
   const [search, setSearch] = useState(true);
   const [dt, setDt] = useState(true);
   const [pr, setPr] = useState(false);
+  const [myValue, setMyValue] = useState('')
 
+  const searchDetails = useSelector(selectSearchDetails);
+  const currentPage = useSelector(selectCurrentPage);
+  const total_pages = useSelector(selectTotalPages);
+
+  const dispatch = useDispatch();
+
+  let token = localStorage.getItem("key");
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchDetails({ token, searchValue: myValue }));
+    }
+  }, [dispatch, token, myValue]);
 
   const changeColor = (index) => {
     setActive(index);
@@ -47,6 +63,7 @@ const Product = () => {
     setPr(false)
   }
 
+  console.log(searchDetails)
   const getMyStatus = myStatus.map((item, index) => 
     <button key={index} className={index === active ? 'active-item': 'inactive-item'} onClick={() => changeColor(index)}>
       {item}
@@ -69,7 +86,7 @@ const Product = () => {
       <div className="row">
       <div className="col-sm-12 col-md-12 col-lg-8">
         <div className="search-container">
-          <input type="text" placeholder="Search Order..." className="search-input"/>
+          <input type="text" placeholder="Search Order..." className="search-input" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
           <span className="search-icon">&#128269;</span>
         </div>
       </div>
@@ -111,6 +128,71 @@ const Product = () => {
       {form ? (
         <AddProduct />
       ): ''}
+
+
+      <div className="outer-wrapper">
+        <div className="table-wrapper">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Product image</th>
+                <th>Product Name</th>
+                <th>Product Status</th>
+                <th>Product Price</th>
+                <th>Product Description</th>
+                <th>Product Number</th>
+                <th>Discount</th>
+                <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+            {searchDetails && searchDetails.data?.length > 0 ? (
+              searchDetails.data.map((search) => (
+                <tr key={search.id}>
+                  <td>
+                    <img
+                      src={typeof search.images[0]?.filename === 'string' ? search.images[0]?.filename : 'default_image.png'}
+                      alt={search.product_name}
+                      width={100}
+                    />
+                  </td>
+                  <td>{search.product_name}</td>
+                  <td>{search.status}</td>
+                  <td>{search.price}</td>
+                  <td>{search.product_description}</td>
+                  <td>{search.product_number}</td>
+                  <td>{search.discount}</td>
+                  <td>{search.total_rating}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7">No products available</td>
+              </tr>
+            )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {total_pages > 1 && (
+            <div className="pagination">
+              {Array.from({ length: total_pages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => handlePageChange(i + 1)}
+                  disabled={currentPage === i + 1}
+                  className="mx-1"
+                  style={{
+                    backgroundColor: '#FF962E', 
+                    borderRadius: '10px',
+                    border: '0'
+                  }}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+          )}
     </>
   )
 }

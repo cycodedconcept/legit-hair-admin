@@ -2,7 +2,7 @@ import Logo from './logo.png';
 import Logo2 from './logo2.png';
 import Com from './cicon.png';
 import Order from './oicon.png';
-import Product from './picon.png';
+import Roduct from './picon.png';
 import Report from './ricon.png';
 import User from './uicon.png';
 import Dash from './Category.png';
@@ -24,7 +24,7 @@ import Img from './img.png';
 
 export { 
     Logo, Com, Order, 
-    Product, Report, 
+    Roduct, Report, 
     User, Dash, Cart, 
     Logo2, Success, 
     Wig1, Wig2, Wig3, 

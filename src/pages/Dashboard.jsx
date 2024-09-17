@@ -33,7 +33,7 @@ const Dashboard = () => {
             </div>
           </header>
           {activeContent === 'dashboard' && <Cards /> }
-          {activeContent === 'product' && <Product /> }
+          {activeContent === 'product management' && <Product /> }
       </div>
     </>
   )

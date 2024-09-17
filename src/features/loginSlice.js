@@ -24,12 +24,15 @@ export const submitForm = createAsyncThunk(
             });
 
             localStorage.setItem("key", response.data.token);
+            localStorage.setItem("menus", JSON.stringify(response.data.menus));
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
     }
 );
+
+export const selectMenus = (state) => state.login.data.menus;
 
 const formLoginSlice = createSlice({
     name: 'login',
