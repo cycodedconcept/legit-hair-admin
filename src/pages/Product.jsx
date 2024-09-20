@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDetails, selectSearchDetails, selectCurrentPage, selectTotalPages,  } from '../features/allProductSlice'
-import Select from './support/Select';
+import { fetchDetails, selectSearchDetails, setCurrentPage, selectCurrentPage, selectTotalPages, selectViewDetails, viewCategory } from '../features/allProductSlice';
+import { fetchCategories } from '../features/categorySlice';
+// import Select from './support/Select';
 import Products from './support/Products';
 import AddProduct from './support/AddProduct';
 import DatePicker from 'react-datepicker';
@@ -13,10 +14,10 @@ import { Exp } from '../assets/images';
 import './pages.css'
 
 const Product = () => {
-  const myStatus = [
-    "Product", "Active", "Stock", "Closed", 
-    "Draft", "Enable", "Disable"
-  ];
+  // const myStatus = [
+  //   "Product", "Active", "Stock", "Closed", 
+  //   "Draft", "Enable", "Disable"
+  // ];
 
   const [active, setActive] = useState(0);
   const [selectedDate, setSelectedDate] = useState('');
@@ -26,23 +27,47 @@ const Product = () => {
   const [dt, setDt] = useState(true);
   const [pr, setPr] = useState(false);
   const [myValue, setMyValue] = useState('')
+  const [wal, setWal] = useState(false);
+  const [selectId, setSelectedId] = useState('');
+  const [alter, setAlter] = useState(true);
 
   const searchDetails = useSelector(selectSearchDetails);
   const currentPage = useSelector(selectCurrentPage);
   const total_pages = useSelector(selectTotalPages);
+  const viewDetails = useSelector(selectViewDetails);
 
   const dispatch = useDispatch();
+  const { categories } = useSelector((state) => state.categories);
 
   let token = localStorage.getItem("key");
 
   useEffect(() => {
     if (token) {
-      dispatch(fetchDetails({ token, searchValue: myValue }));
+      setPro(false)
+      if(myValue === '') {
+        setPro(true);
+        setWal(false)
+      }
+      else {
+        setWal(true)
+        setAlter(true);
+        dispatch(fetchDetails({ token, searchValue: myValue }));
+      }
     }
   }, [dispatch, token, myValue]);
 
   const changeColor = (index) => {
     setActive(index);
+  };
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchCategories(token));
+    }
+  }, [dispatch, token]);
+
+  const resetPage = () => {
+    dispatch(setCurrentPage(1));
   };
 
   const showProductForm = (e) => {
@@ -52,6 +77,7 @@ const Product = () => {
     setDt(false)
     setForm(true)
     setPr(true)
+    setWal(false)
   }
 
   const original = (e) => {
@@ -61,14 +87,49 @@ const Product = () => {
     setDt(true)
     setForm(false)
     setPr(false)
+    setWal(false)
   }
 
-  console.log(searchDetails)
-  const getMyStatus = myStatus.map((item, index) => 
-    <button key={index} className={index === active ? 'active-item': 'inactive-item'} onClick={() => changeColor(index)}>
-      {item}
-    </button>
-  )
+  const pickChange = (e) => {
+    const categoryId = e.target.value;
+    setPro(false);
+    setWal(true);
+    setAlter(false);
+    setSelectedId(categoryId);
+    resetPage();
+    console.log(categoryId);
+
+     
+    if (categoryId && token) {
+      console.log("Dispatching viewDetails with:", { token, id: categoryId, page: currentPage });
+      dispatch(viewCategory({ token, id: categoryId, page: 1 }));
+    }
+  };
+
+
+  const handlePageChange = (page) => {
+    dispatch(setCurrentPage(page));
+
+    if (alter) {
+      dispatch(fetchDetails({ token, searchValue: myValue, page }));
+    } else {
+      dispatch(viewCategory({ token, id: selectId, page }));
+    }
+  };
+
+  const renderCategoryOptions = (categories) => {
+    return categories.map((category) => (
+      <option key={category.id} value={category.id}>
+        {category.name} (Parent ID: {category.parent_category_id ?? 'None'})
+      </option>
+    ));
+  };
+
+  // const getMyStatus = myStatus.map((item, index) => 
+  //   <button key={index} className={index === active ? 'active-item': 'inactive-item'} onClick={() => changeColor(index)}>
+  //     {item}
+  //   </button>
+  // )
   return (
     <>
     {pr ? (
@@ -99,11 +160,20 @@ const Product = () => {
       
     {dt ? (
       <div className="scub d-flex">
-      <div className="pro d-flex ml-5">
+      {/* <div className="pro d-flex ml-5">
           {getMyStatus}
-      </div>
-      <div className="pro-right d-flex">
-        <div>
+      </div> */}
+      <div className="pro-right d-flex mx-5 mt-2">
+        {/* <div className='mr-5'>
+          <Select />
+        </div> */}
+        <div className='mx-5'>
+          <select value={selectId} onChange={pickChange}>
+            <option value="">Select a Category</option>
+            {categories && renderCategoryOptions(categories)}
+          </select>
+        </div>
+        <div className='mt-2'>
           <DatePicker 
             selected={selectedDate} 
             onChange={(date) => setSelectedDate(date)} 
@@ -113,9 +183,6 @@ const Product = () => {
             style={{ padding: '10px', fontSize: '16px' }}
           />
         </div>
-        <div>
-          <Select />
-        </div>
       </div>
     </div>
     ): ''}  
@@ -123,14 +190,15 @@ const Product = () => {
 
       {pro ? (
         <Products />
-      ): ''}
+      ) : ''}
+
 
       {form ? (
         <AddProduct />
       ): ''}
 
-
-      <div className="outer-wrapper">
+      {wal ? (
+        <div className="outer-wrapper">
         <div className="table-wrapper">
           <table className="table">
             <thead>
@@ -146,53 +214,84 @@ const Product = () => {
               </tr>
             </thead>
             <tbody>
-            {searchDetails && searchDetails.data?.length > 0 ? (
-              searchDetails.data.map((search) => (
-                <tr key={search.id}>
-                  <td>
-                    <img
-                      src={typeof search.images[0]?.filename === 'string' ? search.images[0]?.filename : 'default_image.png'}
-                      alt={search.product_name}
-                      width={100}
-                    />
-                  </td>
-                  <td>{search.product_name}</td>
-                  <td>{search.status}</td>
-                  <td>{search.price}</td>
-                  <td>{search.product_description}</td>
-                  <td>{search.product_number}</td>
-                  <td>{search.discount}</td>
-                  <td>{search.total_rating}</td>
+            {alter ? (
+              searchDetails && searchDetails.data?.length > 0 ? (
+                searchDetails.data.map((search) => (
+                  <tr key={search.id}>
+                    <td>
+                      <img
+                        src={typeof search.images[0]?.filename === 'string' ? search.images[0]?.filename : 'default_image.png'}
+                        alt={search.product_name}
+                        width={100}
+                      />
+                    </td>
+                    <td>{search.product_name}</td>
+                    <td>{search.status}</td>
+                    <td>{search.price}</td>
+                    <td>{search.product_description}</td>
+                    <td>{search.product_number}</td>
+                    <td>{search.discount}</td>
+                    <td>{search.total_rating}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">No products available</td>
                 </tr>
-              ))
+              )
             ) : (
-              <tr>
-                <td colSpan="7">No products available</td>
-              </tr>
+              viewDetails && viewDetails.data?.length > 0 ? (
+                viewDetails.data.map((view) => (
+                  <tr key={view.id}>
+                    <td>
+                      <img
+                        src={typeof view.images[0]?.filename === 'string' ? view.images[0]?.filename : 'default_image.png'}
+                        alt={view.product_name}
+                        width={100}
+                      />
+                    </td>
+                    <td>{view.product_name}</td>
+                    <td>{view.status}</td>
+                    <td>{view.price}</td>
+                    <td>{view.product_description}</td>
+                    <td>{view.product_number}</td>
+                    <td>{view.discount}</td>
+                    <td>{view.total_rating}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">No products available</td>
+                </tr>
+              )
             )}
+
             </tbody>
           </table>
         </div>
+        {total_pages > 1 && (
+          <div className="pagination">
+            {Array.from({ length: total_pages }, (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => handlePageChange(i + 1)}
+                disabled={currentPage === i + 1}
+                className="mx-1"
+                style={{
+                  backgroundColor: '#FF962E',
+                  borderRadius: '10px',
+                  border: '0'
+                }}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-      {total_pages > 1 && (
-            <div className="pagination">
-              {Array.from({ length: total_pages }, (_, i) => (
-                <button
-                  key={i + 1}
-                  onClick={() => handlePageChange(i + 1)}
-                  disabled={currentPage === i + 1}
-                  className="mx-1"
-                  style={{
-                    backgroundColor: '#FF962E', 
-                    borderRadius: '10px',
-                    border: '0'
-                  }}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-          )}
+      ): ''}
+      
+      
     </>
   )
 }

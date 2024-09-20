@@ -360,7 +360,7 @@ table td {
     width: 100%
 }
 
-.delete-button, .update-button, .f-btn, .log-btn, .exp-btn, .pro-btn, .pcancel {
+.delete-button, .update-button, .f-btn, .log-btn, .exp-btn, .pro-btn, .pcancel, .btn-status {
     outline: none !important;
     border: 0;
     box-shadow: none;
@@ -369,6 +369,10 @@ table td {
     color: #fff;
     border-radius: 10px;
     margin-left: 10px;
+}
+
+.btn-status {
+    background: #008000;
 }
 
 .update-button {
@@ -587,7 +591,7 @@ input, textarea, select {
 }
 
 .date-picker {
-    width: 120px;
+    width: 300px;
     padding: 10px;
 }
 

@@ -4,6 +4,7 @@ import allProductsReducer from '../features/allProductSlice';
 import categoryReducer from '../features/categorySlice';
 import productReducer from '../features/createProductSlice'
 
+
 const store = configureStore({
   reducer: {
     login: formLoginReducer,

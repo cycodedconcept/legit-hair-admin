@@ -5,6 +5,7 @@ const initialState = {
     products: [], 
     productDetails: {},
     searchDetails: {},
+    viewDetails: {},
     currentPage: 1,
     per_page: 10,
     pre_page: null,
@@ -13,6 +14,7 @@ const initialState = {
     total_pages: 0,
     isLoading: false,
     error: null,
+    status: 'idle'
 };
 
 export const fetchAllProducts = createAsyncThunk(
@@ -52,8 +54,6 @@ export const getProductDetails = createAsyncThunk(
         }
     }
 )
-
-
 
 export const updateProduct = createAsyncThunk(
     'products/getUpdateProduct',
@@ -98,6 +98,42 @@ export const fetchDetails = createAsyncThunk(
     }
   );
 
+  export const changeStatus = createAsyncThunk(
+    'product/updateStatus',
+    async ({ token, id}, { rejectWithValue}) => {
+      try {
+        const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/product_status?product_id=${id}`,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        );
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response?.data || 'Something went wrong');
+      }
+    }
+  );
+
+  export const viewCategory = createAsyncThunk(
+      'products/viewByCategory',
+      async ({token, id, page}, { rejectWithValue}) => {
+          try {
+              const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/view_category_product?cat_id=${id}&page=${page}`, {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                }
+              )
+              return response.data;
+          } catch (error) {
+            return rejectWithValue(error.response?.data || 'Something went wrong');
+          }
+      }
+  )
+
 const allProductsSlice = createSlice({
     name: 'allProducts',
     initialState,
@@ -105,6 +141,10 @@ const allProductsSlice = createSlice({
         setPage: (state, action) => {
             state.currentPage = action.payload;
         },
+        setCurrentPage: (state, action) => {
+            state.currentPage = action.payload;
+        },
+      
     },
     extraReducers: (builder) => {
         builder
@@ -181,10 +221,48 @@ const allProductsSlice = createSlice({
                 state.isLoading = false;
                 state.error = action.payload || 'Something went wrong';
             })
+            .addCase(changeStatus.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(changeStatus.fulfilled, (state, action) => {
+                state.isLoading = false;
+                const updatedProduct = action.payload;
+                const index = state.products.findIndex(product => product.id === updatedProduct.id);
+                if (index !== -1) {
+                    state.products[index].status = updatedProduct.status;
+                }
+            })
+            .addCase(changeStatus.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload || 'Something went wrong';
+            })
+            .addCase(viewCategory.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(viewCategory.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.data = action.payload
+
+                const payload = action.payload;
+
+                state.viewDetails = payload || {};
+                state.currentPage = payload.page || 1;
+                state.per_page = payload.per_page || 10;
+                state.pre_page = payload.pre_page || null;
+                state.next_page = payload.next_page || null;
+                state.total = payload.total || 0;
+                state.total_pages = payload.total_pages || 0;
+            })
+            .addCase(viewCategory.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload || 'Something went wrong';
+            })
     },
 });
 
 export const { setPage } = allProductsSlice.actions;
+export const { setCurrentPage } = allProductsSlice.actions;
 
 export const selectAllProducts = (state) => state.allProducts;
 
@@ -221,5 +299,11 @@ export const selectSearchDetails = createSelector(
     [selectAllProducts],
     (allProducts) => allProducts?.searchDetails
 );
+
+export const selectViewDetails = createSelector(
+    [selectAllProducts],
+    (allProducts) => allProducts?.viewDetails
+)
+
 
 export default allProductsSlice.reducer;

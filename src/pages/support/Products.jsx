@@ -14,7 +14,8 @@ import {
     selectError,
     selectProductDetails,
     getProductDetails,
-    updateProduct
+    updateProduct,
+    changeStatus
 } from '../../features/allProductSlice';
 
 const Products = () => {
@@ -98,6 +99,27 @@ const Products = () => {
     dispatch(getProductDetails({ id, token }));
   };
 
+  const switchStatus = (id, token) => {
+    console.log(id)
+    dispatch(changeStatus({id, token})).then(() => {
+      Swal.fire({
+        title: "Success",
+        text: "Status changed successfully!",
+        icon: "success",
+        button: "OK",
+      })
+    })
+    .catch((error) => {
+      console.error(error);
+      Swal.fire({
+        title: "Error",
+        text: "Something went wrong while updating the product!",
+        icon: "error",
+        confirmButtonText: "OK"
+      });
+    });
+  }
+
   const hideModal = () => {
     setModalVisible(false);
   };
@@ -168,6 +190,7 @@ const Products = () => {
                     <th>Discounts</th>
                     <th>Total Ratings</th>
                     <th>Product Settings</th>
+                    <th>Status Setting</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -195,6 +218,7 @@ const Products = () => {
                           /> 
                           Edit
                         </td>
+                        <td><button className='btn-status' onClick={() => switchStatus(product.id, token)}>Change Status</button></td>
                       </tr>
                     ))
                   ) : (

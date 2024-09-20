@@ -28,8 +28,6 @@ export const createProduct = createAsyncThunk(
   }
 );
 
-
-
 const productSlice = createSlice({
   name: 'product',
   initialState,
@@ -47,7 +45,7 @@ const productSlice = createSlice({
       .addCase(createProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || 'Something went wrong';
-      });
+      })
   },
 });
 
