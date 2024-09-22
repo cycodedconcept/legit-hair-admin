@@ -6,6 +6,10 @@ const initialState = {
     orderDetails: {},
     isLoading: false,
     error: null,
+    order_id: '',
+    delivery_status: '',
+    success: false,
+    data: {},
     currentPage: 1,
     per_page: 10,
     pre_page: null,
@@ -44,12 +48,38 @@ export const fetchDetails = createAsyncThunk(
           return rejectWithValue(error.response?.data || 'Something went wrong');
         }
     }
+);
+
+export const updateStatus = createAsyncThunk(
+    'orders/changeStatus',
+    async ({ token, order_id, delivery_status }, {rejectWithValue}) => {
+        try {
+            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/update_delivery_status', {
+                order_id,
+                delivery_status
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+          return rejectWithValue(error.response?.data || 'Something went wrong');
+            
+        }
+    }
 )
 
 const createOrderSlice = createSlice({
     name: 'order',
     initialState,
-    reducers: {},
+    reducers: {
+        clearStatusUpdate: (state) => {
+            state.success = false; // Reset success state
+        },
+    },
     extraReducers: (builder) => {
         builder
           .addCase(getOrder.pending, (state) => {
@@ -84,7 +114,20 @@ const createOrderSlice = createSlice({
             state.isLoading = false;
             state.error = action.payload || 'Something went wrong';
           })
+          .addCase(updateStatus.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+          })
+          .addCase(updateStatus.fulfilled, (state, action) => {
+            state.success = true;
+            state.data = action.payload;
+          })
+          .addCase(updateStatus.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload || 'Something went wrong';
+          })
     }
 });
 
+export const { clearStatusUpdate } = createOrderSlice.actions; 
 export default createOrderSlice.reducer;

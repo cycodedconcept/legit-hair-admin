@@ -360,7 +360,7 @@ table td {
     width: 100%
 }
 
-.delete-button, .update-button, .f-btn, .log-btn, .exp-btn, .pro-btn, .pcancel, .btn-status, .complete, .pending {
+.delete-button, .update-button, .f-btn, .log-btn, .exp-btn, .pro-btn, .pcancel, .btn-status, .complete, .pending, .processing, .delivered, .out {
     outline: none !important;
     border: 0;
     box-shadow: none;
@@ -729,8 +729,15 @@ input, textarea, select {
     color: #fff;
     width: 100px;
 }
-.complete {
+.complete, .delivered {
     background: #008000;
+}
+.processing {
+    background: #FF962E
+}
+
+.out {
+    background: #a52a2a;
 }
 
 .form-input {
