@@ -85,9 +85,9 @@ export const suspendProduct = createAsyncThunk(
 
 export const fetchCategoryStatus = createAsyncThunk(
   'categories/categoryStatus',
-  async ({token, catId, statusId}, {rejectWithValue}) => {
+  async ({token, statusId}, {rejectWithValue}) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_categories?cat_id=${catId}&status=${statusId}`, {
+      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_categories?status=${statusId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -196,6 +196,18 @@ const categorySlice = createSlice({
         state.searchValue = action.payload;
       })
       .addCase(fetchSearchValue.rejected, (state) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(suspendProduct.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(suspendProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.success = action.payload;
+      })
+      .addCase(suspendProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })

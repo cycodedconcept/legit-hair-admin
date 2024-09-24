@@ -450,10 +450,11 @@ table td {
     background: #FF962E;
     color: #fff;
     border-radius: 10px;
+    border: 0 !important;
 }
 
 .deactivate {
-    border: 1px solid #FF962E;
+    border: 1px solid #FF962E !important;
     color: #FF962E;
     background: #fff;
     border-radius: 10px;
