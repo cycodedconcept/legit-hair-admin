@@ -269,7 +269,7 @@ const Product = () => {
             </tbody>
           </table>
         </div>
-        {total_pages > 1 && (
+        {/* {total_pages > 1 && (
           <div className="pagination">
             {Array.from({ length: total_pages }, (_, i) => (
               <button
@@ -287,7 +287,62 @@ const Product = () => {
               </button>
             ))}
           </div>
-        )}
+        )} */}
+
+{total_pages > 1 && (
+            <div className="pagination">
+
+              {/* Previous page button */}
+              {currentPage > 1 && (
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className="mx-1"
+                  style={{
+                    backgroundColor: '#FF962E',
+                    borderRadius: '10px',
+                    border: '0',
+                  }}
+                >
+                  {currentPage - 1}
+                </button>
+              )}
+
+              {/* Previous dots if there are more pages before the previous page */}
+              {/* {currentPage > 2 && <span className="mx-1">...</span>} */}
+
+              {/* Current page */}
+              <button
+                onClick={() => handlePageChange(currentPage)}
+                disabled
+                className="mx-1"
+                style={{
+                  backgroundColor: '#FF962E',
+                  borderRadius: '10px',
+                  border: '0',
+                }}
+              >
+                {currentPage}
+              </button>
+
+              {/* Next page if it exists */}
+              {currentPage < total_pages && (
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className="mx-1"
+                  style={{
+                    backgroundColor: '#FF962E',
+                    borderRadius: '10px',
+                    border: '0',
+                  }}
+                >
+                  {currentPage + 1}
+                </button>
+              )}
+
+              {/* Next dots if there are more pages after the next page */}
+              {currentPage < total_pages - 1 && <span className="mx-1">...</span>}
+            </div>
+          )}
       </div>
       ): ''}
       

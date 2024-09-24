@@ -325,7 +325,6 @@ const Order = () => {
                             <label>Select Status</label>
                             <select className='w-100' name='delivery_status' value={deliveryStatus} onChange={handleStatusChange}>
                                 <option value="">--Choose Option--</option>
-                                {/* <option value="pending">Pending</option> */}
                                 <option value="processing">Processing</option>
                                 <option value="out for delivery">Out for delivery</option>
                                 <option value="delivered">Delivered</option>

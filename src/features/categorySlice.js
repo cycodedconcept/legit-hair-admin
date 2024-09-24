@@ -6,7 +6,7 @@ const initialState = {
   subCategories: [],
   companyCategory: [],
   success: {},
-  categoryStatus: [],
+  categoryStatus: {},
   searchValue: {},
   isLoading: false,
   error: null,
@@ -52,9 +52,9 @@ export const fetchSubcategories = createAsyncThunk(
 
 export const fetchCompanyCategory = createAsyncThunk(
   'categories/fetchCompanyCategory',
-  async ({token, id}, {rejectWithValue}) => {
+  async ({token, page}, {rejectWithValue}) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_categories?cat_id=${id}`, {
+      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_categories?page=${page}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -153,7 +153,14 @@ const categorySlice = createSlice({
       })
       .addCase(fetchCompanyCategory.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.companyCategory = action.payload;
+        const data = action.payload;
+        state.companyCategory = data.data || [];
+        state.currentPage = data.page || 1;
+        state.per_page = data.per_page || 10;
+        state.pre_page = data.pre_page || null;
+        state.next_page = data.next_page || null;
+        state.total = data.total || 0;
+        state.total_pages = data.total_pages || 0;
       })
       .addCase(fetchCompanyCategory.rejected, (state, action) => {
         state.isLoading = false;

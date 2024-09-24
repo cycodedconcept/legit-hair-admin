@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './Sidebar'
 import Cards from './Cards';
 import Product from './Product';
+import Company from './Company';
 import Order from './Order';
 import { Bell, Profile } from '../assets/images'
 import './pages.css'
@@ -35,6 +36,7 @@ const Dashboard = () => {
           </header>
           {activeContent === 'dashboard' && <Cards /> }
           {activeContent === 'product management' && <Product /> }
+          {activeContent === 'company management' && <Company /> }
           {activeContent === 'order management' && <Order /> }
       </div>
     </>
