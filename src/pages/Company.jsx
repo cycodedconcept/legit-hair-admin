@@ -1,16 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCompanyCategory, fetchCategoryStatus, suspendProduct } from '../features/categorySlice'
+import { fetchCompanyCategory, fetchCategoryStatus, suspendProduct, fetchSearchValue, viewDetails } from '../features/categorySlice'
 
 const Company = () => {
   const [background, setBackground] = useState('all');
   const [enable, setEnable] = useState(true);
   const [disable, setDisable] = useState(true);
   const [hide, setHide] = useState(true);
+  const [myValue, setMyValue] = useState('');
+  const [over, setOver] = useState(true);
+  const [more, setMore] = useState(true);
 
   const dispatch = useDispatch();
-  const { companyCategory, categoryStatus, currentPage, total_pages, isLoading, error, success } = useSelector((state) => state.categories);
+  const { companyCategory, categoryStatus, currentPage, total_pages, isLoading, error, searchValue, viewCategoryDetails } = useSelector((state) => state.categories);
   let token = localStorage.getItem("key");
 
   const handleButtonClick = (button) => {
@@ -29,6 +32,7 @@ const Company = () => {
         setEnable(false);
         setDisable(true);
         setHide(false);
+        setOver(true)
         dispatch(fetchCategoryStatus({token, statusId: value}))
     }
     
@@ -39,6 +43,7 @@ const Company = () => {
         setEnable(true);
         setDisable(false);
         setHide(false);
+        setOver(true);
         dispatch(fetchCategoryStatus({token, statusId: value}))
     }
   }
@@ -47,7 +52,8 @@ const Company = () => {
       if (token) {
           setEnable(true);
           setDisable(true);
-          setHide(true)
+          setHide(true);
+          setOver(true);
         dispatch(fetchCompanyCategory({token, page: currentPage}));
       }
   }
@@ -83,13 +89,30 @@ const Company = () => {
             });
         }
     };
+
+    useEffect(() => {
+        if (token) {
+            setOver(false)
+            if (myValue === '') {
+                setOver(false)
+            }
+            dispatch(fetchSearchValue({token, searchValue: myValue}))
+        }
+    }, [dispatch, token, myValue])
+
+    const myDetails = (id) => {
+        console.log(id)
+        setMore(false)
+    }
   
   return (
     <>
-      <div className="row">
+    {more ? (
+        <>
+          <div className="row">
           <div className="col-sm-12 col-md-12 col-lg-9">
                 <div className="search-container">
-                    <input type="text" placeholder="Search Order..." className="search-input" />
+                    <input type="text" placeholder="Search Order..." className="search-input" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
                     <span className="search-icon">&#128269;</span>
                 </div>
           </div>
@@ -153,72 +176,128 @@ const Company = () => {
       </div>
 
       <div className="row">
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : error ? (
-            <div>Error: {error?.message || 'Something went wrong'}</div>
-          ) : (
-              <>
-              {hide ? (
-                  <>
-                    {companyCategory.map((category) => 
-                        <div className='col-sm-12 col-md-12 col-lg-4 mb-3' key={category.categories.id}>
-                            <div style={{border: '1px solid #FF962E', borderRadius: '15px', padding: '10px'}}>
-                                <label className='custom-checkbox'>
-                                    <input type="checkbox" name="options" value="option1"/>
-                                    <span className="checkmark"></span>
-                                </label>
-                                <div className='mt-5'>
-                                    <p style={{marginBottom: '0rem', textAlign: 'center'}}>{category.categories.category_name}</p>
-                                    <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{textAlign: 'center'}}>{category.categories.status === 1 ? 'Enable' : 'Disable'}</p>
-                                </div>
-                                <hr style={{borderTop: '1px dashed black'}}/>
-                                <div className='d-flex justify-content-between'>
-                                    <div>
-                                        <p>Products</p>
-                                        <p>{category.products}</p>
+            {isLoading ? (
+                <div>Loading...</div>
+            ) : error ? (
+                <div>Error: {error?.message || 'Something went wrong'}</div>
+            ) : (
+                <>
+                {over ? (
+                    <>
+                        {hide ? (
+                    <>
+                        {companyCategory.map((category) => 
+                            <div className='col-sm-12 col-md-12 col-lg-4 mb-3' key={category.categories.id}>
+                                <div style={{border: '1px solid #FF962E', borderRadius: '15px', padding: '10px'}}>
+                                    <div className='d-flex justify-content-between'>
+                                        <label className='custom-checkbox'>
+                                            <input type="checkbox" name="options" value="option1"/>
+                                            <span className="checkmark"></span>
+                                        </label>
+                                        <button className='el3-btn mt-3' onClick={() => myDetails(category.categories.id)}>view more</button>
                                     </div>
-                                    <div className='mt-3'>
-                                    <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
+                                    
+                                    <div className='mt-5'>
+                                        <p style={{marginBottom: '0rem', textAlign: 'center'}}>{category.categories.category_name}</p>
+                                        <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{textAlign: 'center'}}>{category.categories.status === 1 ? 'Enable' : 'Disable'}</p>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                  </>
-              ): (
-                  <>
-                   {categoryStatus.map((category) => 
-                        <div className='col-sm-12 col-md-12 col-lg-4 mb-3' key={category.categories.id}>
-                            <div style={{border: '1px solid #FF962E', borderRadius: '15px', padding: '10px'}}>
-                                <label className='custom-checkbox'>
-                                    <input type="checkbox" name="options" value="option1"/>
-                                    <span className="checkmark"></span>
-                                </label>
-                                <div className='mt-5'>
-                                    <p style={{marginBottom: '0rem', textAlign: 'center'}}>{category.categories.category_name}</p>
-                                    <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{textAlign: 'center'}}>{category.categories.status === 1 ? 'Enable' : 'Disable'}</p>
-                                </div>
-                                <hr style={{borderTop: '1px dashed black'}}/>
-                                <div className='d-flex justify-content-between'>
-                                    <div>
-                                        <p>Products</p>
-                                        <p>{category.products}</p>
-                                    </div>
-                                    <div className='mt-3'>
-                                    <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
+                                    <hr style={{borderTop: '1px dashed black'}}/>
+                                    <div className='d-flex justify-content-between'>
+                                        <div>
+                                            <p>Products</p>
+                                            <p>{category.products}</p>
+                                        </div>
+                                        <div className='mt-3'>
+                                        <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
-                  </>
-              )}
-               
-              </>
-          )
-        }
+                        )}
+                    </>
+                ): (
+                    <>
+                    {categoryStatus.map((category) => 
+                            <div className='col-sm-12 col-md-12 col-lg-4 mb-3' key={category.categories.id}>
+                                <div style={{border: '1px solid #FF962E', borderRadius: '15px', padding: '10px'}}>
+                                    <div className='d-flex justify-content-between'>
+                                        <label className='custom-checkbox'>
+                                            <input type="checkbox" name="options" value="option1"/>
+                                            <span className="checkmark"></span>
+                                        </label>
+                                        <button className='el3-btn mt-3' onClick={() => myDetails(category.categories.id)}>view more</button>
+                                    </div>
+                                    <div className='mt-5'>
+                                        <p style={{marginBottom: '0rem', textAlign: 'center'}}>{category.categories.category_name}</p>
+                                        <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{textAlign: 'center'}}>{category.categories.status === 1 ? 'Enable' : 'Disable'}</p>
+                                    </div>
+                                    <hr style={{borderTop: '1px dashed black'}}/>
+                                    <div className='d-flex justify-content-between'>
+                                        <div>
+                                            <p>Products</p>
+                                            <p>{category.products}</p>
+                                        </div>
+                                        <div className='mt-3'>
+                                        <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
+                    </>
+                ) : (
+                    <>
+                    {searchValue.data && searchValue.data.length > 0 ? (
+                            searchValue.data.map((search) => (
+                                <div className='col-sm-12 col-md-12 col-lg-4 mb-3' key={search.categories.id}>
+                                    <div style={{border: '1px solid #FF962E', borderRadius: '15px', padding: '10px'}}>
+                                        <div className='d-flex justify-content-between'>
+                                            <label className='custom-checkbox'>
+                                                <input type="checkbox" name="options" value="option1"/>
+                                                <span className="checkmark"></span>
+                                            </label>
+                                            <button className='el3-btn mt-3' onClick={() => myDetails(search.categories.id)}>view more</button>
+                                        </div>
+                                        <div className='mt-5'>
+                                            <p style={{marginBottom: '0rem', textAlign: 'center'}}>{search.categories.category_name}</p>
+                                            <p className={search.categories.status === 1 ? 'enable' : 'disable'} style={{textAlign: 'center'}}>
+                                                {search.categories.status === 1 ? 'Enable' : 'Disable'}
+                                            </p>
+                                        </div>
+                                        <hr style={{borderTop: '1px dashed black'}}/>
+                                        <div className='d-flex justify-content-between'>
+                                            <div>
+                                                <p>Products</p>
+                                                <p>{search.products}</p>
+                                            </div>
+                                            <div className='mt-3'>
+                                                <button onClick={() => switchStatus(search.categories.id, token)} 
+                                                        className={search.categories.status === 1 ? 'deactivate' : 'activate'}>
+                                                    {search.categories.status === 1 ? 'Disable' : 'Activate'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className='text-center'>No records found</p>
+                        )}
+
+                    </>
+                )}
+                
+                </>
+            )
+            }
       </div>
+        </>
+    ) : 'hello'}
+      
+      
+
       {total_pages > 1 && (
             <div className="pagination">
             {Array.from({ length: total_pages }, (_, i) => (

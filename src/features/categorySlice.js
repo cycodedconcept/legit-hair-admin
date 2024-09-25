@@ -8,6 +8,7 @@ const initialState = {
   success: {},
   categoryStatus: {},
   searchValue: {},
+  viewCategoryDetails: {},
   isLoading: false,
   error: null,
   currentPage: 1,
@@ -113,8 +114,24 @@ export const fetchSearchValue = createAsyncThunk(
       return rejectWithValue(error.response?.data || 'Failed to fetch categories and search value');
     }
   }
-)
+);
 
+
+export const viewDetails = createAsyncThunk(
+  'categories/view',
+  async ({token, catId, page}, {rejectWithValue}) => {
+    try {
+      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/view_category_product?cat_id=${catId}&page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      })
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to fetch categories and search value');
+    }
+  }
+)
 
 
 const categorySlice = createSlice({
@@ -208,6 +225,25 @@ const categorySlice = createSlice({
         state.success = action.payload;
       })
       .addCase(suspendProduct.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(viewDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(viewDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const data = action.payload;
+        state.viewCategoryDetails = data.data || [];
+        state.currentPage = data.page || 1;
+        state.per_page = data.per_page || 10;
+        state.pre_page = data.pre_page || null;
+        state.next_page = data.next_page || null;
+        state.total = data.total || 0;
+        state.total_pages = data.total_pages || 0;
+      })
+      .addCase(viewDetails.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })

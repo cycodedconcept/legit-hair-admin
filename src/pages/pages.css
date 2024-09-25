@@ -469,6 +469,12 @@ table td {
     background-color: #2D85DE;
 }
 
+.el3-btn {
+    border: 0;
+    background: #fff;
+    color: #FF962E;
+}
+
 .log-btn {
     width: 100%;
     background: #FF962E;
