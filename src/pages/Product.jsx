@@ -204,10 +204,10 @@ const Product = () => {
             <thead>
               <tr>
                 <th>Product image</th>
-                <th>Product Name</th>
+                <th style={{width: '250px'}}>Product Name</th>
                 <th>Product Status</th>
                 <th>Product Price</th>
-                <th>Product Description</th>
+                <th style={{width: '250px'}}>Product Description</th>
                 <th>Product Number</th>
                 <th>Discount</th>
                 <th>Rating</th>
@@ -289,7 +289,7 @@ const Product = () => {
           </div>
         )} */}
 
-{total_pages > 1 && (
+        {total_pages > 1 && (
             <div className="pagination">
 
               {/* Previous page button */}

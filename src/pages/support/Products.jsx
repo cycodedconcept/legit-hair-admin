@@ -44,10 +44,10 @@ const Products = () => {
     { input1: '', input2: '', input3: '' },
   ]);
 
-  const handleAddInputGroup = (e) => {
-    e.preventDefault();
+  const handleAddInputGroup = () => {
     setInputGroups([...inputGroups, { inche: '', price: '', discount: '' }]);
   };
+  
 
   const handleRemoveInputGroup = (index) => {
     const newInputGroups = [...inputGroups];
@@ -183,9 +183,9 @@ const Products = () => {
                 <thead>
                   <tr>
                     <th>Product Image</th>
-                    <th>Product Name</th>
+                    <th style={{width: '250px'}}>Product Name</th>
                     <th>Product Price</th>
-                    <th>Product Description</th>
+                    <th style={{width: '250px'}}>Product Description</th>
                     <th>Product Number</th>
                     <th>Discounts</th>
                     <th>Total Ratings</th>
@@ -486,15 +486,16 @@ const Products = () => {
                           +
                         </button>
                       </div>
-                      {inputGroups.map((inputGroups, index) => (
+
+                      {inputGroups.map((group, index) => (
                         <div key={index} style={{ marginBottom: '20px' }} className="d-flex">
                           <input
                             type="text"
                             name="input1"
-                            value={inputGroups.inche || ''}
+                            value={group.inche || ''}
                             onChange={(e) => {
                               const newInputGroups = [...inputGroups];
-                              newInputGroups[index] = { ...newInputGroups[index], inche: e.target.value };
+                              newInputGroups[index] = { ...group, inche: e.target.value };
                               setInputGroups(newInputGroups);
                             }}
                             placeholder="Inches"
@@ -503,10 +504,10 @@ const Products = () => {
                           <input
                             type="number"
                             name="input2"
-                            value={inputGroups.price || ''}
+                            value={group.price || ''}
                             onChange={(e) => {
                               const newInputGroups = [...inputGroups];
-                              newInputGroups[index] = { ...newInputGroups[index], price: e.target.value };
+                              newInputGroups[index] = { ...group, price: e.target.value };
                               setInputGroups(newInputGroups);
                             }}
                             placeholder="Price"
@@ -515,10 +516,10 @@ const Products = () => {
                           <input
                             type="number"
                             name="input3"
-                            value={inputGroups.discount || ''}
+                            value={group.discount || ''}
                             onChange={(e) => {
                               const newInputGroups = [...inputGroups];
-                              newInputGroups[index] = { ...newInputGroups[index], discount: e.target.value };
+                              newInputGroups[index] = { ...group, discount: e.target.value };
                               setInputGroups(newInputGroups);
                             }}
                             placeholder="Discount"
@@ -527,10 +528,11 @@ const Products = () => {
                           <FontAwesomeIcon
                             icon={faTimes}
                             onClick={() => handleRemoveInputGroup(index)}
-                            style={{ color: '#FF962E' }}
+                            style={{ color: '#FF962E', cursor: 'pointer' }}
                           />
                         </div>
                       ))}
+
                     </div>
                   </div>
 

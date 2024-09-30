@@ -77,7 +77,7 @@ const createOrderSlice = createSlice({
     initialState,
     reducers: {
         clearStatusUpdate: (state) => {
-            state.success = false; // Reset success state
+          state.success = false; // Reset success state
         },
     },
     extraReducers: (builder) => {

@@ -106,12 +106,12 @@ const Order = () => {
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>Delivery Country</th>
-                      <th>Delivery State</th>
-                      <th>Delivery Address</th>
+                      <th style={{width: '250px'}}>Delivery Country</th>
+                      <th style={{width: '250px'}}>Delivery State</th>
+                      <th style={{width: '250px'}}>Delivery Address</th>
                       <th>Date</th>
                       <th>Date Delivered</th>
-                      <th>Delivery Landmark</th>
+                      <th style={{width: '250px'}}>Delivery Landmark</th>
                       <th>Order ID</th>
                       <th>Amount Paid</th>
                       <th>Payment Method</th>

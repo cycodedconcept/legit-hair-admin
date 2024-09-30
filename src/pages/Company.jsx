@@ -1,324 +1,690 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCompanyCategory, fetchCategoryStatus, suspendProduct, fetchSearchValue, viewDetails } from '../features/categorySlice'
+import {
+  fetchCompanyCategory,
+  fetchCategoryStatus,
+  fetchSubcategories,
+  suspendProduct,
+  fetchSearchValue,
+  viewDetails,
+  setPage,
+  resetViewCategoryDetails,
+  setViewDetailsPage,
+  catForm,
+  createCategory,
+  bulkSuspend
+} from '../features/categorySlice';
 
 const Company = () => {
+  const [filterStatus, setFilterStatus] = useState('all');
   const [background, setBackground] = useState('all');
+  const [myValue, setMyValue] = useState('');
+  const [more, setMore] = useState(true);
+  const [viewingCategoryId, setViewingCategoryId] = useState(null);
+  const [isViewingDetails, setIsViewingDetails] = useState(false);
   const [enable, setEnable] = useState(true);
   const [disable, setDisable] = useState(true);
-  const [hide, setHide] = useState(true);
-  const [myValue, setMyValue] = useState('');
-  const [over, setOver] = useState(true);
-  const [more, setMore] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [inputValue, setInputValue] = useState('')
+  const [mode, setMode] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategoryName, setSelectedCategoryName] = useState("");
+  const [catv, setCatv] = useState('');
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+
+
+
+  
 
   const dispatch = useDispatch();
-  const { companyCategory, categoryStatus, currentPage, total_pages, isLoading, error, searchValue, viewCategoryDetails } = useSelector((state) => state.categories);
+  const {
+    companyCategory,
+    categoryStatus,
+    currentPage,
+    total_pages,
+    isLoading,
+    error,
+    searchValue,
+    viewCategoryDetails,
+    viewDetailsPage,
+    viewDetailsTotalPages,
+    spinItem,
+    success,
+    catSuccess,
+    subCategories,
+    cat_name,
+    cat_parent_id
+  } = useSelector((state) => state.categories);
+
   let token = localStorage.getItem("key");
 
-  const handleButtonClick = (button) => {
-    setBackground(button);
+  const handleButtonClick = (status) => {
+    setBackground(status);
+    setFilterStatus(status); // Update the filter status based on the button clicked
+  
+    // if (status === 'enable') {
+    //   setEnable(1, token); // Fetch enabled categories
+    // } else if (status === 'disable') {
+    //   showDisable(0, token); // Fetch disabled categories
+    // } else {
+    //   dispatch(fetchCompanyCategory({ token, page: currentPage })); // Fetch all categories
+    // }
   };
+  
 
   useEffect(() => {
-      if (token) {
-          dispatch(fetchCompanyCategory({token, page: currentPage}));
-      }
-  }, [dispatch, currentPage, token])
-
-
-  const showEnable = (value, token) => {
     if (token) {
-        setEnable(false);
-        setDisable(true);
-        setHide(false);
-        setOver(true)
-        dispatch(fetchCategoryStatus({token, statusId: value}))
+      dispatch(fetchCompanyCategory({ token, page: currentPage }));
+      setFilterStatus('all');
     }
-    
-  }
+  }, [dispatch, currentPage, token]);
+  
 
-  const showDisable = (value, token) => {
+  // Fetch category status (enable/disable)
+//   const showEnable = (value, token) => {
+//     if (token) {
+//       dispatch(fetchCategoryStatus({ token, statusId: value }));
+//     }
+//   };
+
+//   const showDisable = (value, token) => {
+//     if (token) {
+//       dispatch(fetchCategoryStatus({ token, statusId: value }));
+//     }
+//   };
+
+  const changeView = () => {
+    setMore(true);
     if (token) {
-        setEnable(true);
-        setDisable(false);
-        setHide(false);
-        setOver(true);
-        dispatch(fetchCategoryStatus({token, statusId: value}))
+      dispatch(fetchCompanyCategory({ token, page: currentPage }));
+    }
+  };
+
+  const handleChange = (e) => {
+      setInputValue(e.target.value);
+  }
+
+  const showModal = () => {
+      setModalVisible(true);
+  }
+
+  const hideModal = () => {
+    setModalVisible(false);
+    setMode(false)
+  };
+
+  const newCategory = (e) => {
+    e.preventDefault();
+    if (inputValue) {
+        dispatch(catForm({token, cat_name: inputValue}));
+        console.log(inputValue)
+        Swal.fire({
+            icon: 'success',
+            title: 'Category added successfully!',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        hideModal();
+        dispatch(fetchCompanyCategory({ token, page: currentPage }));
+    }else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Failed to add category',
+            showConfirmButton: true,
+        });
     }
   }
 
-  const showAll = (token) => {
-      if (token) {
-          setEnable(true);
-          setDisable(true);
-          setHide(true);
-          setOver(true);
-        dispatch(fetchCompanyCategory({token, page: currentPage}));
-      }
-  }
+//   useEffect(() => {
+//     if (success) {
+    //   Swal.fire({
+    //     icon: 'success',
+    //     title: 'Category added successfully!',
+    //     showConfirmButton: false,
+    //     timer: 3000
+    //   });
 
+    //   setModalVisible(false);
+    //   dispatch(fetchCompanyCategory({ token, page: currentPage }));
+//     }
+//   }, [success, dispatch, currentPage, token]);
 
-
-    const switchStatus = (id, token) => {
-        if (token) {
-        console.log(id);
-    
-        dispatch(suspendProduct({ token, id }))
-            .then((result) => {
-            if (result.type === 'categories/suspendProduct/fulfilled') {
-                dispatch(fetchCompanyCategory({ token, page: 1 }));
-    
-                Swal.fire({
-                title: "Success",
-                text: "Status changed successfully!",
-                icon: "success",
-                button: "OK",
-                });
-            }
-            })
-            .catch((error) => {
-            console.error(error);
-    
+  // Suspend or enable category
+  const switchStatus = (id, token) => {
+      console.log(id)
+    if (token) {
+      dispatch(suspendProduct({ token, id }))
+        .then((result) => {
+          if (result.type === 'categories/suspendProduct/fulfilled') {
+            dispatch(fetchCompanyCategory({ token, page: 1 }));
             Swal.fire({
-                title: "Error",
-                text: "Something went wrong while updating the product!",
-                icon: "error",
-                confirmButtonText: "OK"
+              title: "Success",
+              text: "Status changed successfully!",
+              icon: "success",
+              button: "OK",
             });
-            });
-        }
-    };
-
-    useEffect(() => {
-        if (token) {
-            setOver(false)
-            if (myValue === '') {
-                setOver(false)
-            }
-            dispatch(fetchSearchValue({token, searchValue: myValue}))
-        }
-    }, [dispatch, token, myValue])
-
-    const myDetails = (id) => {
-        console.log(id)
-        setMore(false)
+          }
+        })
+        .catch((error) => {
+          Swal.fire({
+            title: "Error",
+            text: "Something went wrong while updating the product!",
+            icon: "error",
+            confirmButtonText: "OK"
+          });
+        });
     }
+  };
+
+  // Fetch search value results
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchSearchValue({ token, searchValue: myValue }));
+    }
+  }, [dispatch, token, myValue]);
+
+  // View more details
+  const myDetails = (id) => {
+    setMore(false);
+    setIsViewingDetails(true);
+    setViewingCategoryId(id);
+
+    dispatch(resetViewCategoryDetails());
+    dispatch(setViewDetailsPage(1));
+
+    if (token) {
+      dispatch(viewDetails({ token, catId: id, page: 1 }));
+    }
+  };
+
+  const getCat = (id) => {
+      if (token) {
+          console.log(id);
+          localStorage.setItem("newId", id)
+          setMode(true);
+          dispatch(fetchSubcategories({token, id}))
+      }
+  }
+
+  const handlePageChange = (page) => {
+    if (currentPage !== page) {
+      dispatch(setPage(page));
+      if (more) {
+        dispatch(fetchCompanyCategory({ token, page }));
+      }
+    }
+  };
+
+  const handleViewDetailsPageChange = (page) => {
+    if (viewDetailsPage !== page && viewingCategoryId) {
+      dispatch(setViewDetailsPage(page));
+      dispatch(viewDetails({ token, catId: viewingCategoryId, page }));
+    }
+  };
+
+  const renderPagination = () => {
+    if (!isLoading && total_pages > 1) {
+      return (
+        <div className="pagination">
+          {Array.from({ length: total_pages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => handlePageChange(i + 1)}
+              disabled={currentPage === i + 1}
+              className="mx-1"
+              style={{
+                backgroundColor: '#FF962E',
+                borderRadius: '10px',
+                border: '0',
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderViewDetailsPagination = () => {
+    if (!isLoading && viewDetailsTotalPages > 1) {
+      return (
+        <div className="pagination">
+          {Array.from({ length: viewDetailsTotalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => handleViewDetailsPageChange(i + 1)}
+              disabled={viewDetailsPage === i + 1}
+              className="mx-1"
+              style={{
+                backgroundColor: '#FF962E',
+                borderRadius: '10px',
+                border: '0',
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+
+ const filteredCategories = companyCategory.filter(category => {
+    const matchesStatus =
+      filterStatus === 'all'
+        ? true
+        : filterStatus === 'enable'
+        ? category.categories.status === 1
+        : category.categories.status === 0;
+  
+    const searchInput = myValue ? myValue.toLowerCase().trim() : '';
+  
+    const matchesSearchValue = searchInput === ''
+      ? true
+      : category.categories.category_name.toLowerCase().includes(searchInput);
+  
+    return matchesStatus && matchesSearchValue;
+  });
+    
+  
+  const handleCategoryChange = (event) => {
+    const selectedValue = event.target.value;
+    const selectedOption = event.target.options[event.target.selectedIndex].text;
+
+    setSelectedCategory(selectedValue);
+    setSelectedCategoryName(selectedOption);
+
+    console.log('Selected Category ID:', selectedValue);
+    console.log('Selected Category Name:', selectedOption);
+  };
+
+
+//   const handleCheckboxChange = (id) => {
+//     setSelectedCategoryIds((prevSelected) => {
+//       if (prevSelected.includes(id)) {
+//         // If the ID is already selected, remove it
+//         return prevSelected.filter((categoryId) => categoryId !== id);
+//       } else {
+//         // If the ID is not selected, add it
+//         return [...prevSelected, id];
+//       }
+//     });
+//   };
+
+const handleCheckboxChange = (id) => {
+    setSelectedCategoryIds((prevSelected) => {
+      const updatedSelected = prevSelected.includes(id)
+        ? prevSelected.filter((categoryId) => categoryId !== id) // Remove the ID if it was already selected
+        : [...prevSelected, id]; // Add the ID if it was not selected
+  
+      console.log('Updated Selected Category IDs:', updatedSelected); // Log the updated IDs
+      return updatedSelected; // Return the updated state
+    });
+  };
+
+//   const disableAll = (e) => {
+//       e.preventDefault();
+
+//       if (token) {
+//         dispatch(bulkSuspend({token, cat_idarray: updatedSelected}))
+//       }
+//   }
+
+const disableAll = (e) => {
+    e.preventDefault();
+  
+    if (token) {
+      dispatch(bulkSuspend({ token, cat_idarray: selectedCategoryIds }))
+        .unwrap() // Unwrap the promise to handle success/error
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Categories have been suspended successfully.',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            // Reload the page after the user clicks "OK"
+            window.location.reload();
+          });
+        })
+        .catch((error) => {
+          // Handle error if needed
+          console.error('Error suspending categories:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Something went wrong while suspending categories.',
+            confirmButtonText: 'OK'
+          });
+        });
+    }
+};
+  
+  
+
+  
+  const CategorySelect = () => {
+    const renderCategories = (subCategories, indent = 0) => {
+      return subCategories.map((category) => (
+        <React.Fragment key={category.id}>
+          <option
+            value={category.id}
+            selected={category.id === selectedCategory}
+          >
+            {"-".repeat(indent)} {category.category_name}
+          </option>
+          {category.children && category.children.length > 0 &&
+            renderCategories(category.children, indent + 2)
+          }
+        </React.Fragment>
+      ));
+    };
+  
+    return (
+      <select value={selectedCategory} onChange={handleCategoryChange}>
+        <option value="">Select a category</option>
+        {renderCategories(subCategories)}
+      </select>
+    );
+  };
+
+  const handleSubmit = () => {
+      dispatch(createCategory({token, cat_name: catv, cat_parent_id: selectedCategory}))
+  }
   
   return (
     <>
-    {more ? (
+      {more ? (
         <>
           <div className="row">
-          <div className="col-sm-12 col-md-12 col-lg-9">
-                <div className="search-container">
-                    <input type="text" placeholder="Search Order..." className="search-input" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
-                    <span className="search-icon">&#128269;</span>
-                </div>
+            <div className="col-sm-12 col-md-12 col-lg-9">
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="Search Company..."
+                  className="search-input"
+                  value={myValue}
+                  onChange={(e) => setMyValue(e.target.value)}
+                />
+                <span className="search-icon">&#128269;</span>
+              </div>
+            </div>
+            <div className="col-sm-12 col-md-12 col-lg-3 mt-3 mt-lg-5">
+              <button className="pro-btn" onClick={showModal}>+ Create Company</button>
+            </div>
           </div>
-          <div className="col-sm-12 col-md-12 col-lg-3 mt-3 mt-lg-5">
-              <button className='pro-btn'>+ Create Company</button>
-          </div>
-      </div>
-      <div className='d-flex justify-content-between mt-2 mt-lg-4 mb-lg-4'>
-            <div className='sts-btn p-2'>
-            <button
-                onClick={() => {
+  
+          <div className="d-flex justify-content-between mt-2 mt-lg-4 mb-lg-4">
+            <div className="sts-btn p-2">
+              <button
+                onClick={() => { 
                     handleButtonClick('all');
-                    showAll(token);
+                    setDisable(true)
+                    setEnable(true)
                 }}
                 style={{
-                backgroundColor: background === 'all' ? '#f6e7d7' : '#fff',
-                color: background === 'all' ? '#FF962E' : 'black',
-                border: '0'
+                  backgroundColor: background === 'all' ? '#f6e7d7' : '#fff',
+                  color: background === 'all' ? '#FF962E' : 'black',
+                  border: '0',
                 }}
-            >
+              >
                 All Company
-            </button>
-
-            <button
+              </button>
+              <button
                 onClick={() => {
-                handleButtonClick('enable');
-                showEnable(1, token);
+                  handleButtonClick('enable');
+                //   showEnable(1, token); 
+                setDisable(true)
+                setEnable(false)
                 }}
                 style={{
-                backgroundColor: background === 'enable' ? '#f6e7d7' : '#FFF',
-                color: background === 'enable' ? '#FF962E' : '#6E7079',
-                border: '0'
+                  backgroundColor: background === 'enable' ? '#f6e7d7' : '#FFF',
+                  color: background === 'enable' ? '#FF962E' : '#6E7079',
+                  border: '0',
                 }}
-            >
+              >
                 Enable
-            </button>
-
-            <button
+              </button>
+              <button
                 onClick={() => {
-                    handleButtonClick('disable');
-                    showDisable(0, token);
+                  handleButtonClick('disable');
+                //   showDisable(0, token); 
+                setDisable(false)
+                setEnable(true)
                 }}
                 style={{
-                backgroundColor: background === 'disable' ? '#f6e7d7' : '#FFF',
-                color: background === 'disable' ? '#FF962E' : '#6E7079',
-                border: '0'
+                  backgroundColor: background === 'disable' ? '#f6e7d7' : '#FFF',
+                  color: background === 'disable' ? '#FF962E' : '#6E7079',
+                  border: '0',
                 }}
-            >
+              >
                 Disable
-            </button>
+              </button>
             </div>
             <div>
                 {enable ? (
-                  <button className='el2-btn'>Enable</button>
+                  <button className='el2-btn' onClick={disableAll}>Enable</button>
                 ) : ''}
 
                 {disable ? (
-                  <button className='el2-btn'>Disable</button>
+                  <button className='el2-btn' onClick={disableAll}>Disable</button>
                 ) : ''}
             </div>
-      </div>
-
-      <div className="row">
+          </div>
+  
+          <div className="row">
             {isLoading ? (
                 <div>Loading...</div>
             ) : error ? (
                 <div>Error: {error?.message || 'Something went wrong'}</div>
             ) : (
                 <>
-                {over ? (
-                    <>
-                        {hide ? (
-                    <>
-                        {companyCategory.map((category) => 
-                            <div className='col-sm-12 col-md-12 col-lg-4 mb-3' key={category.categories.id}>
-                                <div style={{border: '1px solid #FF962E', borderRadius: '15px', padding: '10px'}}>
-                                    <div className='d-flex justify-content-between'>
-                                        <label className='custom-checkbox'>
-                                            <input type="checkbox" name="options" value="option1"/>
-                                            <span className="checkmark"></span>
-                                        </label>
-                                        <button className='el3-btn mt-3' onClick={() => myDetails(category.categories.id)}>view more</button>
-                                    </div>
-                                    
-                                    <div className='mt-5'>
-                                        <p style={{marginBottom: '0rem', textAlign: 'center'}}>{category.categories.category_name}</p>
-                                        <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{textAlign: 'center'}}>{category.categories.status === 1 ? 'Enable' : 'Disable'}</p>
-                                    </div>
-                                    <hr style={{borderTop: '1px dashed black'}}/>
-                                    <div className='d-flex justify-content-between'>
-                                        <div>
-                                            <p>Products</p>
-                                            <p>{category.products}</p>
-                                        </div>
-                                        <div className='mt-3'>
-                                        <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
-                                        </div>
-                                    </div>
-                                </div>
+                {filteredCategories?.map((category) => (
+                    <div className="col-sm-12 col-md-12 col-lg-4 mb-3" key={category.categories.id}>
+                    <div style={{ border: '1px solid #FF962E', borderRadius: '15px', padding: '10px' }}>
+                        <div className="d-flex justify-content-between">
+                            <label className="custom-checkbox">
+                                <input type="checkbox" name="options" checked={selectedCategoryIds.includes(category.categories.id)} 
+                                onChange={() => handleCheckboxChange(category.categories.id)} />
+                                <span className="checkmark"></span>
+                            </label>
+                            <button className="el3-btn mt-3" onClick={() => getCat(category.categories.id)}>Subcategories</button>
+                            <button className="el3-btn mt-3" onClick={() => myDetails(category.categories.id)}>More</button>
+                        </div>
+                        <div className="mt-5">
+                        <p style={{ marginBottom: '0rem', textAlign: 'center' }}>{category.categories.category_name}</p>
+                        <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{ textAlign: 'center' }}>
+                            {category.categories.status === 1 ? 'Enable' : 'Disable'}
+                        </p>
+                        </div>
+                        <hr style={{borderTop: '1px dashed black'}}/>
+                        <div className='d-flex justify-content-between'>
+                            <div>
+                                <p>Products</p>
+                                <p>{category.products}</p>
                             </div>
-                        )}
-                    </>
-                ): (
-                    <>
-                    {categoryStatus.map((category) => 
-                            <div className='col-sm-12 col-md-12 col-lg-4 mb-3' key={category.categories.id}>
-                                <div style={{border: '1px solid #FF962E', borderRadius: '15px', padding: '10px'}}>
-                                    <div className='d-flex justify-content-between'>
-                                        <label className='custom-checkbox'>
-                                            <input type="checkbox" name="options" value="option1"/>
-                                            <span className="checkmark"></span>
-                                        </label>
-                                        <button className='el3-btn mt-3' onClick={() => myDetails(category.categories.id)}>view more</button>
-                                    </div>
-                                    <div className='mt-5'>
-                                        <p style={{marginBottom: '0rem', textAlign: 'center'}}>{category.categories.category_name}</p>
-                                        <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{textAlign: 'center'}}>{category.categories.status === 1 ? 'Enable' : 'Disable'}</p>
-                                    </div>
-                                    <hr style={{borderTop: '1px dashed black'}}/>
-                                    <div className='d-flex justify-content-between'>
-                                        <div>
-                                            <p>Products</p>
-                                            <p>{category.products}</p>
-                                        </div>
-                                        <div className='mt-3'>
-                                        <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div className='mt-3'>
+                            <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
                             </div>
-                        )}
-                    </>
-                )}
-                    </>
-                ) : (
-                    <>
-                    {searchValue.data && searchValue.data.length > 0 ? (
-                            searchValue.data.map((search) => (
-                                <div className='col-sm-12 col-md-12 col-lg-4 mb-3' key={search.categories.id}>
-                                    <div style={{border: '1px solid #FF962E', borderRadius: '15px', padding: '10px'}}>
-                                        <div className='d-flex justify-content-between'>
-                                            <label className='custom-checkbox'>
-                                                <input type="checkbox" name="options" value="option1"/>
-                                                <span className="checkmark"></span>
-                                            </label>
-                                            <button className='el3-btn mt-3' onClick={() => myDetails(search.categories.id)}>view more</button>
-                                        </div>
-                                        <div className='mt-5'>
-                                            <p style={{marginBottom: '0rem', textAlign: 'center'}}>{search.categories.category_name}</p>
-                                            <p className={search.categories.status === 1 ? 'enable' : 'disable'} style={{textAlign: 'center'}}>
-                                                {search.categories.status === 1 ? 'Enable' : 'Disable'}
-                                            </p>
-                                        </div>
-                                        <hr style={{borderTop: '1px dashed black'}}/>
-                                        <div className='d-flex justify-content-between'>
-                                            <div>
-                                                <p>Products</p>
-                                                <p>{search.products}</p>
-                                            </div>
-                                            <div className='mt-3'>
-                                                <button onClick={() => switchStatus(search.categories.id, token)} 
-                                                        className={search.categories.status === 1 ? 'deactivate' : 'activate'}>
-                                                    {search.categories.status === 1 ? 'Disable' : 'Activate'}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className='text-center'>No records found</p>
-                        )}
-
-                    </>
-                )}
-                
+                        </div>
+                    </div>
+                    </div>
+                ))}
                 </>
-            )
-            }
-      </div>
-        </>
-    ) : 'hello'}
-      
-      
-
-      {total_pages > 1 && (
-            <div className="pagination">
-            {Array.from({ length: total_pages }, (_, i) => (
-                <button
-                key={i + 1}
-                onClick={() => handlePageChange(i + 1)}
-                disabled={currentPage === i + 1}
-                className="mx-1"
-                style={{
-                    backgroundColor: '#FF962E',
-                    borderRadius: '10px',
-                    border: '0',
-                }}
-                >
-                {i + 1}
-                </button>
-            ))}
+            )}
+            {renderPagination()}
             </div>
-      )}
+
+        </>
+      ) : (
+        <div className="view-details-section">
+            {/* <button onClick={changeView} style={{ color: '#FF962E' }}>
+                &#8592; Back
+            </button> */}
+
+            <div className='d-flex gap-2 mt-3'>
+                <p style={{color: '#FF962E', cursor: 'pointer'}} onClick={changeView}>Company Management</p>
+                <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Details</p>
+            </div>
+
+            <div className="category-details">
+                {isLoading ? (
+                <p>Loading details...</p>
+                ) : error ? (
+                <p>Error: {error.message || 'Failed to load details'}</p>
+                ) : viewCategoryDetails?.length > 0 ? (
+                    viewCategoryDetails.map((detail) => (
+                        <div key={detail.id}>
+                            <div className="d-flex justify-content-between">
+                                <div className='w-50 mb-3'>
+                                    <p><b>Product Name</b></p>
+                                    <small>{detail.product_name}</small>
+                                </div>
+                                <div>
+                                    <p><b>Product Price</b></p>
+                                    <small>₦{detail.price}</small>
+                                </div>
+                                <div>
+                                    <p><b>Product Number</b></p>
+                                    <small>{detail.product_number}</small>
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-between">
+                                <div className='text-center mb-3'>
+                                    <p><b>Product Discount</b></p>
+                                    <small>₦{detail.discount}</small>
+                                </div>
+                                <div className='text-center'>
+                                    <p><b>Product Rating</b></p>
+                                    <small>{detail.total_rating}</small>
+                                </div>
+                            </div>
+                            <div className="row mt-5">
+                                <div className="col-sm-12 col-md-12 col-lg-6">
+                                    <h5 className='text-center'>Product Images</h5>
+                                    <div className="row mt-3">
+                                    {detail?.images && detail.images.length > 0 ? (
+                                        detail.images.map((image, index) => (
+                                            <div className="col-sm-12 col-md-12 col-lg-4" key={index}>
+                                                <img src={image.filename} alt="image" className='w-50'/>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>No images found</p>
+                                    )}
+
+                                    </div>
+                                </div>
+                                <div className="col-sm-12 col-md-12 col-lg-6">
+                                    <h5 className='text-center'>Product Inches</h5>
+                                    {detail?.inches && detail.inches.length > 0 ? (
+                                        detail.inches.map((inch, index) => 
+                                            <div key={index}>
+                                                <div className="d-flex justify-content-between">
+                                                    <p>Inches:</p>
+                                                    <small>{inch.inche}</small>
+                                                </div>
+                                                <div className="d-flex justify-content-between">
+                                                    <p>Price:</p>
+                                                    <small>₦{inch.price}</small>
+                                                </div>
+                                                <div className="d-flex justify-content-between">
+                                                    <p>Discount:</p>
+                                                    <small>₦{inch.discount}</small>
+                                                </div>
+                                                {index !== detail.inches.length - 1 && (
+                                                    <hr style={{border: '1px solid #FF962E'}}/>
+                                                )}
+                                            </div>
+                                        )
+                                    ) : (
+                                        <p className='text-center'>No inches records found</p>
+                                    )}
+
+                                </div>
+                            </div>
+                            <hr style={{border: '1px solid #FF962E'}}/>
+                        </div>
+                    ))
+                ) : (
+                <p className='text-center'>No details available for this category.</p>
+                )}
+            </div>
+
+            {renderViewDetailsPagination()}
+        </div>
+        )}
+
+        {modalVisible ? (
+            <>
+             <div className="modal-overlay">
+                <div className="modal-content2">
+                    <div className="head-mode">
+                        <h3> Add Company</h3>
+                        <button className="modal-close" onClick={hideModal}>
+                            &times;
+                        </button>
+                    </div>
+                    <div className="modal-body">
+                        <form onSubmit={newCategory}>
+                            <div className="form-group">
+                                <label htmlFor="category">Create Category</label>
+                                <input type="text" name="" placeholder='category name' value={inputValue} onChange={handleChange} style={{width: '600px'}}/>
+                                <button className='log-btn mt-5' style={{width: '600px'}}>
+                                    {
+                                    spinItem ?(
+                                        <>
+                                        <div className="spinner-border spinner-border-sm text-light" role="status">
+                                            <span className="sr-only"></span>
+                                        </div>
+                                        <span>Loading... </span>
+                                        </>
+                                        
+                                    ): (
+                                        'Add Category'
+                                    )
+                                    }
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            </>
+        ) : ''}
+
+        {mode ? (
+            <>
+                <div className="modal-overlay">
+                    <div className="modal-content2">
+                      <div className="head-mode">
+                        <h3> Add Subcategories</h3>
+                        <button className="modal-close" onClick={hideModal}>
+                            &times;
+                        </button>
+                      </div>
+                      <div className="modal-body">
+                          <label>Subcategory Name</label>
+                          <CategorySelect />
+                          <label className='mt-3'>New Name</label>
+                          <input type="text" placeholder='Product name' value={catv} onChange={(e) => setCatv(e.target.value)}/>
+
+                          <button className='pro-btn mt-3' onClick={handleSubmit}>Create Subcaegory</button>
+                      </div>
+
+                    </div>
+                </div>
+            </>
+        ) : ''}
+        
     </>
   )
 }
-
-export default Company
+export default Company;

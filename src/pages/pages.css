@@ -336,6 +336,11 @@ table td {
     
 }
 
+table th {
+    font-weight: 600;
+    color: #FF962E !important;
+}
+
 .scroll-bg {
     margin: 10% auto;
     padding: 20px;
