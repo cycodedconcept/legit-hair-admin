@@ -17,7 +17,6 @@ const initialState = {
   catSuccess: {},
   spinItem: false,
   
-  // Pagination for company categories
   currentPage: 1,
   per_page: 10,
   pre_page: null,
@@ -25,15 +24,12 @@ const initialState = {
   total: 0,
   total_pages: 0,
   
-  // Pagination for view details
   viewDetailsPage: 1,
   viewDetailsTotalPages: 0,
 
-  // Pagination for categoryStatus
   categoryStatusPage: 1,
   categoryStatusTotalPages: 0,
 
-  // Pagination for searchValue
   searchValuePage: 1,
   searchValueTotalPages: 0,
 };

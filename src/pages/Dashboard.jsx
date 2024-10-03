@@ -3,6 +3,7 @@ import Sidebar from './Sidebar'
 import Cards from './Cards';
 import Product from './Product';
 import Company from './Company';
+import Customer from './Customer';
 import Order from './Order';
 import { Bell, Profile } from '../assets/images'
 import './pages.css'
@@ -37,6 +38,7 @@ const Dashboard = () => {
           {activeContent === 'dashboard' && <Cards /> }
           {activeContent === 'product management' && <Product /> }
           {activeContent === 'company management' && <Company /> }
+          {activeContent === 'customer management' && <Customer /> }
           {activeContent === 'order management' && <Order /> }
       </div>
     </>

@@ -4,6 +4,7 @@ import allProductsReducer from '../features/allProductSlice';
 import categoryReducer from '../features/categorySlice';
 import productReducer from '../features/createProductSlice';
 import orderReducer from '../features/orderSlice';
+import customerReducer from '../features/customerSlice';
 
 
 const store = configureStore({
@@ -12,7 +13,8 @@ const store = configureStore({
     allProducts: allProductsReducer,
     categories: categoryReducer,
     product: productReducer,
-    order: orderReducer
+    order: orderReducer,
+    customers: customerReducer
   },
 });
 

@@ -395,6 +395,11 @@ table th {
     color: #FF962E;
 }
 
+.el2-btn:hover {
+    background: #FF962E;
+    color: #fff;
+}
+
 .sts-btn {
     border: 1px solid #E0E2E7;
     border-radius: 15px;
@@ -439,16 +444,20 @@ table th {
     display: block;
 }
 
-.enable {
+.enable, .Active {
     color: #FF962E;
     background: #fff;
     border: 0!important;
 }
 
-.disable {
+.disable, .Blocked {
     color: #CC5F5F;
     background: #fff;
     border: 0 !important;
+}
+
+.text-left {
+    text-align: right;
 }
 
 .activate {
@@ -828,13 +837,12 @@ input, textarea, select {
 
 .pending {
     color: #fff;
-    width: 100px;
 }
 .complete, .delivered {
     background: #008000;
 }
 .processing {
-    background: #FF962E
+    background: #FF962E;
 }
 
 .out {

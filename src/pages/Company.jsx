@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
@@ -35,7 +36,10 @@ const Company = () => {
   const [catv, setCatv] = useState('');
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
-
+  const [categories, setCategories] = useState([]); // Top-level categories
+  const [categoryHierarchy, setCategoryHierarchy] = useState([
+    { level: 0, selectedCategory: '', subcategories: [] }
+  ]); // Category hierarchy
 
   
 
@@ -179,14 +183,12 @@ const Company = () => {
     }
   };
 
-  // Fetch search value results
   useEffect(() => {
     if (token) {
       dispatch(fetchSearchValue({ token, searchValue: myValue }));
     }
   }, [dispatch, token, myValue]);
 
-  // View more details
   const myDetails = (id) => {
     setMore(false);
     setIsViewingDetails(true);
@@ -203,7 +205,6 @@ const Company = () => {
   const getCat = (id) => {
       if (token) {
           console.log(id);
-          localStorage.setItem("newId", id)
           setMode(true);
           dispatch(fetchSubcategories({token, id}))
       }
@@ -294,16 +295,16 @@ const Company = () => {
   });
     
   
-  const handleCategoryChange = (event) => {
-    const selectedValue = event.target.value;
-    const selectedOption = event.target.options[event.target.selectedIndex].text;
+  // const handleCategoryChange = (event) => {
+  //   const selectedValue = event.target.value;
+  //   const selectedOption = event.target.options[event.target.selectedIndex].text;
 
-    setSelectedCategory(selectedValue);
-    setSelectedCategoryName(selectedOption);
+  //   setSelectedCategory(selectedValue);
+  //   setSelectedCategoryName(selectedOption);
 
-    console.log('Selected Category ID:', selectedValue);
-    console.log('Selected Category Name:', selectedOption);
-  };
+  //   console.log('Selected Category ID:', selectedValue);
+  //   console.log('Selected Category Name:', selectedOption);
+  // };
 
 
 //   const handleCheckboxChange = (id) => {
@@ -321,11 +322,11 @@ const Company = () => {
 const handleCheckboxChange = (id) => {
     setSelectedCategoryIds((prevSelected) => {
       const updatedSelected = prevSelected.includes(id)
-        ? prevSelected.filter((categoryId) => categoryId !== id) // Remove the ID if it was already selected
-        : [...prevSelected, id]; // Add the ID if it was not selected
+        ? prevSelected.filter((categoryId) => categoryId !== id)
+        : [...prevSelected, id];
   
-      console.log('Updated Selected Category IDs:', updatedSelected); // Log the updated IDs
-      return updatedSelected; // Return the updated state
+      console.log('Updated Selected Category IDs:', updatedSelected);
+      return updatedSelected;
     });
   };
 
@@ -342,7 +343,7 @@ const disableAll = (e) => {
   
     if (token) {
       dispatch(bulkSuspend({ token, cat_idarray: selectedCategoryIds }))
-        .unwrap() // Unwrap the promise to handle success/error
+        .unwrap()
         .then(() => {
           Swal.fire({
             icon: 'success',
@@ -350,12 +351,10 @@ const disableAll = (e) => {
             text: 'Categories have been suspended successfully.',
             confirmButtonText: 'OK'
           }).then(() => {
-            // Reload the page after the user clicks "OK"
             window.location.reload();
           });
         })
         .catch((error) => {
-          // Handle error if needed
           console.error('Error suspending categories:', error);
           Swal.fire({
             icon: 'error',
@@ -370,33 +369,81 @@ const disableAll = (e) => {
   
 
   
-  const CategorySelect = () => {
-    const renderCategories = (subCategories, indent = 0) => {
-      return subCategories.map((category) => (
-        <React.Fragment key={category.id}>
-          <option
-            value={category.id}
-            selected={category.id === selectedCategory}
-          >
-            {"-".repeat(indent)} {category.category_name}
-          </option>
-          {category.children && category.children.length > 0 &&
-            renderCategories(category.children, indent + 2)
-          }
-        </React.Fragment>
-      ));
-    };
+  // const CategorySelect = () => {
+  //   const renderCategories = (subCategories, indent = 0) => {
+  //     return subCategories.map((category) => (
+  //       <React.Fragment key={category.id}>
+  //         <option
+  //           value={category.id}
+  //           selected={category.id === selectedCategory}
+  //         >
+  //           {"-".repeat(indent)} {category.category_name}
+  //         </option>
+  //         {category.children && category.children.length > 0 &&
+  //           renderCategories(category.children, indent + 2)
+  //         }
+  //       </React.Fragment>
+  //     ));
+  //   };
   
-    return (
-      <select value={selectedCategory} onChange={handleCategoryChange}>
-        <option value="">Select a category</option>
-        {renderCategories(subCategories)}
-      </select>
-    );
+  //   return (
+  //     <select value={selectedCategory} onChange={handleCategoryChange}>
+  //       <option value="">Select a category</option>
+  //       {renderCategories(subCategories)}
+  //     </select>
+  //   );
+  // };
+
+  const saveToLocalStorage = (selectedId) => {
+    localStorage.setItem('selectedCategory', selectedId);
+  };
+
+  const handleCategoryChange = async (event, level) => {
+    const selectedValue = event.target.value;
+
+    saveToLocalStorage(selectedValue);
+
+    const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_sub_category?cat_id=${selectedValue}`, {
+      headers: { 
+        Authorization: `Bearer ${token}` 
+    },
+    });
+    const subcategories = response.data;
+
+    const newHierarchy = [...categoryHierarchy];
+    newHierarchy[level].selectedCategory = selectedValue;
+    newHierarchy[level].subcategories = subcategories;
+
+    if (subcategories.length > 0) {
+      newHierarchy[level + 1] = { level: level + 1, selectedCategory: '', subcategories: [] };
+    } else {
+      newHierarchy.length = level + 1;
+    }
+
+    setCategoryHierarchy(newHierarchy);
   };
 
   const handleSubmit = () => {
-      dispatch(createCategory({token, cat_name: catv, cat_parent_id: selectedCategory}))
+    const storedCategory = localStorage.getItem('selectedCategory');
+    console.log(storedCategory)
+    
+    if (catv) {
+      dispatch(createCategory({token, cat_name: catv, cat_parent_id: storedCategory}));
+      Swal.fire({
+        icon: 'success',
+        title: 'Category added successfully!',
+        showConfirmButton: false,
+        timer: 3000
+      });
+      hideModal();
+      dispatch(fetchCompanyCategory({ token, page: 1 }));
+    }else {
+      Swal.fire({
+          icon: 'error',
+          title: 'Failed to add category',
+          showConfirmButton: true,
+      });
+    }
   }
   
   return (
@@ -499,10 +546,10 @@ const disableAll = (e) => {
                             <button className="el3-btn mt-3" onClick={() => myDetails(category.categories.id)}>More</button>
                         </div>
                         <div className="mt-5">
-                        <p style={{ marginBottom: '0rem', textAlign: 'center' }}>{category.categories.category_name}</p>
-                        <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{ textAlign: 'center' }}>
-                            {category.categories.status === 1 ? 'Enable' : 'Disable'}
-                        </p>
+                          <p style={{ marginBottom: '0rem', textAlign: 'center' }}>{category.categories.category_name}</p>
+                          <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{ textAlign: 'center' }}>
+                              {category.categories.status === 1 ? 'Enable' : 'Disable'}
+                          </p>
                         </div>
                         <hr style={{borderTop: '1px dashed black'}}/>
                         <div className='d-flex justify-content-between'>
@@ -511,7 +558,7 @@ const disableAll = (e) => {
                                 <p>{category.products}</p>
                             </div>
                             <div className='mt-3'>
-                            <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
+                              <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
                             </div>
                         </div>
                     </div>
@@ -672,9 +719,29 @@ const disableAll = (e) => {
                       </div>
                       <div className="modal-body">
                           <label>Subcategory Name</label>
-                          <CategorySelect />
+                          {/* <CategorySelect /> */}
+                          {categoryHierarchy.map((categoryLevel, index) => (
+                            <div key={index}>
+                              <select onChange={(event) => handleCategoryChange(event, index)} value={categoryLevel.selectedCategory}>
+                                <option value="">Select Category</option>
+                                {index === 0 &&
+                                  subCategories.map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                      {category.category_name}
+                                    </option>
+                                  ))}
+                                {index > 0 &&
+                                  categoryHierarchy[index - 1].subcategories.map((subcategory) => (
+                                    <option key={subcategory.id} value={subcategory.id}>
+                                      {subcategory.category_name}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+                          ))}
+
                           <label className='mt-3'>New Name</label>
-                          <input type="text" placeholder='Product name' value={catv} onChange={(e) => setCatv(e.target.value)}/>
+                          <input type="text" placeholder='category name' value={catv} onChange={(e) => setCatv(e.target.value)}/>
 
                           <button className='pro-btn mt-3' onClick={handleSubmit}>Create Subcaegory</button>
                       </div>
