@@ -5,6 +5,7 @@ import Product from './Product';
 import Company from './Company';
 import Customer from './Customer';
 import Order from './Order';
+import Admin from '../components/Admin';
 import { Bell, Profile } from '../assets/images'
 import './pages.css'
 
@@ -40,6 +41,7 @@ const Dashboard = () => {
           {activeContent === 'company management' && <Company /> }
           {activeContent === 'customer management' && <Customer /> }
           {activeContent === 'order management' && <Order /> }
+          {activeContent === 'admin settings' && <Admin /> }
       </div>
     </>
   )

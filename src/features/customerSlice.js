@@ -8,6 +8,8 @@ const initialState = {
   fetchAllUsers: [],
   userOrders: [],
   user_id: '',
+  order_id: '',
+  orderDetails: {},
 
   currentPage: 1,
   per_page: 10,
@@ -68,6 +70,22 @@ export const getUserOrder = createAsyncThunk(
       return response.data.message;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Failed to get users orders');
+    }
+  }
+);
+
+export const getOrderDetails = createAsyncThunk(
+  'customers/details',
+  async ({token, order_id}, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/orders_details?order_id=${order_id}`, {
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        }
+      })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to get order details');
     }
   }
 )
@@ -134,6 +152,18 @@ const customerSlice = createSlice({
             state.orderUsersTotalPages = data.total_pages || 0;
           })
           .addCase(getUserOrder.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+          })
+          .addCase(getOrderDetails.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+          })
+          .addCase(getOrderDetails.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.orderDetails = action.payload;
+          })
+          .addCase(getOrderDetails.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.payload;
           })

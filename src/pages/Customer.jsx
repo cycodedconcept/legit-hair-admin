@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faCaretRight, faCalendar, faUserAlt, faEnvelope, faMobile } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUsers, disableUser, getUserOrder, setOrderUsersPage } from '../features/customerSlice';
+import { getUsers, disableUser, getUserOrder, setOrderUsersPage, getOrderDetails } from '../features/customerSlice';
 
 
 const Customer = () => {
@@ -11,6 +11,7 @@ const Customer = () => {
   const [disable, setDisable] = useState(true);
   const [background, setBackground] = useState('all');
   const [more, setMore] = useState(true);
+  const [myModal, setMyModal] = useState(false);
 
 
   const dispatch = useDispatch();
@@ -23,7 +24,9 @@ const Customer = () => {
     user_id,
     orderUsersPage,
     orderUsersTotalPages,
-    userOrders
+    userOrders,
+    order_id,
+    orderDetails
   } = useSelector((state) => state.customers);
 
   let token = localStorage.getItem("key");
@@ -54,6 +57,15 @@ const Customer = () => {
     }
   };
 
+  const hideModal = () => {
+    setMyModal(false);
+  };
+
+  const callDetails = (id) => {
+    console.log(id);
+    setMyModal(true);
+    dispatch(getOrderDetails({token, order_id: id}))
+  }
 
   const filterUser = fetchAllUsers.filter(user => {
     if (background === 'all') return true;
@@ -300,6 +312,7 @@ const Customer = () => {
                             <p><b>Additional Information:</b></p>
                             <small>{user.additional_information}</small>
                         </div>
+                        <button className='pro-btn m-0' onClick={() => callDetails(user.id)}>View Order Details</button>
                       </div>
                       <div className="col-sm-12 col-md-12 col-lg-8" style={{borderLeft: '1px solid #FF962E', padding: '10px 8px', borderRadius: '10px'}}>
                         <h5 className='text-center'><b>Delivery Information</b></h5>
@@ -322,7 +335,7 @@ const Customer = () => {
                       {user.product && JSON.parse(user.product).length > 0 ? (
                         JSON.parse(user.product).map((prod, index) => 
                           <div key={index}>
-                            <div className="d-flex justify-content-between">
+                            <div className="d-flex justify-content-between mb-3">
                               <div>
                                 <p><b>Product Amount</b></p>
                                 <small>₦{prod.product_amount}</small>
@@ -349,7 +362,6 @@ const Customer = () => {
                       ) : (
                         <p className='text-center'>No product record found</p>
                       )}
-
                     </div>
                     <hr style={{border: '1px solid #FF962E'}}/>
                   </div>
@@ -363,6 +375,135 @@ const Customer = () => {
        </div>
       </>
        )}
+
+       {myModal ? (
+         <>
+           <div className="modal-overlay">
+              <div className="modal-content2">
+                <div className="head-mode">
+                  <h3> Order Details</h3>
+                  <button className="modal-close" onClick={hideModal}>
+                    &times;
+                  </button>
+                </div>
+                <div className="modal-body">
+                {isLoading ? (
+                  <p>Loading orders...</p>
+                ) : error ? (
+                  <p>Error: {error.message || 'Failed to load details'}</p>
+                ) : orderDetails && orderDetails.product && orderDetails.product.length > 0 ? (
+                  <>
+                    <div className='d-flex mt-3'>
+                      <p><b>Order ID:</b></p>
+                      <p style={{color: '#FF962E', marginLeft: '20px'}}>{orderDetails.order_id}</p>
+                    </div>
+                    <h4 className='text-center mb-4'>User Information</h4>
+                    <div className="row">
+                      <div className="col-sm-12 col-md-12 col-lg-5 p-3" style={{borderRight: '2px solid #FF962E', borderRadius: '20px'}}>
+                        <div className='d-flex justify-content-between'>
+                          <FontAwesomeIcon icon={faUserAlt} style={{color: '#FF962E'}}/>
+                          <p>{orderDetails.ordered_by.name}</p>
+                        </div>
+                        <div className='d-flex justify-content-between'>
+                          <FontAwesomeIcon icon={faEnvelope} style={{color: '#FF962E'}}/>
+                          <p>{orderDetails.ordered_by.email}</p>
+                        </div>
+                        <div className='d-flex justify-content-between'>
+                          <FontAwesomeIcon icon={faMobile} style={{color: '#FF962E'}}/>
+                          <p>{orderDetails.ordered_by.phone_number}</p>
+                        </div>
+                        <div className='d-flex justify-content-between'>
+                          <FontAwesomeIcon icon={faCalendar} style={{color: '#FF962E'}}/>
+                          <p>{orderDetails.date}</p>
+                        </div>
+                        <div className='d-flex justify-content-between'>
+                          <p>Account Status:</p>
+                          <p className={orderDetails.ordered_by.account_status === 0 ? 'inactive' : 'active'}>{orderDetails.ordered_by.account_status === 0 ? 'inactive' : 'active'}</p>
+                        </div>
+                      </div>
+                      <div className="col-sm-12 col-md-12 offset-lg-1 col-lg-6 p-3">
+                        <div className='d-flex justify-content-between'>
+                          <p>Amount Paid:</p>
+                          <p>₦{orderDetails.amount_paid}</p>
+                        </div>
+                        <div className='d-flex justify-content-between'>
+                          <p>Delivery Status:</p>
+                          <p>{orderDetails.delivery_status}</p>
+                        </div>
+                        <div className='d-flex justify-content-between'>
+                          <p>Payment Status:</p>
+                          <p className={orderDetails.payment_status}>{orderDetails.payment_status}</p>
+                        </div>
+                        <div className='d-flex justify-content-between'>
+                          <p>Payment Method:</p>
+                          <p>{orderDetails.payment_method}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <h4 className='text-center mb-4 mt-4'>Product Information</h4>
+                    {orderDetails.product.map((prod, index) => (
+                    <div key={index}>
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          <p><b>Product Amount</b></p>
+                          <small>₦{prod.product_amount}</small>
+                        </div>
+                        <div>
+                          <p><b>Inches</b></p>
+                          <small>{prod.inches}"</small>
+                        </div>
+                        <div>
+                          <p><b>Initial Amount</b></p>
+                          <small>₦{prod.initial_amount}</small>
+                        </div>
+                        <div>
+                          <p><b>Discounted</b></p>
+                          <small>{prod.discounted ? 'Yes' : 'No'}</small>
+                        </div>
+                        <div>
+                          <p><b>Order Quantity</b></p>
+                          <small>{prod.order_quantity}</small>
+                        </div>
+                      </div>
+                      <div className="images mt-5">
+                        <div className="row">
+                          {prod.images.map((img, imgIndex) => (
+                            <div className="col-sm-12 col-md-12 col-lg-4">
+                              <img key={imgIndex} src={img.filename} alt={`Product image ${imgIndex + 1}`} className="w-100"/>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    ))}
+                    <h5 className='text-center mt-5'>Delivery Information</h5>
+                    <div className='d-flex justify-content-between mb-3'>
+                      <p>Delivery Country:</p>
+                      <small className='w-75'>{orderDetails.delivery_country}</small>
+                    </div>
+                    <div className='d-flex justify-content-between mb-3'>
+                      <p>Delivery State:</p>
+                      <small className='w-75'>{orderDetails.delivery_state}</small>
+                    </div>
+                    <div className='d-flex justify-content-between mb-3'>
+                      <p>Delivery Address:</p>
+                      <small className='w-75'>{orderDetails.delivery_address}</small>
+                    </div>
+                    <div className='d-flex justify-content-between'>
+                      <p>Delivery Landmark:</p>
+                      <small className='w-75'>{orderDetails.delivery_landmark}</small>
+                    </div>
+
+                  </>
+                ) : (
+                  <p className="text-center">No product record found</p>
+                )}
+                </div>
+              </div>
+            </div>
+         </>
+       ) : ''}
+       
     </>
   )
 }

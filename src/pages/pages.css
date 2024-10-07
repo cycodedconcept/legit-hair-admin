@@ -450,6 +450,13 @@ table th {
     border: 0!important;
 }
 
+.active {
+    color: #FF962E;
+}
+.inactive {
+    color: #CC5F5F;
+}
+
 .disable, .Blocked {
     color: #CC5F5F;
     background: #fff;
@@ -694,7 +701,7 @@ input, textarea, select {
     padding: 14px;
     border: 1px solid #DDE5E9;
     border-radius: 10px;
-    background-color: #F4F5F6;
+    background-color: transparent !important;
     width: 100%;
     margin-bottom: 20px;
     color: #222;

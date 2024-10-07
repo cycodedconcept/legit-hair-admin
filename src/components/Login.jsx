@@ -122,9 +122,6 @@ const Login = () => {
                   {showPassword ? <FontAwesomeIcon icon={faEye} style={{ color: '#FF962E' }} /> : <FontAwesomeIcon icon={faEyeSlash} style={{ color: '#FF962E' }} />}
                 </span>
               </div>
-              {/* <div className="my-3" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button type="button" className='f-btn' onClick={() => { setShowLogin(false); setForget(true); }}>Forgot your password?</button>
-              </div> */}
               <button className='log-btn mt-5'>
                 {
                   spinItem ?(
