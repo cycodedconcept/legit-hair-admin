@@ -44,7 +44,8 @@ const Products = () => {
     { input1: '', input2: '', input3: '' },
   ]);
 
-  const handleAddInputGroup = () => {
+  const handleAddInputGroup = (e) => {
+    e.preventDefault();
     setInputGroups([...inputGroups, { inche: '', price: '', discount: '' }]);
   };
   
@@ -414,61 +415,8 @@ const Products = () => {
                     </div>
                   </div>
 
-                  {/* <div className="col-sm-12 mt-4">
-                    <div className="form-group">
-                      <label>Product Measurements (Inches)</label>
-                      {inputGroups.map((group, index) => (
-                        <div key={index} className="input-group mb-3">
-                          <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder="Inches"
-                            value={group.input1}
-                            onChange={(e) => {
-                              const newGroups = [...inputGroups];
-                              newGroups[index].input1 = e.target.value;
-                              setInputGroups(newGroups);
-                            }}
-                          />
-                          <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder="Price"
-                            value={group.input2}
-                            onChange={(e) => {
-                              const newGroups = [...inputGroups];
-                              newGroups[index].input2 = e.target.value;
-                              setInputGroups(newGroups);
-                            }}
-                          />
-                          <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder="Discount"
-                            value={group.input3}
-                            onChange={(e) => {
-                              const newGroups = [...inputGroups];
-                              newGroups[index].input3 = e.target.value;
-                              setInputGroups(newGroups);
-                            }}
-                          />
-                          <div className="input-group-append">
-                            <button 
-                              className="btn btn-danger" 
-                              type="button" 
-                              onClick={() => handleRemoveInputGroup(index)}
-                            >
-                              <FontAwesomeIcon icon={faTimes} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                      <button className="btn btn-primary" onClick={handleAddInputGroup}>
-                        Add Measurement
-                      </button>
-                    </div>
-                  </div> */}
-                  <div className="col-sm-12 col-md-12 col-lg-6 mt-4">
+                  
+                  <div className="col-sm-12 col-md-12 col-lg-12 mt-4">
                     <div className="form-group">
                       <div className="d-flex justify-content-between mb-3">
                         <label htmlFor="exampleInputPassword1">Inches</label>
@@ -502,7 +450,7 @@ const Products = () => {
                             className="mx-2"
                           />
                           <input
-                            type="number"
+                            type="text"
                             name="input2"
                             value={group.price || ''}
                             onChange={(e) => {
@@ -514,7 +462,7 @@ const Products = () => {
                             className="mx-2"
                           />
                           <input
-                            type="number"
+                            type="text"
                             name="input3"
                             value={group.discount || ''}
                             onChange={(e) => {

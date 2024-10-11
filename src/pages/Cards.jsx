@@ -1,47 +1,87 @@
-import React, { useState } from 'react'
-import { Cart, User, Order } from '../assets/images';
-import { BarChart, PieChart, Progress } from './Chart';
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { adminBoard } from '../features/dashboardSlice';
+import { User, Order } from '../assets/images';
+import { BarChart, Progress } from './Chart';
 import Wig from './Wig';
 
 const Cards = () => {
-  const [progress, setProgress] = useState(15)
+  let token = localStorage.getItem("key");
+
+  const { board } = useSelector((state) => state.dashboard);
+  const dispatch = useDispatch();
+
+
+  const [progress, setProgress] = useState(0);
+  const [pro2, setPro2] = useState(0);
+
   const cardItems = [
     {
       id: 0,
-      icon: Cart,
-      content: "Saved Product",
-      otherContent: "Total Products",
-      cvalue: "20%",
-      dvalue: "39,280"
+      icon: User,
+      content: "New Signup",
+      cvalue: board.newSignupsCount,
     },
     {
       id: 1,
-      icon: User,
-      content: "Customers",
+      icon: Order,
+      content: "Orders",
       otherContent: "Active",
-      cvalue: "1,250",
-      dvalue: "1,180 -4.90%"
+      cvalue: board.totalcompletedOrders,
     },
     {
       id: 2,
       icon: Order,
-      content: "All Orders",
+      content: "Orders",
       otherContent: "Pending",
+      dvalue: board.totalpendingOrders,
+    },
+    {
+      id: 3,
+      icon: Order,
+      content: "Orders",
       anotherContent: "Completed",
-      cvalue: "20,656",
-      dvalue: "5,790",
-      evalue: "14,866 +10.80%"
+      cvalue: board.totalcompletedOrders,
+    },
+
+    {
+      id: 4,
+      icon: Order,
+      content: "Total Orders",
+      anotherContent: "Total Product",
+      cvalue: board.totalorders,
+      evalue: board.totalproducts,
+    },
+    {
+      id: 5,
+      icon: User,
+      content: "Total Customers",
+      cvalue: board.totalcustomer,
     },
   ]
 
+  useEffect(() => {
+    if (token) {
+      dispatch(adminBoard({token}));
+    }
+
+  }, [dispatch, token])
+
+  useEffect(() => {
+    if (board) {
+      setProgress(board.totalactivecustomers || 0);
+      setPro2(board.totalinactivecustomers || 0);
+    }
+  }, [board]);
+
   const cardDisplay = cardItems.map((item) => 
-    <div className="card-single" key={item.id}>
+    <div className="card-single mb-3" key={item.id}>
       <div className="card-head p-2">
         <img src={item.icon} alt="" />
       </div>
       <div className="card-body d-flex justify-content-between">
         <div>
-          <p className={ item.content === 'Saved Product' ? 'text-color': '#222'}>{item.content}</p>
+          <p style={{color: '#FF962E', fontWeight: '500'}}>{item.content}</p>
           <p style={{ fontWeight: '600'}}>{item.cvalue}</p>
         </div>
         <div>
@@ -49,12 +89,14 @@ const Cards = () => {
           <p style={{ fontWeight: '600'}}>{item.dvalue}</p>
         </div>
         <div>
-          <p>{item.anotherContent}</p>
+          <p style={{color: '#FF962E'}}>{item.anotherContent}</p>
           <p style={{ fontWeight: '600'}}>{item.evalue}</p>
         </div>
       </div>
     </div>
+
   )
+
   return (
     <>
       <div className="dash-cards">
@@ -63,18 +105,18 @@ const Cards = () => {
       <div className="row mt-5">
         <div className="col-sm-12 col-md-12 col-lg-6">
           <BarChart />
-          <div className="row mt-5">
-            <div className="col-sm-12 col-md-12 col-lg-6 p-2">
-              <h5 className='mb-4'>Customer Volume</h5>
-              <Progress percentage={progress} />
-            </div>
-            <div className="col-sm-12 col-md-12 col-lg-6 p-2">
-              <h5 className='mb-3'>Customer Behavior</h5>
-                <PieChart />
-            </div>
+          <div className='text-center mx-5 w-50 mt-5'>
+            <h5 className='mb-3'>Active Customers</h5>
+            <Progress percentage={progress} />
+
+            <hr style={{border: '2px solid #FF962E'}} />
+
+            <h5 className='mb-3'>Inactive Customers</h5>
+            <Progress percentage={pro2}/>
           </div>
         </div>
-        <div className="col-sm-12 col-md-12 col-lg-6">
+        <div className="col-sm-12 col-md-12 col-lg-6" style={{borderLeft: '1px solid #FF962E'}}>
+          <h5 className='mb-3' style={{color: '#FF962E'}}>Recent Orders</h5>
           <Wig />
         </div>
       </div>

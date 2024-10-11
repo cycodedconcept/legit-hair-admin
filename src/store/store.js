@@ -5,7 +5,8 @@ import categoryReducer from '../features/categorySlice';
 import productReducer from '../features/createProductSlice';
 import orderReducer from '../features/orderSlice';
 import customerReducer from '../features/customerSlice';
-import adminReducer from '../features/adminSlice'
+import adminReducer from '../features/adminSlice';
+import dashboardReducer from '../features/dashboardSlice'
 
 
 const store = configureStore({
@@ -16,7 +17,8 @@ const store = configureStore({
     product: productReducer,
     order: orderReducer,
     customers: customerReducer,
-    admin: adminReducer
+    admin: adminReducer,
+    dashboard: dashboardReducer
   },
 });
 

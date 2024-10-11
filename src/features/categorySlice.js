@@ -16,6 +16,7 @@ const initialState = {
   cat_parent_id: '',
   catSuccess: {},
   spinItem: false,
+  percentage: '',
   
   currentPage: 1,
   per_page: 10,
@@ -195,6 +196,22 @@ export const bulkSuspend = createAsyncThunk(
   }
 );
 
+export const bulkPrice = createAsyncThunk(
+  'categories/bulkPriceUpdate',
+  async ({token, id, percentage}, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/bulk_update_company_prices?cat_id=${id}&percentage=${percentage}`, {
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        }
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to add bulk price');
+    }
+  }
+);
+
 
 const categorySlice = createSlice({
   name: 'categories',
@@ -370,6 +387,18 @@ const categorySlice = createSlice({
       })
       .addCase(bulkSuspend.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(bulkPrice.pending, (state) => {
+        state.spinItem = true;
+        state.error = null;
+      })
+      .addCase(bulkPrice.fulfilled, (state, action) => {
+        state.spinItem = false;
+        state.success = action.payload;
+      })
+      .addCase(bulkPrice.rejected, (state, action) => {
+        state.spinItem = false;
         state.error = action.payload;
       })
   },

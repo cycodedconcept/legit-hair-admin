@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js';
+import { getGraph } from '../features/dashboardSlice'
 
 ChartJS.register(
     CategoryScale,
@@ -14,12 +16,32 @@ ChartJS.register(
 );
 
 const BarChart = () => {
+  let token = localStorage.getItem("key");
+  const dispatch = useDispatch();
+  const { graphData } = useSelector((state) => state.dashboard);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(getGraph({token}))
+    }
+  }, [dispatch, token])
+
+  let ph = [];
+  let bh = [];
+
+  graphData.forEach((graph) => {
+    ph.push(graph.date);
+    bh.push(graph.salesCount);
+  });
+
+
+
     const data = {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      labels: ph,
       datasets: [
         {
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
+          label: '# of Sales',
+          data: bh,
           backgroundColor: '#FF962E',
           borderColor: '#FF962E',
           borderWidth: 1,
@@ -37,31 +59,6 @@ const BarChart = () => {
   
     return <Bar data={data} options={options} />;
 };
-  
-  const PieChart = () => {
-    const data = {
-      labels: ['Excellent', 'Good', 'Poor'],
-      datasets: [
-        {
-          label: '# of Votes',
-          data: [30, 60, 10,],
-          backgroundColor: [
-            '#FF962E',
-            '#FFCC91',
-            '#CC5F5F',
-          ],
-          borderColor: [
-            '#FF962E',
-            '#FFCC91',
-            '#CC5F5F',
-          ],
-          borderWidth: 1,
-        },
-      ],
-    };
-  
-    return <Pie data={data} />;
-};
 
 const Progress = ({ percentage }) => {
     return (
@@ -77,4 +74,4 @@ const Progress = ({ percentage }) => {
     );
 }
 
-export { BarChart, PieChart, Progress };
+export { BarChart, Progress };

@@ -4,23 +4,14 @@ import { faTimes, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDetails, selectSearchDetails, setCurrentPage, selectCurrentPage, selectTotalPages, selectViewDetails, viewCategory } from '../features/allProductSlice';
 import { fetchCategories } from '../features/categorySlice';
-// import Select from './support/Select';
 import Products from './support/Products';
 import AddProduct from './support/AddProduct';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
 import { Exp } from '../assets/images';
 import './pages.css'
 
 const Product = () => {
-  // const myStatus = [
-  //   "Product", "Active", "Stock", "Closed", 
-  //   "Draft", "Enable", "Disable"
-  // ];
 
-  const [active, setActive] = useState(0);
-  const [selectedDate, setSelectedDate] = useState('');
   const [pro, setPro] = useState(true);
   const [form, setForm] = useState(false);
   const [search, setSearch] = useState(true);
@@ -56,9 +47,6 @@ const Product = () => {
     }
   }, [dispatch, token, myValue]);
 
-  const changeColor = (index) => {
-    setActive(index);
-  };
 
   useEffect(() => {
     if (token) {
@@ -125,11 +113,7 @@ const Product = () => {
     ));
   };
 
-  // const getMyStatus = myStatus.map((item, index) => 
-  //   <button key={index} className={index === active ? 'active-item': 'inactive-item'} onClick={() => changeColor(index)}>
-  //     {item}
-  //   </button>
-  // )
+  
   return (
     <>
     {pr ? (
@@ -163,25 +147,12 @@ const Product = () => {
       {/* <div className="pro d-flex ml-5">
           {getMyStatus}
       </div> */}
-      <div className="pro-right d-flex mx-5 mt-2">
-        {/* <div className='mr-5'>
-          <Select />
-        </div> */}
-        <div className='mx-5'>
+      <div className="pro-right d-flex mt-2">
+        <div>
           <select value={selectId} onChange={pickChange}>
             <option value="">Select a Category</option>
             {categories && renderCategoryOptions(categories)}
           </select>
-        </div>
-        <div className='mt-2'>
-          <DatePicker 
-            selected={selectedDate} 
-            onChange={(date) => setSelectedDate(date)} 
-            dateFormat="yyyy-MM-dd"
-            placeholderText="Select a date"
-            className="date-picker"
-            style={{ padding: '10px', fontSize: '16px' }}
-          />
         </div>
       </div>
     </div>
@@ -292,7 +263,6 @@ const Product = () => {
         {total_pages > 1 && (
             <div className="pagination">
 
-              {/* Previous page button */}
               {currentPage > 1 && (
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -307,10 +277,7 @@ const Product = () => {
                 </button>
               )}
 
-              {/* Previous dots if there are more pages before the previous page */}
-              {/* {currentPage > 2 && <span className="mx-1">...</span>} */}
 
-              {/* Current page */}
               <button
                 onClick={() => handlePageChange(currentPage)}
                 disabled
@@ -324,7 +291,6 @@ const Product = () => {
                 {currentPage}
               </button>
 
-              {/* Next page if it exists */}
               {currentPage < total_pages && (
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
@@ -339,11 +305,10 @@ const Product = () => {
                 </button>
               )}
 
-              {/* Next dots if there are more pages after the next page */}
               {currentPage < total_pages - 1 && <span className="mx-1">...</span>}
             </div>
           )}
-      </div>
+        </div>
       ): ''}
       
       

@@ -298,7 +298,13 @@ table {
     
 }
 
-
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #fff;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); 
+}
 
 table th, table td{
     position: sticky; 
@@ -340,6 +346,18 @@ table th {
     font-weight: 600;
     color: #FF962E !important;
 }
+
+.pagination {
+    position: sticky;
+    bottom: 0;
+    z-index: 2; 
+    background-color: white;
+    padding: 5px 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: right;
+  }
+  
 
 .scroll-bg {
     margin: 10% auto;
@@ -995,3 +1013,5 @@ input, textarea, select {
         margin-left: 0;
     }
 }
+
+

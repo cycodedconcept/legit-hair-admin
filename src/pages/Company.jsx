@@ -16,7 +16,8 @@ import {
   setViewDetailsPage,
   catForm,
   createCategory,
-  bulkSuspend
+  bulkSuspend,
+  bulkPrice
 } from '../features/categorySlice';
 
 const Company = () => {
@@ -29,17 +30,19 @@ const Company = () => {
   const [enable, setEnable] = useState(true);
   const [disable, setDisable] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState('');
+  const [price, setPrice] = useState('');
   const [mode, setMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCategoryName, setSelectedCategoryName] = useState("");
   const [catv, setCatv] = useState('');
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
-  const [categories, setCategories] = useState([]); // Top-level categories
+  const [categories, setCategories] = useState([]);
   const [categoryHierarchy, setCategoryHierarchy] = useState([
     { level: 0, selectedCategory: '', subcategories: [] }
-  ]); // Category hierarchy
+  ]);
+  const [after, setAfter] = useState(false);
 
   
 
@@ -60,7 +63,8 @@ const Company = () => {
     catSuccess,
     subCategories,
     cat_name,
-    cat_parent_id
+    cat_parent_id,
+    percentage
   } = useSelector((state) => state.categories);
 
   let token = localStorage.getItem("key");
@@ -108,7 +112,11 @@ const Company = () => {
   };
 
   const handleChange = (e) => {
-      setInputValue(e.target.value);
+    setInputValue(e.target.value);
+  }
+
+  const getPrice = (e) => {
+    setPrice(e.target.value);
   }
 
   const showModal = () => {
@@ -117,7 +125,8 @@ const Company = () => {
 
   const hideModal = () => {
     setModalVisible(false);
-    setMode(false)
+    setMode(false);
+    setAfter(false);
   };
 
   const newCategory = (e) => {
@@ -135,9 +144,9 @@ const Company = () => {
         dispatch(fetchCompanyCategory({ token, page: currentPage }));
     }else {
         Swal.fire({
-            icon: 'error',
-            title: 'Failed to add category',
-            showConfirmButton: true,
+          icon: 'error',
+          title: 'Failed to add category',
+          showConfirmButton: true,
         });
     }
   }
@@ -338,31 +347,43 @@ const handleCheckboxChange = (id) => {
 //       }
 //   }
 
-const disableAll = (e) => {
+const disableAll = async (e) => {
     e.preventDefault();
-  
-    if (token) {
-      dispatch(bulkSuspend({ token, cat_idarray: selectedCategoryIds }))
-        .unwrap()
-        .then(() => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'Categories have been suspended successfully.',
-            confirmButtonText: 'OK'
-          }).then(() => {
-            window.location.reload();
-          });
-        })
-        .catch((error) => {
-          console.error('Error suspending categories:', error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'Something went wrong while suspending categories.',
-            confirmButtonText: 'OK'
-          });
+
+    if (!selectedCategoryIds || selectedCategoryIds.length === 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Information',
+        text: 'Please click on the checkbox.',
+        confirmButtonColor: '#FF962E'
+      });
+      return;
+    }
+
+    try {
+      const result = await dispatch(bulkSuspend({token, cat_idarray: selectedCategoryIds})).unwrap();
+      if (result) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Status',
+          text: 'Status Changed Successfully',
+          confirmButtonColor: '#FF962E'
         });
+
+        setSelectedCategoryIds([]); 
+
+        setTimeout(() => {
+          Swal.close();
+          dispatch(fetchCompanyCategory({ token, page: currentPage }));
+        }, 3000)
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'An error occurred during the assignment. Please try again.',
+        confirmButtonColor: '#FF962E'
+      });
     }
 };
   
@@ -435,6 +456,8 @@ const disableAll = (e) => {
         showConfirmButton: false,
         timer: 3000
       });
+
+      setCatv('');
       hideModal();
       dispatch(fetchCompanyCategory({ token, page: 1 }));
     }else {
@@ -445,7 +468,55 @@ const disableAll = (e) => {
       });
     }
   }
+
+  const modalPrice = (id) => {
+    setAfter(true);
+    localStorage.setItem("mp", id);
+  }
   
+  const changeBulkPrice = async (e) => {
+    e.preventDefault();
+    const myId = localStorage.getItem("mp");
+
+    if (price === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Information',
+        text: 'Please fill in all the fields.',
+        confirmButtonColor: '#FF962E'
+      });
+      return;
+    }
+
+    const priceChange = parseInt(price) / 100;
+
+    try {
+      const result = await dispatch(bulkPrice({token, id: myId, percentage: priceChange})).unwrap();
+
+      if (result) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Update Successfully',
+          text: 'Bulk price update suceessful',
+          confirmButtonColor: '#FF962E'
+        });
+
+        setTimeout(() => {
+          Swal.close();
+          hideModal()
+          dispatch(fetchCompanyCategory({ token, page: currentPage }));
+        }, 3000)
+        
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'An error occurred during the assignment. Please try again.',
+        confirmButtonColor: '#FF962E'
+      });
+    }
+  }
   return (
     <>
       {more ? (
@@ -545,13 +616,18 @@ const disableAll = (e) => {
                             <button className="el3-btn mt-3" onClick={() => getCat(category.categories.id)}>Subcategories</button>
                             <button className="el3-btn mt-3" onClick={() => myDetails(category.categories.id)}>More</button>
                         </div>
+                      
                         <div className="mt-5">
                           <p style={{ marginBottom: '0rem', textAlign: 'center' }}>{category.categories.category_name}</p>
                           <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{ textAlign: 'center' }}>
                               {category.categories.status === 1 ? 'Enable' : 'Disable'}
                           </p>
                         </div>
-                        <hr style={{borderTop: '1px dashed black'}}/>
+
+                        <div className="text-center">
+                          <button className='pro-btn' onClick={() => modalPrice(category.categories.id)}>bulk price change</button>
+                        </div>
+                        <hr style={{borderTop: '1px dashed #FF962E'}}/>
                         <div className='d-flex justify-content-between'>
                             <div>
                                 <p>Products</p>
@@ -743,12 +819,47 @@ const disableAll = (e) => {
                           <label className='mt-3'>New Name</label>
                           <input type="text" placeholder='category name' value={catv} onChange={(e) => setCatv(e.target.value)}/>
 
-                          <button className='pro-btn mt-3' onClick={handleSubmit}>Create Subcaegory</button>
+                          <button className='log-btn mt-3' onClick={handleSubmit}>Create Subcategory</button>
                       </div>
 
                     </div>
                 </div>
             </>
+        ) : ''}
+
+        {after ? (
+          <>
+            <div className="modal-overlay">
+              <div className="modal-content2">
+                <div className="head-mode">
+                  <h3>Bulk Price Change</h3>
+                  <button className="modal-close" onClick={hideModal}>
+                    &times;
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <form onSubmit={changeBulkPrice}>
+                    <input type="text" name="price" placeholder='100%' style={{width: '600px'}} value={price} onChange={getPrice}/>
+                    <button className='log-btn mt-5' style={{width: '600px'}}>
+                      {
+                      spinItem ?(
+                          <>
+                          <div className="spinner-border spinner-border-sm text-light" role="status">
+                            <span className="sr-only"></span>
+                          </div>
+                          <span>Loading... </span>
+                          </>
+                          
+                      ): (
+                          'Add Price Change'
+                      )
+                      }
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </>
         ) : ''}
         
     </>
