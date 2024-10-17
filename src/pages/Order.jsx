@@ -101,7 +101,7 @@ const Order = () => {
           <div>Error: {error?.message || 'Something went wrong'}</div>
         ) : (
           <>
-            <div className="outer-wrapper">
+            <div className="outer-wrapper mt-5">
               <div className="table-wrapper">
                 <table className="table">
                   <thead>
@@ -186,12 +186,12 @@ const Order = () => {
         )
       ) : (
           <>
-            <div className='d-flex gap-2 mt-3'>
+            <div className='d-flex gap-2 mt-5 mt-lg-3'>
                 <p style={{color: '#FF962E', cursor: 'pointer'}} onClick={changeView}>Order</p>
                 <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Details</p>
             </div>
 
-            <div className="d-flex justify-content-between">
+            <div className="d-block d-md-flex d-lg-flex justify-content-between">
                 <div>
                     <p>Delivery Date</p>
                     <div className='d-flex'>

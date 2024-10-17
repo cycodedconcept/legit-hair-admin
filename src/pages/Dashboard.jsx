@@ -6,6 +6,7 @@ import Company from './Company';
 import Customer from './Customer';
 import Order from './Order';
 import Admin from '../components/Admin';
+import Report from './Report';
 import { Bell, Profile } from '../assets/images'
 import './pages.css'
 
@@ -24,12 +25,16 @@ const Dashboard = () => {
   }
   return (
     <>
+      <input type="checkbox" id="nav-toggle"/>
       <Sidebar onButtonClick={handleButtonClick} activeContent={activeContent}/>
-      <div className="main-content mt-5 p-3">
+      <div className="main-content mt-2 mt-lg-5 p-3">
           <header className='d-flex justify-content-between'>
             <div className="head-left d-flex">
-              <i className="las la-bars" style={{fontSize: '32px'}}></i>
-              <h3 style={{ lineHeight: '1.2'}} className="mx-3">{upperLetter(activeContent)}</h3>
+              {/* <i className="las la-bars" style={{fontSize: '32px'}}></i> */}
+              <label htmlFor="nav-toggle">
+                   <span className="las la-bars" style={{fontSize: '32px'}}></span>
+               </label>
+              <h3 style={{ lineHeight: '1.2'}} className="mx-3 vega">{upperLetter(activeContent)}</h3>
             </div>
             <div className="head-right">
               <img src={Bell} alt="" className='mx-3'/>
@@ -41,6 +46,7 @@ const Dashboard = () => {
           {activeContent === 'company management' && <Company /> }
           {activeContent === 'customer management' && <Customer /> }
           {activeContent === 'order management' && <Order /> }
+          {activeContent === 'reports' && <Report /> }
           {activeContent === 'admin settings' && <Admin /> }
       </div>
     </>

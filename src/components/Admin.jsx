@@ -295,7 +295,7 @@ const Admin = () => {
     <>
     {details ? (
         <>
-            <div className="update-bank text-left mt-3">
+            <div className="update-bank text-left mt-5 mt-lg-3">
                 <button className='pro-btn' onClick={switchMode}>Update Bank Details</button>
             </div>
             <form style={{width: '100%'}} onSubmit={handleSubmit}>
@@ -380,7 +380,7 @@ const Admin = () => {
         </>
     ) : (
         <>
-            <div className='d-flex gap-2 mt-3'>
+            <div className='d-flex gap-2 mt-5 mt-lg-3'>
                 <p style={{color: '#FF962E', cursor: 'pointer'}} onClick={changeView}>Admin Settings</p>
                 <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> Bank Details</p>
             </div>
@@ -424,7 +424,7 @@ const Admin = () => {
                         </button>
                     </form>
                 </div>
-                <div className="col-sm-12 col-sm-12 col-lg-6">
+                <div className="col-sm-12 col-sm-12 col-lg-6 mt-5 mt-lg-0">
                 <h5 className='text-center'>Update Online Information</h5>
                     <form style={{width: '100%'}} onSubmit={submitOnline}>
                         <div className="form-group">

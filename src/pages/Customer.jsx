@@ -165,8 +165,8 @@ const Customer = () => {
     <>
     {more ? (
       <>
-        <div className="d-flex justify-content-between mt-2 mt-lg-4 mb-lg-4">
-        <div className="sts-btn p-2">
+        <div className="d-flex justify-content-between mt-5 mb-4 mt-lg-3 mb-lg-4">
+        <div className="sts-btn p-2 w-100">
           <button
             onClick={() => { 
                 handleButtonClick('all');
@@ -207,7 +207,7 @@ const Customer = () => {
               border: '0',
             }}
           >
-            Blocked
+            Block
           </button>
         </div>
         {/* <div>
@@ -263,7 +263,7 @@ const Customer = () => {
       </>
     ) : (
       <>
-       <div className="order-details-section">
+       <div className="order-details-section mt-5 mt-lg-0">
           <div className='d-flex gap-2 mt-3'>
             <p style={{color: '#FF962E', cursor: 'pointer'}} onClick={goBack}>Customer Management</p>
             <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Details</p>
@@ -276,24 +276,24 @@ const Customer = () => {
             ) : userOrders.length > 0 ? (
                 userOrders?.map((user) => (
                   <div key={user.id}>
-                    <div className="d-flex justify-content-between mb-5">
-                      <div className='mb-3'>
+                    <div className="d-block d-lg-flex justify-content-between mb-5">
+                      <div className='mb-3 doub'>
                         <p><b>Date</b></p>
                         <small>{user.date}</small>
                       </div>
-                      <div>
+                      <div className='doub'>
                         <p><b>Payment Status</b></p>
                         <small>{user.payment_status}</small>
                       </div>
-                      <div>
+                      <div className='doub'>
                         <p><b>Payment Method</b></p>
                         <small>{user.payment_method}</small>
                       </div>
-                      <div>
+                      <div className='doub mb-3 mb-lg-0'>
                         <p><b>Delivery Status</b></p>
                         <small className={user.delivery_status}>{user.delivery_status}</small>
                       </div>
-                      <div>
+                      <div className='doub'>
                         <p><b>Amount Paid</b></p>
                         <small>₦{user.amount_paid}</small>
                       </div>
@@ -335,24 +335,24 @@ const Customer = () => {
                       {user.product && JSON.parse(user.product).length > 0 ? (
                         JSON.parse(user.product).map((prod, index) => 
                           <div key={index}>
-                            <div className="d-flex justify-content-between mb-3">
-                              <div>
+                            <div className="d-block d-lg-flex justify-content-between mb-3">
+                              <div className='doub'>
                                 <p><b>Product Amount</b></p>
                                 <small>₦{prod.product_amount}</small>
                               </div>
-                              <div>
+                              <div className='doub'>
                                 <p><b>Inches</b></p>
                                 <small>{prod.inches}</small>
                               </div>
-                              <div>
+                              <div className='doub'>
                                 <p><b>Initial Amount</b></p>
                                 <small>₦{prod.initial_amount}</small>
                               </div>
-                              <div>
+                              <div className='doub'>
                                 <p><b>Discounted</b></p>
                                 <small>{prod.discounted ? 'Yes' : 'No'}</small>
                               </div>
-                              <div>
+                              <div className='doub'>
                                 <p><b>Order Quantity</b></p>
                                 <small>{prod.order_quantity}</small>
                               </div>
@@ -443,24 +443,24 @@ const Customer = () => {
                     <h4 className='text-center mb-4 mt-4'>Product Information</h4>
                     {orderDetails.product.map((prod, index) => (
                     <div key={index}>
-                      <div className="d-flex justify-content-between">
-                        <div>
+                      <div className="d-block d-lg-flex justify-content-between">
+                        <div className='doub'>
                           <p><b>Product Amount</b></p>
                           <small>₦{prod.product_amount}</small>
                         </div>
-                        <div>
+                        <div className='doub'>
                           <p><b>Inches</b></p>
                           <small>{prod.inches}"</small>
                         </div>
-                        <div>
+                        <div className='doub'>
                           <p><b>Initial Amount</b></p>
                           <small>₦{prod.initial_amount}</small>
                         </div>
-                        <div>
+                        <div className='doub'>
                           <p><b>Discounted</b></p>
                           <small>{prod.discounted ? 'Yes' : 'No'}</small>
                         </div>
-                        <div>
+                        <div className='doub'>
                           <p><b>Order Quantity</b></p>
                           <small>{prod.order_quantity}</small>
                         </div>

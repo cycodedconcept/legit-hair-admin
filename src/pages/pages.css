@@ -56,9 +56,9 @@ body {
 
 
 
-#nav-toggle:checked + .sidebar {
+/* #nav-toggle:checked + .sidebar {
     width: 70px;
-}
+} */
 
 #nav-toggle:checked + .sidebar .sidebar-brand,
 #nav-toggle:checked + .sidebar li a {
@@ -70,19 +70,19 @@ body {
     padding-left: 0rem;
 }
 
-#nav-toggle:checked + .sidebar .sidebar-brand h2 span:last-child,
+/* #nav-toggle:checked + .sidebar .sidebar-brand h2 span:last-child,
 #nav-toggle:checked + .sidebar li a span:last-child {
     display: none;
-}
+} */
 
-#nav-toggle:checked ~ .main-content {
+/* #nav-toggle:checked ~ .main-content {
     margin-left: 70px;
-}
+} */
 
-#nav-toggle:checked ~ .main-content header {
+/* #nav-toggle:checked ~ .main-content header {
     width: calc(100% - 70px);
     left: 70px;
-} 
+}  */
 
 .main-content {
     transition: margin-left 300ms;
@@ -103,9 +103,9 @@ header {
     transition: left 300ms;
 }
 
-/* #nav-toggle {
+#nav-toggle {
     display: none;
-} */
+}
 
 /* header h2 {
     color: #222;
@@ -307,7 +307,7 @@ thead th {
 }
 
 table th, table td{
-    position: sticky; 
+    /* position: sticky;  */
     top: 0px;
     
     background-color: #2D85DE;
@@ -977,7 +977,9 @@ input, textarea, select {
   }
   
 
-  
+  .cat {
+    width: 600px;
+  }
 
 @media screen and (max-width: 992px) {
     .dash-cards {
@@ -1012,6 +1014,29 @@ input, textarea, select {
     .log-btn {
         margin-left: 0;
     }
+
+    .head-right {
+        display: none;
+    }
+
+    .pro-btn {
+        width: 100%;
+        margin-left: 0;
+    }
+    .vega {
+        font-size: 20px;
+    }
+    .cat {
+        width: 100%;
+    }
+    .doub {
+        display: flex;
+        justify-content: space-between;
+    }
 }
+
+
+/* togle */
+
 
 

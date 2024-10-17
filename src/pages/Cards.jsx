@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { adminBoard } from '../features/dashboardSlice';
+// import { getCustomerReport } from '../features/reportSlice';
+
 import { User, Order } from '../assets/images';
 import { BarChart, Progress } from './Chart';
 import Wig from './Wig';

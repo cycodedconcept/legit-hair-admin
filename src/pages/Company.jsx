@@ -539,7 +539,7 @@ const disableAll = async (e) => {
             </div>
           </div>
   
-          <div className="d-flex justify-content-between mt-2 mt-lg-4 mb-lg-4">
+          <div className="d-flex justify-content-between mt-4 mb-5 mt-lg-4 mb-lg-4">
             <div className="sts-btn p-2">
               <button
                 onClick={() => { 
@@ -588,7 +588,7 @@ const disableAll = async (e) => {
             </div>
             <div>
                 {enable ? (
-                  <button className='el2-btn' onClick={disableAll}>Enable</button>
+                  <button className='el2-btn mb-2 mb-lg-0' onClick={disableAll}>Enable</button>
                 ) : ''}
 
                 {disable ? (
@@ -652,7 +652,7 @@ const disableAll = async (e) => {
                 &#8592; Back
             </button> */}
 
-            <div className='d-flex gap-2 mt-3'>
+            <div className='d-flex gap-2 mt-5 mt-lg-3'>
                 <p style={{color: '#FF962E', cursor: 'pointer'}} onClick={changeView}>Company Management</p>
                 <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Details</p>
             </div>
@@ -665,16 +665,16 @@ const disableAll = async (e) => {
                 ) : viewCategoryDetails?.length > 0 ? (
                     viewCategoryDetails.map((detail) => (
                         <div key={detail.id}>
-                            <div className="d-flex justify-content-between">
-                                <div className='w-50 mb-3'>
+                            <div className="d-block d-lg-flex justify-content-between">
+                                <div className='mb-3 doub'>
                                     <p><b>Product Name</b></p>
                                     <small>{detail.product_name}</small>
                                 </div>
-                                <div>
+                                <div className='doub'>
                                     <p><b>Product Price</b></p>
                                     <small>₦{detail.price}</small>
                                 </div>
-                                <div>
+                                <div className='doub'>
                                     <p><b>Product Number</b></p>
                                     <small>{detail.product_number}</small>
                                 </div>
@@ -696,7 +696,7 @@ const disableAll = async (e) => {
                                     {detail?.images && detail.images.length > 0 ? (
                                         detail.images.map((image, index) => (
                                             <div className="col-sm-12 col-md-12 col-lg-4" key={index}>
-                                                <img src={image.filename} alt="image" className='w-50'/>
+                                                <img src={image.filename} alt="image" className='w-100 w-lg-50'/>
                                             </div>
                                         ))
                                     ) : (
@@ -759,8 +759,8 @@ const disableAll = async (e) => {
                         <form onSubmit={newCategory}>
                             <div className="form-group">
                                 <label htmlFor="category">Create Category</label>
-                                <input type="text" name="" placeholder='category name' value={inputValue} onChange={handleChange} style={{width: '600px'}}/>
-                                <button className='log-btn mt-5' style={{width: '600px'}}>
+                                <input type="text" name="" placeholder='category name' value={inputValue} onChange={handleChange} className='cat'/>
+                                <button className='log-btn mt-5 cat'>
                                     {
                                     spinItem ?(
                                         <>
@@ -798,7 +798,7 @@ const disableAll = async (e) => {
                           {/* <CategorySelect /> */}
                           {categoryHierarchy.map((categoryLevel, index) => (
                             <div key={index}>
-                              <select onChange={(event) => handleCategoryChange(event, index)} value={categoryLevel.selectedCategory}>
+                              <select onChange={(event) => handleCategoryChange(event, index)} value={categoryLevel.selectedCategory} className='mb-3'>
                                 <option value="">Select Category</option>
                                 {index === 0 &&
                                   subCategories.map((category) => (
