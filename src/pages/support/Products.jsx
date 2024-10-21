@@ -206,10 +206,10 @@ const Products = () => {
                           />
                         </td>
                         <td>{product.product_name}</td>
-                        <td>{product.price}</td>
+                        <td>₦{product.price}</td>
                         <td>{product.product_description}</td>
                         <td>{product.product_number}</td>
-                        <td>{product.discount}</td>
+                        <td>₦{product.discount}</td>
                         <td>{product.total_rating}</td>
                         <td style={{ cursor: 'pointer' }}>
                           <FontAwesomeIcon 

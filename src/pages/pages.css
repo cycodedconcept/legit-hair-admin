@@ -298,6 +298,15 @@ table {
     
 }
 
+.bodija {
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: white;
+    padding: 0 20px;
+}
+  
+  
+
 thead th {
     position: sticky;
     top: 0;
@@ -356,7 +365,18 @@ table th {
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: right;
+}
+
+.sticky-pagination {
+    position: sticky;
+    bottom: -16px;
+    background-color: white;
+    /* padding: 10px; */
+    text-align: right;
+    z-index: 100;
+    border-top: 1px solid #ccc; /* optional */
   }
+  
   
 
 .scroll-bg {
@@ -394,7 +414,7 @@ table th {
     background-color: rgb(233, 43, 43);
     color: #fff;
     border-radius: 10px;
-    margin-left: 10px;
+    /* margin-left: 10px; */
 }
 
 .al-btn {
@@ -1037,6 +1057,38 @@ input, textarea, select {
 
 
 /* togle */
+.main-image {
+    border-radius: 10px; 
+}
+
+.carousel-image {
+    border-radius: 10px; 
+    transition: transform 0.2s; 
+}
+
+.carousel-image:hover {
+    transform: scale(1.05); 
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    font-size: 24px;
+    cursor: pointer;
+    color: #FF962E;
+    transform: translateY(-50%);
+}
+
+.next-arrow {
+    right: 10px;
+}
+
+.prev-arrow {
+    left: 10px;
+}
+
+
 
 
 

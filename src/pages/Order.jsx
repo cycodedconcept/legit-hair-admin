@@ -12,13 +12,15 @@ import {
     faListAlt,
     faEdit
  } from '@fortawesome/free-solid-svg-icons';
- import Swal from 'sweetalert2'
+ import Swal from 'sweetalert2';
+ import Commerce from './support/Commerce';
 
 const Order = () => {
   const [show, setShow] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [deliveryStatus, setDeliveryStatus] = useState('');
-  
+  const [productView, setProductView] = useState(true);
+
   const dispatch = useDispatch();
   const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status } = useSelector((state) => state.order);
 
@@ -53,6 +55,11 @@ const Order = () => {
   const changeView = () => {
     setShow(true);
   }
+
+  const changeProduct = () => {
+    setProductView(true);
+  }
+
 
   const displayModal = (id) => {
     console.log(id)
@@ -92,9 +99,18 @@ const Order = () => {
     }
   }, [success, dispatch, currentPage, token]);
 
+  const ecom = () => {
+    setProductView(false)
+  }
+
   return (
     <>
-      {show ? (
+    {productView ? (
+      <>
+       <div className="text-left mt-5 mt-lg-3">
+          <button className='pro-btn' onClick={ecom}>Create Manual Order</button>
+        </div>
+        {show ? (
         isLoading ? (
           <div>Loading...</div>
         ) : error ? (
@@ -235,7 +251,7 @@ const Order = () => {
                             <hr style={{border: '1px solid #FF962E'}}/>
                             <div className='d-flex justify-content-between'>
                                 <p>Product Amount:</p>
-                                <p>{order.product_amount}</p>
+                                <p>₦{order.product_amount}</p>
                             </div>
                             <div className='d-flex justify-content-between'>
                                 <p>Product Inches:</p>
@@ -244,7 +260,7 @@ const Order = () => {
                             <div className='d-flex justify-content-between'>
                                 <div>
                                     <p>Initial Amount</p>
-                                    <p className='text-center'>{order.initial_amount}</p>
+                                    <p className='text-center'>₦{order.initial_amount}</p>
                                 </div>
                                 <div>
                                     <p>Order Quantity</p>
@@ -336,6 +352,17 @@ const Order = () => {
             </div>
           </div>
       ) : ''}
+      </>
+
+    ) : (
+      <>
+       <div className='d-flex gap-2 mt-5 mt-lg-3'>
+          <p style={{color: '#FF962E', cursor: 'pointer'}} onClick={changeProduct}>Order</p>
+          <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Products</p>
+        </div>
+      <Commerce />
+      </>
+    )}
       
     </>
   );

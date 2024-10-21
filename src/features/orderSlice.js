@@ -2,36 +2,41 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const initialState = {
-    order: {},
-    orderDetails: {},
-    isLoading: false,
-    error: null,
-    order_id: '',
-    delivery_status: '',
-    success: false,
-    data: {},
-    currentPage: 1,
-    per_page: 10,
-    pre_page: null,
-    next_page: null,
-    total: 0,
-    total_pages: 0
+  order: {},
+  orderDetails: {},
+  isLoading: false,
+  error: null,
+  order_id: '',
+  delivery_status: '',
+  success: false,
+  data: {},
+  currentPage: 1,
+  per_page: 10,
+  pre_page: null,
+  next_page: null,
+  total: 0,
+  total_pages: 0,
+  product: [],
+
+  productPage: 1,
+  productTotalPages: 0
+
 }
 
 export const getOrder = createAsyncThunk(
-    'orders/fetchOrders',
-    async ({token, page}, {rejectWithValue}) => {
-        try {
-            const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_orders?page=${page}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            return response.data;
-        } catch (error) {
-          return rejectWithValue(error.response?.data || 'Something went wrong');
-        }
+  'orders/fetchOrders',
+  async ({token, page}, {rejectWithValue}) => {
+    try {
+      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_orders?page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Something went wrong');
     }
+  }
 );
 
 export const fetchDetails = createAsyncThunk(
@@ -70,15 +75,34 @@ export const updateStatus = createAsyncThunk(
             
         }
     }
+);
+
+export const productItem = createAsyncThunk(
+  'orders/productItem',
+  async ({token, page}, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/admin_get_product?page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Something went wrong');
+    }
+  }
 )
 
 const createOrderSlice = createSlice({
     name: 'order',
     initialState,
     reducers: {
-        clearStatusUpdate: (state) => {
-          state.success = false; // Reset success state
-        },
+      clearStatusUpdate: (state) => {
+        state.success = false;
+      },
+      setPageProduct: (state, action) => {
+        state.productPage = action.payload;
+      }
     },
     extraReducers: (builder) => {
         builder
@@ -126,8 +150,28 @@ const createOrderSlice = createSlice({
             state.isLoading = false;
             state.error = action.payload || 'Something went wrong';
           })
+          .addCase(productItem.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+          })
+          .addCase(productItem.fulfilled, (state, action) => {
+            state.isLoading = false;
+            const data = action.payload;
+
+            state.product = data.data || [];
+            state.productPage = data.page || 1;
+            state.per_page = data.per_page || 10;
+            state.pre_page = data.pre_page || null;
+            state.next_page = data.next_page || null;
+            state.total = data.total || 0;
+            state.productTotalPages = data.total_pages || 0;
+          })
+          .addCase(productItem.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+          })
     }
 });
 
-export const { clearStatusUpdate } = createOrderSlice.actions; 
+export const { clearStatusUpdate, setPageProduct } = createOrderSlice.actions; 
 export default createOrderSlice.reducer;
