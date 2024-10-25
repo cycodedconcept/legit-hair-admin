@@ -216,18 +216,22 @@ const handleChange = (e) => {
                     }}
                     >+</button>
                 </div> */}
-                    <div className='p-5'>
-                        <h4><span style={{ color: '#FF962E' }}>Total:</span> ₦{total.toLocaleString()}</h4>
-                    </div>
                 </div>
                 
                 {index !== cartItems.length - 1 && (
                 <hr style={{ border: '1px solid #FF962E', margin: '20px 0' }} />
                 )}
+
+                
             </div>
+                
             ))}
 
-            <button className='pro-btn mt-5' onClick={cartModal}>Generate Invoice</button>
+                <div className='d-flex justify-content-between mt-3'>
+                  <button className='pro-btn' onClick={cartModal}>Generate Invoice</button>
+                  <h4><span style={{ color: '#FF962E' }}>Total:</span> ₦{total.toLocaleString()}</h4>
+                </div>
+
             
         </>
       )}
