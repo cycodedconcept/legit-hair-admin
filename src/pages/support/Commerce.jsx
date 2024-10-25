@@ -169,16 +169,22 @@ const Commerce = () => {
         return;
       }
     
-    const isProductInCart = cart.some(item => 
-      Number(item.id) === Number(productToAdd.id)
-    );
+    // const isProductInCart = cart.some(item => 
+    //   Number(item.id) === Number(productToAdd.id)
+    // );
+
+    const isProductInCart = cart.some(item => {
+        console.log(`Checking item ID ${item.id} against product ID ${productToAdd.id}`);
+        return Number(item.id) === Number(productToAdd.id);
+    });
+      
     
     if (!isProductInCart) {
         
         const selectedInchObject = productToAdd.inches.find((inche) => String(inche.inche) === String(selectedInch));
         console.log('Selected Inch Object:', selectedInchObject);
         const newCartItem = {
-            id: productToAdd.id,
+            product_id: productToAdd.product_id,
             product_name: productToAdd.product_name,
             product_amount: productToAdd.main_price_discount || productToAdd.main_price,
             images: productToAdd.images,
@@ -187,6 +193,9 @@ const Commerce = () => {
             initial_amount: selectedInchObject ? selectedInchObject.price : 0,
             discounted: selectedInchObject ? selectedInchObject.discount : 0,
         };
+
+        console.log('Product to Add ID:', productToAdd.product_id);
+
 
         
 
@@ -266,7 +275,7 @@ const Commerce = () => {
                 <p style={{color: '#FF962E', cursor: 'pointer'}} onClick={changeProduct}>View Products</p>
                 <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> Product Details</p>
             </div>
-           <div className="row">
+            <div className="row">
                 <div className="col-sm-12 col-md-12 col-lg-6">
                     {isLoading ? (
                         <div>Loading...</div>
