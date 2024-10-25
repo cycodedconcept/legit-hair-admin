@@ -4,7 +4,9 @@ import { productItem, setPageProduct } from '../../features/orderSlice';
 import { getProductDetails } from '../../features/allProductSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faCaretRight } from '@fortawesome/free-solid-svg-icons';
-import ImageCarousel from './ImageCarousel'
+import ImageCarousel from './ImageCarousel';
+import ProductCartButton from './ProductCartButton';
+import Swal from 'sweetalert2';
 
 
 const Commerce = () => {
@@ -16,6 +18,23 @@ const Commerce = () => {
   const { productDetails } = useSelector((state) => state.allProducts);
 
   const [details, setDetails] = useState(true);
+  const [selectedInch, setSelectedInch] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart');
+    console.log('Saved cart:', savedCart);
+  }, []);
+
+  const [cart, setCart] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem('cart');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch {
+      return [];
+    }
+  })
+
  
   useEffect(() => {
     if (token) {
@@ -31,13 +50,27 @@ const Commerce = () => {
       if (token) {
           console.log(id)
         dispatch(getProductDetails({id: id, token}));
-        setDetails(false)
+        setDetails(false);
+        setSelectedInch('');
+        setQuantity(1);
       }
   }
 
   const changeProduct = () => {
     setDetails(true);
   }
+
+  const handleInchChange = (e) => {
+    setSelectedInch(e.target.value);
+  };
+
+  const handleQuantityChange = (type) => {
+    if (type === 'increase') {
+      setQuantity(prevQuantity => prevQuantity + 1);
+    } else if (type === 'decrease' && quantity > 1) {
+      setQuantity(prevQuantity => prevQuantity - 1);
+    }
+  };
 
 
   const renderProductPagination = () => {
@@ -122,6 +155,68 @@ const Commerce = () => {
         );
     }
   };
+
+  const addToCart = (productToAdd) => {
+
+    if (!selectedInch) {
+        Swal.fire({
+          title: 'Select an Inch',
+          text: 'Please select an inch before adding to the cart.',
+          icon: 'warning',
+          timer: 3000,
+          showConfirmButton: false,
+        });
+        return;
+      }
+    
+    const isProductInCart = cart.some(item => 
+      Number(item.id) === Number(productToAdd.id)
+    );
+    
+    if (!isProductInCart) {
+        
+        const selectedInchObject = productToAdd.inches.find((inche) => String(inche.inche) === String(selectedInch));
+        console.log('Selected Inch Object:', selectedInchObject);
+        const newCartItem = {
+            id: productToAdd.id,
+            product_name: productToAdd.product_name,
+            product_amount: productToAdd.main_price_discount || productToAdd.main_price,
+            images: productToAdd.images,
+            inches: selectedInch,
+            order_quantity: quantity,
+            initial_amount: selectedInchObject ? selectedInchObject.price : 0,
+            discounted: selectedInchObject ? selectedInchObject.discount : 0,
+        };
+
+        
+
+      const updatedCart = [...cart, newCartItem];
+      
+      setCart(updatedCart);
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+      Swal.fire({
+        title: 'Added to Cart!',
+        text: `${productToAdd.product_name} has been added to your cart.`,
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    } else {
+      Swal.fire({
+        title: 'Already in Cart',
+        text: `${productToAdd.product_name} is already in your cart.`,
+        icon: 'info',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
   
   return (
     <>
@@ -148,8 +243,13 @@ const Commerce = () => {
                                 <small>{item.product_name.length > maxLength ? item.product_name.slice(0, maxLength) + "..." : item.product_name}</small>
                                 <p style={{color: '#FF962E'}}>₦{item.price.toLocaleString()}</p>
                             </div>
-                            <div className="card-footer-item p-3 ml-0">
+                            {/* <div className="card-footer-item p-3 ml-0">
                                 <button className='el2-btn w-100' onClick={() => proDetails(item.id)}><FontAwesomeIcon icon={faShoppingCart} className="mx-2" />View More</button>
+                            </div> */}
+                            <div className="card-footer-item p-3 ml-0">
+                                <button className='el2-btn w-100' onClick={() => proDetails(item.id)}>
+                                    View Details
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -180,13 +280,55 @@ const Commerce = () => {
                 </div>
                 <div className="col-sm-12 col-md-12 col-lg-6">
                     <p>{productDetails.product_name}</p>
-                    <p style={{color: '#f3a557'}}><b>₦{productDetails.main_price.toLocaleString()}</b></p>
+                    <p style={{color: '#f3a557'}}>
+                        <b>
+                        {/* ₦{productDetails.main_price ? productDetails.main_price.toLocaleString() : '0'} */}
+                        {productDetails.main_price_discount ? (
+                            <>
+                            <span className="mx-2">
+                                ₦{productDetails.main_price_discount ? productDetails.main_price_discount.toLocaleString() : '0'}
+                            </span>
+                            <span style={{ textDecoration: 'line-through', color: '#000', fontSize: '13px' }}>
+                                ₦{productDetails.main_price ? productDetails.main_price.toLocaleString() : '0'}
+                            </span>
+                            </>
+                        ) : (
+                            <>₦{productDetails.main_price ? productDetails.main_price.toLocaleString() : '0'}</>
+                        )}
+                        </b>
+                    </p>
+                    <div className="d-flex justify-content-between">
+                      <p>{productDetails.product_number}</p>
+                      <p>status: {productDetails.status}</p>
+                      <p>stock: {productDetails.stock}</p>
+                    </div>
+
+                    <label htmlFor="inches" className='mt-5'>Select inches</label>
+                    <select id="inches" value={selectedInch} onChange={handleInchChange}>
+                        <option value="">--select inches--</option>
+                        {productDetails?.inches?.map((inch, index) => (
+                            <option value={inch.inche} key={index}>{inch.inche}</option>
+                        ))}
+                    </select>
+                    <div className="d-flex align-items-center mt-3">
+                        <button onClick={() => handleQuantityChange('decrease')} className="btn btn-secondary">-</button>
+                        <span className="mx-3">{quantity}</span>
+                        <button onClick={() => handleQuantityChange('increase')} className="btn btn-secondary">+</button>
+                    </div>
+
+                    <ProductCartButton 
+                        product={productDetails}
+                        cart={cart}
+                        onAddToCart={addToCart}
+                        className="log-btn mt-5 w-100"
+                    />
                 </div>
             </div>
             <div className="below-section mt-5">
                 <h5 style={{color: '#f3a557'}}>Product Description</h5>
-                <p>{productDetails.product_description}</p>
+                <small>{productDetails.product_description}</small>
             </div>
+            
         </>
     )}
     </>
@@ -194,3 +336,4 @@ const Commerce = () => {
 }
 
 export default Commerce
+

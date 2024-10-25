@@ -7,16 +7,25 @@ import Customer from './Customer';
 import Order from './Order';
 import Admin from '../components/Admin';
 import Report from './Report';
-import { Bell, Profile } from '../assets/images'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { Profile } from '../assets/images'
+import Cart from './Cart';
 import './pages.css'
 
 
 
 const Dashboard = () => {
   const [activeContent, setActiveContent] = useState('dashboard');
+  const [cartOpen, setCartOpen] = useState(false);
 
   const handleButtonClick = (content) => {
     setActiveContent(content);
+    setCartOpen(false)
+  };
+
+  const handleCartClick = () => {
+    setCartOpen(true);
   };
 
   const upperLetter = (string) => {
@@ -37,17 +46,30 @@ const Dashboard = () => {
               <h3 style={{ lineHeight: '1.2'}} className="mx-3 vega">{upperLetter(activeContent)}</h3>
             </div>
             <div className="head-right">
-              <img src={Bell} alt="" className='mx-3'/>
+            <FontAwesomeIcon 
+              icon={faShoppingCart} 
+              className="mx-5" 
+              style={{ color: '#FF962E', fontSize: '20px', cursor: 'pointer' }} 
+              onClick={handleCartClick} 
+            />
               <img src={Profile} alt="" />
             </div>
           </header>
-          {activeContent === 'dashboard' && <Cards /> }
-          {activeContent === 'product management' && <Product /> }
-          {activeContent === 'company management' && <Company /> }
-          {activeContent === 'customer management' && <Customer /> }
-          {activeContent === 'order management' && <Order /> }
-          {activeContent === 'reports' && <Report /> }
-          {activeContent === 'admin settings' && <Admin /> }
+
+          {cartOpen ? (
+            <Cart />
+          ) : (
+            <>
+            {activeContent === 'dashboard' && <Cards /> }
+            {activeContent === 'product management' && <Product /> }
+            {activeContent === 'company management' && <Company /> }
+            {activeContent === 'customer management' && <Customer /> }
+            {activeContent === 'order management' && <Order /> }
+            {activeContent === 'reports' && <Report /> }
+            {activeContent === 'admin settings' && <Admin /> }
+          </>
+          )}
+          
       </div>
     </>
   )
