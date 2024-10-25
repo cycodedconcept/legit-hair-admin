@@ -189,6 +189,7 @@ const Commerce = () => {
             product_amount: productToAdd.main_price_discount || productToAdd.main_price,
             images: productToAdd.images,
             inches: selectedInch,
+            category_id: productToAdd.category_id,
             order_quantity: quantity,
             initial_amount: selectedInchObject ? selectedInchObject.price : 0,
             discounted: selectedInchObject ? selectedInchObject.discount : 0,

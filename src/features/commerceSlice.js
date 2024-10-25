@@ -40,7 +40,6 @@ export const createInvoice = createAsyncThunk(
             },
             {
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
             })

@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 
 const Cart = () => {
   const dispatch = useDispatch();
-  const token = localStorage.getItem("key");
+  let token = localStorage.getItem("key");
   const { data, success, error, spinItem, products, delivery_address, 
     delivery_state, delivery_country, 
     amount_paid, additional_information, 
@@ -110,6 +110,8 @@ const handleChange = (e) => {
     const cartView = cartItem ? JSON.parse(cartItem) : [];
     const productsToSubmit = cartView.map(({ images, product_name, ...rest }) => rest);
     console.log(productsToSubmit)
+    console.log(token)
+
 
     if (!cartItem || !address || !state || !country || !payment || !name || !email || !phone) {
         Swal.fire({
@@ -121,8 +123,7 @@ const handleChange = (e) => {
         return;
     }
     const uniqueId = generateUniqueId();
-    console.log(address, state, country, payment, name, email, phone, total, typeof uniqueId)
-
+    console.log(address, state, country, payment, name, email, phone, total, uniqueId)
 
     try {
         const result = await dispatch(createInvoice({
