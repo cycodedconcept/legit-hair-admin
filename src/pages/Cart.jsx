@@ -140,7 +140,7 @@ const handleChange = (e) => {
             customer_phonenumber: phone,
             delivery_landmark: landmark,
             additional_information: additional,
-            redirect_url: "https://legit-hair-admin-o3fiu3k2b-cyrils-projects-d2849141.vercel.app/"
+            redirect_url: "https://legit-hair-admin.vercel.app/"
         })).unwrap();
 
         if (result) {
