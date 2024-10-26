@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createInvoice } from '../features/commerceSlice';
+import { createInvoice, getInvoiceData } from '../features/commerceSlice';
+import Invoice from './support/Invoice';
 import Swal from 'sweetalert2';
 
 
@@ -25,6 +26,7 @@ const Cart = () => {
   const [landmark, setLandmark] = useState('');
   const [payment, setPayment] = useState('');
   const [additional, setAdditional] = useState('');
+  const [view, setView] = useState(true);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -123,7 +125,6 @@ const handleChange = (e) => {
         return;
     }
     const uniqueId = generateUniqueId();
-    console.log(address, state, country, payment, name, email, phone, total, uniqueId)
 
     try {
         const result = await dispatch(createInvoice({
@@ -140,7 +141,7 @@ const handleChange = (e) => {
             customer_phonenumber: phone,
             delivery_landmark: landmark,
             additional_information: additional,
-            redirect_url: "https://legit-hair-admin.vercel.app/"
+            redirect_url: "https://legit-hair-admin.vercel.app/success.html"
         })).unwrap();
 
         if (result) {
@@ -150,10 +151,16 @@ const handleChange = (e) => {
                 text: 'Order created successfully.',
                 confirmButtonColor: '#FF962E'
             });
+
+            dispatch(getInvoiceData({ token, invoice_id: result.invoicenumber }));
     
             setTimeout(() => {
                 Swal.close();
                 resetForm();
+                setModal(false)
+                localStorage.setItem("inum", result.invoicenumber);
+                localStorage.setItem("liurl", result.data.link);
+                setView(false);
             }, 3000);
         }
         else {
@@ -169,6 +176,18 @@ const handleChange = (e) => {
     }
  }
 
+ const resetForm = () => {
+    setAddress('');
+    setState('');
+    setCountry('');
+    setPayment('');
+    setName('');
+    setEmail('');
+    setPhone('');
+    setLandmark('');
+    setAdditional('');
+};
+
   const hideModal = () => {
       setModal(false)
   }
@@ -178,7 +197,9 @@ const handleChange = (e) => {
   }
 
   return (
-    <div>
+    <>
+    {view ? (
+    <>
       {cartItems.length === 0 ? (
         <p>Your cart is empty</p>
       ) : (
@@ -236,6 +257,9 @@ const handleChange = (e) => {
             
         </>
       )}
+    </>
+    ) : <Invoice />}
+      
 
       {modal ? (
           <>
@@ -340,7 +364,7 @@ const handleChange = (e) => {
           </>
       ) : ''}
       
-    </div>
+    </>
   );
 };
 

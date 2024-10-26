@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrder, fetchDetails, updateStatus, clearStatusUpdate } from '../features/orderSlice';
+import { getOrder, fetchDetails, updateStatus, clearStatusUpdate, allInvoice } from '../features/orderSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faCaretRight, 
@@ -22,7 +22,7 @@ const Order = () => {
   const [productView, setProductView] = useState(true);
 
   const dispatch = useDispatch();
-  const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status } = useSelector((state) => state.order);
+  const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status, invoiceData, invoicePage, invoiceTotalPage } = useSelector((state) => state.order);
 
   const token = localStorage.getItem("key");
   const moid = localStorage.getItem("moid");
@@ -103,11 +103,19 @@ const Order = () => {
     setProductView(false)
   }
 
+  const evoice = (e) => {
+    e.preventDefault();
+    if (token) {
+      dispatch(allInvoice({token}))
+    }
+  }
+
   return (
     <>
     {productView ? (
       <>
        <div className="text-left mt-5 mt-lg-3">
+          <button className='pro-btn mx-3' onClick={evoice}>View All Invoice</button>
           <button className='pro-btn' onClick={ecom}>Create Manual Order</button>
         </div>
         {show ? (
@@ -146,7 +154,7 @@ const Order = () => {
                           <td>{item.date_delivered}</td>
                           <td>{item.delivery_landmark}</td>
                           <td>{item.order_id}</td>
-                          <td>{item.amount_paid}</td>
+                          <td>₦{item.amount_paid}</td>
                           <td>{item.payment_method}</td>
                           <td>
                             <button className={item.payment_status}>

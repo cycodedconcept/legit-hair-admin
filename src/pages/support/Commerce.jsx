@@ -158,20 +158,17 @@ const Commerce = () => {
 
   const addToCart = (productToAdd) => {
 
-    if (!selectedInch) {
-        Swal.fire({
-          title: 'Select an Inch',
-          text: 'Please select an inch before adding to the cart.',
-          icon: 'warning',
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        return;
-      }
+    // if (!selectedInch) {
+    //     Swal.fire({
+    //       title: 'Select an Inch',
+    //       text: 'Please select an inch before adding to the cart.',
+    //       icon: 'warning',
+    //       timer: 3000,
+    //       showConfirmButton: false,
+    //     });
+    //     return;
+    // }
     
-    // const isProductInCart = cart.some(item => 
-    //   Number(item.id) === Number(productToAdd.id)
-    // );
 
     const isProductInCart = cart.some(item => {
         console.log(`Checking item ID ${item.id} against product ID ${productToAdd.id}`);
@@ -321,9 +318,22 @@ const Commerce = () => {
                         ))}
                     </select>
                     <div className="d-flex align-items-center mt-3">
-                        <button onClick={() => handleQuantityChange('decrease')} className="btn btn-secondary">-</button>
+                        <button 
+                        onClick={() => handleQuantityChange('decrease')}
+                        style={{
+                            backgroundColor: '#FF962E',
+                            borderRadius: '10px',
+                            border: '0',
+                        }}
+                        >-</button>
                         <span className="mx-3">{quantity}</span>
-                        <button onClick={() => handleQuantityChange('increase')} className="btn btn-secondary">+</button>
+                        <button onClick={() => handleQuantityChange('increase')}
+                        style={{
+                            backgroundColor: '#FF962E',
+                            borderRadius: '10px',
+                            border: '0',
+                        }}
+                        >+</button>
                     </div>
 
                     <ProductCartButton 

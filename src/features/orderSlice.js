@@ -4,6 +4,7 @@ import axios from 'axios';
 const initialState = {
   order: {},
   orderDetails: {},
+  invoiceData: {},
   isLoading: false,
   error: null,
   order_id: '',
@@ -19,7 +20,10 @@ const initialState = {
   product: [],
 
   productPage: 1,
-  productTotalPages: 0
+  productTotalPages: 0,
+
+  invoicePage: 1,
+  invoiceTotalPage: 0
 
 }
 
@@ -91,6 +95,22 @@ export const productItem = createAsyncThunk(
       return rejectWithValue(error.response?.data || 'Something went wrong');
     }
   }
+);
+
+export const allInvoice = createAsyncThunk(
+  'orders/allInvoice',
+  async ({token}, { rejectWithValue }) => {
+    try {
+      const response = await axios.get("https://testbackendproject.pluralcode.academy/admin/get_all_invoice", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Something went wrong');
+    }
+  }
 )
 
 const createOrderSlice = createSlice({
@@ -102,6 +122,9 @@ const createOrderSlice = createSlice({
       },
       setPageProduct: (state, action) => {
         state.productPage = action.payload;
+      },
+      setPageInvoice: (state, action) => {
+        state.invoicePage = action.payload;
       }
     },
     extraReducers: (builder) => {
@@ -170,8 +193,28 @@ const createOrderSlice = createSlice({
             state.isLoading = false;
             state.error = action.payload;
           })
+          .addCase(allInvoice.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+          })
+          .addCase(allInvoice.fulfilled, (state, action) => {
+            state.isLoading = false;
+            const data = action.payload;
+
+            state.invoiceData = data.data || [];
+            state.invoicePage = data.page || 1;
+            state.per_page = data.per_page || 10;
+            state.pre_page = data.pre_page || null;
+            state.next_page = data.next_page || null;
+            state.total = data.total || 0;
+            state.invoiceTotalPage = data.total_pages || 0;
+          })
+          .addCase(allInvoice.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+          })
     }
 });
 
-export const { clearStatusUpdate, setPageProduct } = createOrderSlice.actions; 
+export const { clearStatusUpdate, setPageProduct, setPageInvoice } = createOrderSlice.actions; 
 export default createOrderSlice.reducer;
