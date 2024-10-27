@@ -19,7 +19,7 @@ const initialState = {
     data: {},
     spinItem: false,
     redirect_url: '',
-    invoiceData: {}
+    invoiceData: []
 }
 
 export const createInvoice = createAsyncThunk(
@@ -46,10 +46,13 @@ export const createInvoice = createAsyncThunk(
             })
             return response.data;
         } catch (error) {
+          const errorMessage = error.response?.data || error.message || 'Something went wrong';
+          console.error('Error response:', errorMessage);
           return rejectWithValue(error.response?.data || 'Something went wrong');
         }
     }
 );
+
 
 export const getInvoiceData = createAsyncThunk(
     'commerce/getInvoiceData',
@@ -102,6 +105,7 @@ const commerceSlice = createSlice({
           })
     }
 });
+
 
 export default commerceSlice.reducer;
 

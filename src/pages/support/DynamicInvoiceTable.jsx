@@ -1,27 +1,15 @@
 import React from 'react';
 
 const DynamicInvoiceTable = ({ data }) => {
-  // Skip these properties when creating the table
-  const excludedFields = ['images', 'id', '_id', '__v', 'category_id'];
-  
-  // Function to get headers from the first product
-  const getHeaders = () => {
-    if (!data?.products?.[0]) return [];
-    
-    // Get all keys from the first product
-    const headers = Object.keys(data.products[0])
-      .filter(key => !excludedFields.includes(key))
-      .map(key => ({
-        key,
-        // Convert snake_case or camelCase to Title Case
-        label: key
-          .split(/[_\s]/)
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-          .join(' ')
-      }));
-    
-    return headers;
-  };
+  // Define custom headers
+  const customHeaders = [
+    { key: 'product_name', label: 'Product name' },
+    { key: 'inches', label: 'Inches' },
+    { key: 'order_quantity', label: 'Quantity' },
+    { key: 'product_amount', label: 'Price' },
+    { key: 'discounted_price', label: 'Discounted price' },
+    { key: 'total', label: 'Total' }
+  ];
 
   // Calculate row totals if product_amount and order_quantity exist
   const calculateRowTotal = (item) => {
@@ -50,42 +38,41 @@ const DynamicInvoiceTable = ({ data }) => {
 
   // Format cell value based on field type
   const formatCellValue = (value, key) => {
-    if (key.includes('amount') || key.includes('price') || key.includes('total')) {
+    if (key.includes('amount') || key.includes('price') || key === 'total') {
       return formatCurrency(value);
     }
     return value;
   };
 
-  const headers = getHeaders();
-
   return (
-    <div className="table-responsive">
-      <table className="invoice-table">
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse">
         <thead>
-          <tr>
-            {headers.map(({ key, label }) => (
-              <th key={key}>{label}</th>
+          <tr className="bg-gray-100">
+            {customHeaders.map(({ key, label }) => (
+              <th key={key} className="p-2 border text-left font-medium">
+                {label}
+              </th>
             ))}
-            <th>Total</th>
           </tr>
         </thead>
         <tbody>
           {data?.products?.map((item, index) => (
-            <tr key={index}>
-              {headers.map(({ key }) => (
-                <td key={key}>{formatCellValue(item[key], key)}</td>
+            <tr key={index} className="border-b hover:bg-gray-50">
+              {customHeaders.map(({ key }) => (
+                <td key={key} className="p-2 border">
+                  {key === 'total' 
+                    ? formatCurrency(calculateRowTotal(item))
+                    : formatCellValue(item[key], key)}
+                </td>
               ))}
-              <td>{formatCurrency(calculateRowTotal(item))}</td>
             </tr>
           ))}
-          <tr className="total-row">
-            <td 
-              colSpan={headers.length} 
-              style={{ textAlign: 'right', fontWeight: 'bold' }}
-            >
+          <tr className="bg-gray-100">
+            <td colSpan={customHeaders.length - 1} className="p-2 border text-right font-medium">
               Grand Total:
             </td>
-            <td style={{ fontWeight: 'bold' }}>
+            <td className="p-2 border font-medium">
               {formatCurrency(calculateGrandTotal())}
             </td>
           </tr>

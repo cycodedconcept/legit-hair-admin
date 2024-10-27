@@ -7,11 +7,14 @@ import { faShoppingCart, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import ImageCarousel from './ImageCarousel';
 import ProductCartButton from './ProductCartButton';
 import Swal from 'sweetalert2';
+import { useCart } from '../CartContext';
 
 
 const Commerce = () => {
   const token = localStorage.getItem("key");
   let maxLength = 20;
+
+  const { cartItems, updateCart } = useCart();
 
   const dispatch = useDispatch();
   const { isLoading, error, product, productPage, productTotalPages} = useSelector((state) => state.order);
@@ -20,20 +23,15 @@ const Commerce = () => {
   const [details, setDetails] = useState(true);
   const [selectedInch, setSelectedInch] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [displayPrice, setDisplayPrice] = useState(productDetails.main_price);
+  const [strikethroughPrice, setStrikethroughPrice] = useState(null);
+
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     console.log('Saved cart:', savedCart);
   }, []);
 
-  const [cart, setCart] = useState(() => {
-    try {
-      const savedCart = localStorage.getItem('cart');
-      return savedCart ? JSON.parse(savedCart) : [];
-    } catch {
-      return [];
-    }
-  })
 
  
   useEffect(() => {
@@ -47,14 +45,16 @@ const Commerce = () => {
   };
 
   const proDetails = (id) => {
-      if (token) {
-          console.log(id)
+    if (token) {
         dispatch(getProductDetails({id: id, token}));
         setDetails(false);
         setSelectedInch('');
         setQuantity(1);
-      }
+        setDisplayPrice(productDetails.main_price);
+        setStrikethroughPrice(null);
+    }
   }
+
 
   const changeProduct = () => {
     setDetails(true);
@@ -62,7 +62,25 @@ const Commerce = () => {
 
   const handleInchChange = (e) => {
     setSelectedInch(e.target.value);
+    const selectedInchObject = productDetails.inches.find((inch) => String(inch.inche) === String(e.target.value));
+
+    if (selectedInchObject) {
+      // If inch has discount, show it as main price and strike through regular price
+      if (selectedInchObject.discount) {
+        setDisplayPrice(selectedInchObject.discount);
+        setStrikethroughPrice(selectedInchObject.price);
+      } else {
+        // If no discount, use the regular inch price
+        setDisplayPrice(selectedInchObject.price);
+        setStrikethroughPrice(null);
+      }
+    } else {
+      // Fallback to product's main discount or main price
+      setDisplayPrice(productDetails.main_price_discount || productDetails.main_price);
+      setStrikethroughPrice(productDetails.main_price_discount ? productDetails.main_price : null);
+    }
   };
+
 
   const handleQuantityChange = (type) => {
     if (type === 'increase') {
@@ -156,51 +174,101 @@ const Commerce = () => {
     }
   };
 
-  const addToCart = (productToAdd) => {
+//   const addToCart = (productToAdd) => {
+//     // Ensure an inch is selected if required
+//     if (!selectedInch && productToAdd.inches && productToAdd.inches.length > 0) {
+//         Swal.fire({
+//             title: 'Select an Inch',
+//             text: 'Please select an inch before adding to the cart.',
+//             icon: 'warning',
+//             timer: 3000,
+//             showConfirmButton: false,
+//         });
+//         return;
+//     }
 
-    // if (!selectedInch) {
-    //     Swal.fire({
-    //       title: 'Select an Inch',
-    //       text: 'Please select an inch before adding to the cart.',
-    //       icon: 'warning',
-    //       timer: 3000,
-    //       showConfirmButton: false,
-    //     });
-    //     return;
-    // }
+//     const isProductInCart = cart.some(item => Number(item.id) === Number(productToAdd.id));
     
+//     if (!isProductInCart) {
+//         // Find the selected inch object, if any
+//         const selectedInchObject = productToAdd.inches?.find((inche) => String(inche.inche) === String(selectedInch));
 
-    const isProductInCart = cart.some(item => {
-        console.log(`Checking item ID ${item.id} against product ID ${productToAdd.id}`);
-        return Number(item.id) === Number(productToAdd.id);
-    });
-      
+//         // Determine product amount based on conditions
+//         const productAmount = selectedInchObject
+//             ? selectedInchObject.discount || selectedInchObject.price
+//             : productToAdd.main_price_discount || productToAdd.main_price;
+
+//         const newCartItem = {
+//             product_id: productToAdd.product_id,
+//             product_name: productToAdd.product_name,
+//             product_amount: productAmount,
+//             images: productToAdd.images,
+//             inches: selectedInch,
+//             category_id: productToAdd.category_id,
+//             order_quantity: quantity,
+//             initial_amount: selectedInchObject ? selectedInchObject.price : 0,
+//             discounted: selectedInchObject ? selectedInchObject.discount : 0,
+//         };
+
+//         const updatedCart = [...cart, newCartItem];
+//         setCart(updatedCart);
+//         localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+//         Swal.fire({
+//             title: 'Added to Cart!',
+//             text: `${productToAdd.product_name} has been added to your cart.`,
+//             icon: 'success',
+//             timer: 3000,
+//             showConfirmButton: false
+//         });
+//     } else {
+//         Swal.fire({
+//             title: 'Already in Cart',
+//             text: `${productToAdd.product_name} is already in your cart.`,
+//             icon: 'info',
+//             timer: 3000,
+//             showConfirmButton: false
+//         });
+//     }
+//   };
+
+
+
+const addToCart = (productToAdd) => {
+    if (!selectedInch && productToAdd.inches && productToAdd.inches.length > 0) {
+      Swal.fire({
+        title: 'Select an Inch',
+        text: 'Please select an inch before adding to the cart.',
+        icon: 'warning',
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      return;
+    }
+
+    const isProductInCart = cartItems.some(item => Number(item.id) === Number(productToAdd.id));
     
     if (!isProductInCart) {
-        
-        const selectedInchObject = productToAdd.inches.find((inche) => String(inche.inche) === String(selectedInch));
-        console.log('Selected Inch Object:', selectedInchObject);
-        const newCartItem = {
-            product_id: productToAdd.product_id,
-            product_name: productToAdd.product_name,
-            product_amount: productToAdd.main_price_discount || productToAdd.main_price,
-            images: productToAdd.images,
-            inches: selectedInch,
-            category_id: productToAdd.category_id,
-            order_quantity: quantity,
-            initial_amount: selectedInchObject ? selectedInchObject.price : 0,
-            discounted: selectedInchObject ? selectedInchObject.discount : 0,
-        };
+      const selectedInchObject = productToAdd.inches?.find((inche) => String(inche.inche) === String(selectedInch));
 
-        console.log('Product to Add ID:', productToAdd.product_id);
+      const productAmount = selectedInchObject
+        ? selectedInchObject.discount || selectedInchObject.price
+        : productToAdd.main_price_discount || productToAdd.main_price;
 
+      const newCartItem = {
+        product_id: productToAdd.product_id,
+        product_name: productToAdd.product_name,
+        product_amount: productAmount,
+        images: productToAdd.images,
+        inches: selectedInch,
+        category_id: productToAdd.category_id,
+        order_quantity: quantity,
+        initial_amount: selectedInchObject ? selectedInchObject.price : 0,
+        discounted: selectedInchObject ? selectedInchObject.discount : 0,
+      };
 
-        
-
-      const updatedCart = [...cart, newCartItem];
-      
-      setCart(updatedCart);
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      const updatedCart = [...cartItems, newCartItem];
+      updateCart(updatedCart);
 
       Swal.fire({
         title: 'Added to Cart!',
@@ -220,9 +288,9 @@ const Commerce = () => {
     }
   };
 
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
+//   useEffect(() => {
+//     localStorage.setItem('cart', JSON.stringify(cart));
+//   }, [cart]);
 
   
   return (
@@ -287,23 +355,23 @@ const Commerce = () => {
                 </div>
                 <div className="col-sm-12 col-md-12 col-lg-6">
                     <p>{productDetails.product_name}</p>
-                    <p style={{color: '#f3a557'}}>
+                    <p style={{ color: '#f3a557' }}>
                         <b>
-                        {/* ₦{productDetails.main_price ? productDetails.main_price.toLocaleString() : '0'} */}
-                        {productDetails.main_price_discount ? (
+                            {productDetails.main_price_discount ? (
                             <>
-                            <span className="mx-2">
+                                <span className="mx-2">
                                 ₦{productDetails.main_price_discount ? productDetails.main_price_discount.toLocaleString() : '0'}
-                            </span>
-                            <span style={{ textDecoration: 'line-through', color: '#000', fontSize: '13px' }}>
+                                </span>
+                                <span style={{ textDecoration: 'line-through', color: '#000', fontSize: '13px' }}>
                                 ₦{productDetails.main_price ? productDetails.main_price.toLocaleString() : '0'}
-                            </span>
+                                </span>
                             </>
-                        ) : (
+                            ) : (
                             <>₦{productDetails.main_price ? productDetails.main_price.toLocaleString() : '0'}</>
-                        )}
+                            )}
                         </b>
-                    </p>
+                        </p>
+
                     <div className="d-flex justify-content-between">
                       <p>{productDetails.product_number}</p>
                       <p>status: {productDetails.status}</p>
@@ -338,7 +406,7 @@ const Commerce = () => {
 
                     <ProductCartButton 
                         product={productDetails}
-                        cart={cart}
+                        // cart={cart}
                         onAddToCart={addToCart}
                         className="log-btn mt-5 w-100"
                     />

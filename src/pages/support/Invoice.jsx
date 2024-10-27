@@ -179,7 +179,7 @@ const Invoice = () => {
   }, [dispatch, token, numberIn]);
 
 //   const tableHeaders = ['Description', 'Quantity', 'Unit Price', 'Total'];
-const tableHeaders = ['Product Amount', 'Initial Amount', 'inches', 'categoryId', 'Discount', 'Quantity'];
+const tableHeaders = ['Product Name', 'Inches', 'Quantity', 'Price', 'Discounted Price', 'Total'];
 
   const logoUrl = 'logo2.png';
 
@@ -241,6 +241,8 @@ const tableHeaders = ['Product Amount', 'Initial Amount', 'inches', 'categoryId'
       // Add clickable payment link
       pdf.setTextColor(0, 102, 204); // Blue color
       pdf.setFontSize(12);
+
+      localStorage.removeItem('cart');
     
       const linkY = imgHeight + 10;
       pdf.textWithLink('Click here to pay invoice', 14, linkY, {
@@ -366,8 +368,3 @@ const tableHeaders = ['Product Amount', 'Initial Amount', 'inches', 'categoryId'
 };
 
 export default Invoice;
-
-
-
-
-

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrder, fetchDetails, updateStatus, clearStatusUpdate, allInvoice } from '../features/orderSlice';
+import { getOrder, fetchDetails, updateStatus, clearStatusUpdate, allInvoice, setPageInvoice } from '../features/orderSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faCaretRight, 
@@ -20,6 +20,7 @@ const Order = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [deliveryStatus, setDeliveryStatus] = useState('');
   const [productView, setProductView] = useState(true);
+  const [showInvoice, setShowInvoice] = useState(true); 
 
   const dispatch = useDispatch();
   const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status, invoiceData, invoicePage, invoiceTotalPage } = useSelector((state) => state.order);
@@ -34,14 +35,27 @@ const Order = () => {
     }
   }, [dispatch, currentPage, token]);
 
+
+
+
   const viewDetails = (id) => {
     setShow(false);
     dispatch(fetchDetails({ token, id }));
   };
 
   const handlePageChange = (page) => {
+    setPageInvoice(page);
     dispatch(getOrder({ page, token }));
   };
+
+
+
+  // const handleViewChange = (view) => {
+  //   setProductView(view); // Update view and fetch data accordingly
+  // };
+
+     
+    
 
   const hideModal = () => {
     setModalVisible(false);
@@ -106,8 +120,13 @@ const Order = () => {
   const evoice = (e) => {
     e.preventDefault();
     if (token) {
-      dispatch(allInvoice({token}))
+      dispatch(allInvoice({token}));
+      setShowInvoice(false)
     }
+  }
+
+  const ivoice = () => {
+    setShowInvoice(true)
   }
 
   return (
@@ -115,8 +134,10 @@ const Order = () => {
     {productView ? (
       <>
        <div className="text-left mt-5 mt-lg-3">
-          <button className='pro-btn mx-3' onClick={evoice}>View All Invoice</button>
-          <button className='pro-btn' onClick={ecom}>Create Manual Order</button>
+          <button className='pro-btn my-3 mx-lg-3' onClick={ecom}>Create Manual Order</button>
+          <button className='pro-btn my-3 mx-lg-3' onClick={evoice}>View All Invoice</button>
+          <button className="pro-btn my-3 mx-lg-3" onClick={ivoice}>View Orders</button>
+
         </div>
         {show ? (
         isLoading ? (
@@ -124,6 +145,8 @@ const Order = () => {
         ) : error ? (
           <div>Error: {error?.message || 'Something went wrong'}</div>
         ) : (
+          <>
+          {showInvoice ? (
           <>
             <div className="outer-wrapper mt-5">
               <div className="table-wrapper">
@@ -154,7 +177,7 @@ const Order = () => {
                           <td>{item.date_delivered}</td>
                           <td>{item.delivery_landmark}</td>
                           <td>{item.order_id}</td>
-                          <td>₦{item.amount_paid}</td>
+                          <td>₦{Number(item.amount_paid).toLocaleString()}</td>
                           <td>{item.payment_method}</td>
                           <td>
                             <button className={item.payment_status}>
@@ -185,6 +208,7 @@ const Order = () => {
                     )}
                   </tbody>
                 </table>
+
               </div>
             </div>
             {total_pages > 1 && (
@@ -206,6 +230,75 @@ const Order = () => {
                 ))}
               </div>
             )}
+          </>
+          ) : (
+          <>
+            <div className="outer-wrapper">
+              <div className="table-wrapper">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Invoice Number</th>
+                      <th>Customer Name</th>
+                      <th>Customer Email</th>
+                      <th>Phone Number</th>
+                      <th>Delivery Country</th>
+                      <th>Delivery State</th>
+                      <th>Delivery Address</th>
+                      <th>Delivery Landmark</th>
+                      <th>Amount Paid</th>
+                      <th>Date</th>
+                      <th>Invoice Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invoiceData && invoiceData.length > 0 ? (
+                      invoiceData.map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.invoicenumber}</td>
+                          <td>{item.customer_name}</td>
+                          <td>{item.customer_email}</td>
+                          <td>{item.customer_phonenumber}</td>
+                          <td>{item.delivery_country}</td>
+                          <td>{item.delivery_state}</td>
+                          <td>{item.delivery_address}</td>
+                          <td>{item.delivery_landmark}</td>
+                          <td>₦{Number(item.amount_paid).toLocaleString()}</td>
+                          <td>{item.date}</td>
+                          <td>{item.invoice_status}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="11">No Invoice available</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {invoiceTotalPage > 1 && (
+              <div className="pagination">
+                {Array.from({ length: invoiceTotalPage }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => handlePageChange(i + 1)}
+                    disabled={invoicePage === i + 1}
+                    className="mx-1"
+                    style={{
+                      backgroundColor: '#FF962E',
+                      borderRadius: '10px',
+                      border: '0',
+                    }}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+          )}
+            
           </>
         )
       ) : (

@@ -124,7 +124,9 @@ const handleChange = (e) => {
         });
         return;
     }
+  
     const uniqueId = generateUniqueId();
+    const roundedAmount = Math.round(total);
 
     try {
         const result = await dispatch(createInvoice({
@@ -133,7 +135,7 @@ const handleChange = (e) => {
             delivery_address: address,
             delivery_state: state,
             delivery_country: country,
-            amount_paid: total,
+            amount_paid: roundedAmount,
             payment_method: payment,
             invoice_id: uniqueId,
             customer_email: email,
@@ -249,10 +251,10 @@ const handleChange = (e) => {
                 
             ))}
 
-                <div className='d-flex justify-content-between mt-3'>
-                  <button className='pro-btn' onClick={cartModal}>Generate Invoice</button>
-                  <h4><span style={{ color: '#FF962E' }}>Total:</span> ₦{total.toLocaleString()}</h4>
-                </div>
+            <div className='d-flex justify-content-between mt-3'>
+              <button className='pro-btn' onClick={cartModal}>Generate Invoice</button>
+              <h4><span style={{ color: '#FF962E' }}>Total:</span> ₦{total.toLocaleString()}</h4>
+            </div>
 
             
         </>
