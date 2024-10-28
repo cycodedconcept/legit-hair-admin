@@ -39,7 +39,7 @@ const Sidebar = ({ onButtonClick, activeContent }) => {
                 className={activeContent === item.bname ? 'sidebar-menu button active' : 'sidebar-menu button'}
                 onClick={() => onButtonClick(item.bname)}
             >
-                <img src={item.image} alt={item.name} className='px-3' />
+                <img src={item.image} alt={item.name} className='px-3' style={{width: '50px'}}/>
                 {item.name}
             </button>
         );

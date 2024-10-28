@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faCaretRight, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDetails, selectSearchDetails, setCurrentPage, selectCurrentPage, selectTotalPages, selectViewDetails, viewCategory } from '../features/allProductSlice';
+import { fetchDetails, selectSearchDetails, setCurrentPage, selectCurrentPage, selectTotalPages, selectViewDetails, viewCategory, getProductDetails, updateProduct, } from '../features/allProductSlice';
 import { fetchCategories } from '../features/categorySlice';
 import Products from './support/Products';
 import AddProduct from './support/AddProduct';
+
 
 import { Exp } from '../assets/images';
 import './pages.css'
@@ -22,10 +23,13 @@ const Product = () => {
   const [selectId, setSelectedId] = useState('');
   const [alter, setAlter] = useState(true);
 
+
+
   const searchDetails = useSelector(selectSearchDetails);
   const currentPage = useSelector(selectCurrentPage);
   const total_pages = useSelector(selectTotalPages);
   const viewDetails = useSelector(selectViewDetails);
+
 
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.categories);
@@ -129,17 +133,24 @@ const Product = () => {
     
     {search ? (
       <div className="row">
-      <div className="col-sm-12 col-md-12 col-lg-8">
+      <div className="col-sm-12 col-md-12 col-lg-5">
         <div className="search-container">
           <input type="text" placeholder="Search Order..." className="search-input" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
           <span className="search-icon">&#128269;</span>
         </div>
       </div>
-      <div className="col-sm-12 col-md-12 col-lg-4 mt-5 mb-4">
-        <button className='exp-btn'><img src={ Exp } alt="" /> Export</button>
+      <div className="col-sm-12 col-md-12 col-lg-4">
+        <div className='mt-2'>
+          <select value={selectId} onChange={pickChange}>
+            <option value="">Select a Category</option>
+            {categories && renderCategoryOptions(categories)}
+          </select>
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-12 col-lg-3 mt-3 mb-4 text-left">
         <button className='pro-btn' onClick={showProductForm}>+ Add Products</button>
       </div>
-    </div>
+      </div>
     ): ''}
       
     {dt ? (
@@ -148,12 +159,7 @@ const Product = () => {
           {getMyStatus}
       </div> */}
       <div className="pro-right d-flex mt-2">
-        <div>
-          <select value={selectId} onChange={pickChange}>
-            <option value="">Select a Category</option>
-            {categories && renderCategoryOptions(categories)}
-          </select>
-        </div>
+      
       </div>
     </div>
     ): ''}  
@@ -169,19 +175,17 @@ const Product = () => {
       ): ''}
 
       {wal ? (
-        <div className="outer-wrapper">
-        <div className="table-wrapper">
-          <table className="table">
+        <div>
+          <table className="my-table">
             <thead>
               <tr>
-                <th>Product image</th>
+                <th>Product Image</th>
                 <th style={{width: '250px'}}>Product Name</th>
-                <th>Product Status</th>
                 <th>Product Price</th>
-                <th style={{width: '250px'}}>Product Description</th>
+                <th>Discounts</th>
                 <th>Product Number</th>
-                <th>Discount</th>
-                <th>Rating</th>
+                <th>Status Setting</th>
+                <th>Product Settings</th>
               </tr>
             </thead>
             <tbody>
@@ -192,17 +196,22 @@ const Product = () => {
                     <td>
                       <img
                         src={typeof search.images[0]?.filename === 'string' ? search.images[0]?.filename : 'default_image.png'}
-                        alt={search.product_name}
-                        width={100}
+                        width={80} className="img-thumbnail" alt="Thumbnail" style={{boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}
                       />
                     </td>
-                    <td>{search.product_name}</td>
-                    <td>{search.status}</td>
+                    <td style={{textAlign: 'left'}}>{search.product_name}</td>
                     <td>{search.price}</td>
-                    <td>{search.product_description}</td>
-                    <td>{search.product_number}</td>
                     <td>{search.discount}</td>
-                    <td>{search.total_rating}</td>
+                    <td>{search.product_number}</td>
+                    <td><button className='btn-status' onClick={() => switchStatus(search.id, token)}>Change Status</button></td>
+                    <td style={{ cursor: 'pointer' }}>
+                      <FontAwesomeIcon 
+                        icon={faEdit} 
+                        style={{ color: '#FF962E' }} 
+                        onClick={() => showTheModal(search.id, token)} 
+                      /> 
+                      Edit
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -217,17 +226,22 @@ const Product = () => {
                     <td>
                       <img
                         src={typeof view.images[0]?.filename === 'string' ? view.images[0]?.filename : 'default_image.png'}
-                        alt={view.product_name}
-                        width={100}
+                        width={80} className="img-thumbnail" alt="Thumbnail" style={{boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}
                       />
                     </td>
-                    <td>{view.product_name}</td>
-                    <td>{view.status}</td>
-                    <td>{view.price}</td>
-                    <td>{view.product_description}</td>
+                    <td style={{textAlign: 'left'}}>{view.product_name}</td>
+                    <td>₦{Number(view.price).toLocaleString()}</td>
+                    <td>₦{Number(view.discount).toLocaleString()}</td>
                     <td>{view.product_number}</td>
-                    <td>{view.discount}</td>
-                    <td>{view.total_rating}</td>
+                    <td><button className='btn-status' onClick={() => switchStatus(view.id, token)}>Change Status</button></td>
+                    <td style={{ cursor: 'pointer' }}>
+                      <FontAwesomeIcon 
+                        icon={faEdit} 
+                        style={{ color: '#FF962E' }} 
+                        onClick={() => showTheModal(view.id, token)} 
+                      /> 
+                      Edit
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -239,26 +253,6 @@ const Product = () => {
 
             </tbody>
           </table>
-        </div>
-        {/* {total_pages > 1 && (
-          <div className="pagination">
-            {Array.from({ length: total_pages }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => handlePageChange(i + 1)}
-                disabled={currentPage === i + 1}
-                className="mx-1"
-                style={{
-                  backgroundColor: '#FF962E',
-                  borderRadius: '10px',
-                  border: '0'
-                }}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        )} */}
 
         {total_pages > 1 && (
             <div className="pagination">
@@ -310,7 +304,7 @@ const Product = () => {
           )}
         </div>
       ): ''}
-      
+    
       
     </>
   )

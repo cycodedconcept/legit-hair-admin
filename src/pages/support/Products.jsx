@@ -20,6 +20,7 @@ import {
 
 const Products = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [vimode, setVimode] = useState(false)
   const [inputValues, setInputValues] = useState({
     productName: '',
     price: '',
@@ -123,6 +124,7 @@ const Products = () => {
 
   const hideModal = () => {
     setModalVisible(false);
+    setVimode(false)
   };
 
   const updateDetails = (e) => {
@@ -170,6 +172,11 @@ const Products = () => {
     setInputValues({ ...inputValues, category });
   };
 
+  const myProductDetails = (id) => {
+    setVimode(true);
+    dispatch(getProductDetails({ id, token }));
+  }
+
   return (
     <>
       {isLoading ? (
@@ -178,79 +185,59 @@ const Products = () => {
         <div>Error: {error?.message || 'Something went wrong'}</div>
       ) : (
         <>
-          <div className="outer-wrapper">
-            <div className="table-wrapper">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Product Image</th>
-                    <th style={{width: '250px'}}>Product Name</th>
-                    <th>Product Price</th>
-                    <th style={{width: '250px'}}>Product Description</th>
-                    <th>Product Number</th>
-                    <th>Discounts</th>
-                    <th>Total Ratings</th>
-                    <th>Product Settings</th>
-                    <th>Status Setting</th>
+          <table className='my-table'>
+            <thead>
+              <tr>
+                <th>Product Image</th>
+                <th style={{width: '250px'}}>Product Name</th>
+                <th>Product Price</th>
+                <th>Discounts</th>
+                <th>Product Number</th>
+                <th>Status Setting</th>
+                <th>Product Settings</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products && products.length > 0 ? (
+                products.map((product) => (
+                  <tr key={product.id} onClick={() => myProductDetails(product.id)} style={{cursor: 'pointer'}}>
+                    <td>
+                      <img
+                        src={typeof product.images[0]?.filename === 'string' ? product.images[0]?.filename : 'default_image.png'}
+                        alt="Thumbnail" className='img-thumbnail' style={{boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}
+                        width={80}
+                      />
+                    </td>
+                    <td style={{textAlign: 'left'}}>{product.product_name}</td>
+                    <td>₦{Number(product.price).toLocaleString()}</td>
+                    <td>₦{Number(product.discount).toLocaleString()}</td>
+                    <td>{product.product_number}</td>
+                    <td>
+                      <button className='btn-status' 
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevents row click from firing
+                          switchStatus(product.id, token);
+                        }}          
+                        >Change Status
+                      </button>
+                    </td>
+                    <td style={{ cursor: 'pointer' }} onClick={(e) => e.stopPropagation()}>
+                      <FontAwesomeIcon 
+                        icon={faEdit} 
+                        style={{ color: '#FF962E' }} 
+                        onClick={() => showTheModal(product.id, token)} 
+                      /> 
+                      Edit
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {products && products.length > 0 ? (
-                    products.map((product) => (
-                      <tr key={product.id}>
-                        <td>
-                          <img
-                            src={typeof product.images[0]?.filename === 'string' ? product.images[0]?.filename : 'default_image.png'}
-                            alt={product.product_name}
-                            width={100}
-                          />
-                        </td>
-                        <td>{product.product_name}</td>
-                        <td>₦{product.price}</td>
-                        <td>{product.product_description}</td>
-                        <td>{product.product_number}</td>
-                        <td>₦{product.discount}</td>
-                        <td>{product.total_rating}</td>
-                        <td style={{ cursor: 'pointer' }}>
-                          <FontAwesomeIcon 
-                            icon={faEdit} 
-                            style={{ color: '#FF962E' }} 
-                            onClick={() => showTheModal(product.id, token)} 
-                          /> 
-                          Edit
-                        </td>
-                        <td><button className='btn-status' onClick={() => switchStatus(product.id, token)}>Change Status</button></td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7">No products available</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* {total_pages > 1 && (
-            <div className="pagination">
-              {Array.from({ length: total_pages }, (_, i) => (
-                <button
-                  key={i + 1}
-                  onClick={() => handlePageChange(i + 1)}
-                  disabled={currentPage === i + 1}
-                  className="mx-1"
-                  style={{
-                    backgroundColor: '#FF962E', 
-                    borderRadius: '10px',
-                    border: '0'
-                  }}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-          )} */}
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">No products available</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
 
           {total_pages > 1 && (
             <div className="pagination">
@@ -492,6 +479,111 @@ const Products = () => {
           </div>
         </div>
       ) : null}
+
+      {vimode ? (
+        <div className="modal-overlay">
+          <div className="modal-content2" style={{width: '900px'}}>
+            <div className="head-mode">
+                <h3>Product Details</h3>
+                <button className="modal-close" onClick={hideModal}>
+                  &times;
+                </button>
+            </div>
+            <div className="modal-body">
+              {isLoading ? (
+                <div>Loading...</div>
+              ) : error ? (
+                <div>Error: {error?.message || 'Something went wrong'}</div>
+              ) : (
+                <div className="">
+                  <div className='d-flex justify-content-between'>
+                    <p>Product Name: </p>
+                    <small style={{width: '250px'}}>{productDetails.product_name}</small>
+                  </div>
+                  <hr style={{border: '1px solid #FF962E'}}/>
+                  <div className='d-flex justify-content-between'>
+                    <p>Price: </p>
+                    <small>₦{Number(productDetails.main_price).toLocaleString()}</small>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                    <p>Discount: </p>
+                    <small>₦{Number(productDetails.main_price_discount).toLocaleString()}</small>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                    <p>Date Added: </p>
+                    <small>{productDetails.date_added}</small>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                    <p>Stock: </p>
+                    <small>{productDetails.stock}</small>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                    <p>Product Number: </p>
+                    <small>{productDetails.product_number}</small>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                    <p>Number Ordered: </p>
+                    <small>{productDetails.total_number_ordered}</small>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                    <p>Category Name: </p>
+                    <small>{productDetails.category_name}</small>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                    <p>Status: </p>
+                    <small className={productDetails.status === 0 ? 'Inactive' : 'Active'}><b>{productDetails.status === 0 ? 'Inactive' : 'Active'}</b></small>
+                  </div>
+                  <hr style={{border: '1px solid #FF962E'}}/>
+
+                  <div className="row">
+                    {productDetails.images.map((image) =>
+                      <div className="col-sm-12 col-md-12 col-lg-4 d-flex justify-content-center">
+                        <div style={{
+                            backgroundImage: `url(${image.filename})`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'contain',
+                            width: '100%',
+                            height: '150px',
+                            borderRadius: '20px',
+                          }}>
+                        </div>
+                      </div> 
+                    )}
+                  </div>
+                  <hr style={{border: '1px solid #FF962E'}}/>
+                  <table className='table'>
+                    <thead>
+                      <tr>
+                        <th>Inches</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {productDetails.inches && productDetails.inches.length > 0 ? (
+                        productDetails.inches.map((inche) =>
+                          <tr>
+                            <td>{inche.inche}</td>
+                            <td>₦{Number(inche.price).toLocaleString()}</td>
+                            <td>₦{Number(inche.discount).toLocaleString()}</td>
+                          </tr> 
+                        )
+                      ): (
+                        <tr>
+                          <td colSpan="7">No inches available</td>
+                        </tr>
+                      )} 
+                    </tbody>
+                  </table>
+                  <hr style={{border: '1px solid #FF962E'}}/>
+                  <small>{productDetails.product_description}</small>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : ''}
+      
     </>
   );
 };

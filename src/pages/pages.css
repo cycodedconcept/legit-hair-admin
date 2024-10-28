@@ -14,7 +14,7 @@ body {
     border: 0;
     box-shadow: none;
     background: #FF962E;
-    font-size: 18px;
+    font-size: 13px;
     color: #222;
     width: 100%;
     text-align: left;
@@ -28,7 +28,7 @@ body {
 
 .sidebar {
     background: #FF962E;
-    width: 345px;
+    width: 235px;
     position: fixed;
     left: 0;
     top: 0;
@@ -86,7 +86,7 @@ body {
 
 .main-content {
     transition: margin-left 300ms;
-    margin-left: 345px;
+    margin-left: 232px;
 }
 
 header {
@@ -96,8 +96,8 @@ header {
     padding: 0.5rem 1.5rem;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     position: fixed;
-    left: 345px;
-    width: calc(100% - 345px);
+    left: 235px;
+    width: calc(100% - 145px);
     top: 0;
     z-index: 100;
     transition: left 300ms;
@@ -291,7 +291,7 @@ main {
 
 table {
     
-    min-width: max-content;
+    /* min-width: max-content; */
     
     border-collapse: separate;
     border-spacing: 0px;    
@@ -312,19 +312,20 @@ thead th {
     top: 0;
     z-index: 1;
     background-color: #fff;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
 }
 
 table th, table td{
     /* position: sticky;  */
     top: 0px;
     
-    background-color: #fff;
+    /* background-color: #fff; */
     color: #fff;
     
     text-align: center;
     font-weight: normal;
-    font-size: 18px;
+    font-size: 14px;
     outline: 0.7px solid rgb(233, 229, 229);
     border: 1.5px solid rgb(233, 229, 229);
 
@@ -341,13 +342,13 @@ table th, table td {
 }
 
 table td {
-    text-align: left;
+    text-align: center;
     
-    font-size: 15px;
+    font-size: 11px;
     border: 1px solid rgb(177, 177, 177);
     padding-left: 20px;
     color: #6E7079;
-    ;
+    font-weight: 600;
     
 }
 
@@ -355,6 +356,17 @@ table th {
     font-weight: 600;
     color: #FF962E !important;
 }
+
+tbody tr td:last-child {
+    width: 3% !important;
+}
+
+.my-table tbody tr:nth-child(even) {
+    background-color: #f5eee7;
+
+}
+
+
 
 .pagination {
     position: sticky;
@@ -491,7 +503,7 @@ table th {
 .active {
     color: #FF962E;
 }
-.inactive {
+.inactive, .Inactive {
     color: #CC5F5F;
 }
 
@@ -521,7 +533,15 @@ table th {
 
 
 .btn-status {
-    background: #008000;
+    background: #fff;
+    color: #FF962E;
+    border: 1px solid #FF962E;
+}
+
+.btn-status:hover {
+    color: #fff;
+    background: #FF962E;
+    border: 0;
 }
 
 .update-button {
@@ -908,7 +928,7 @@ input, textarea, select {
 
 .search-container,  .search-container2 {
     position: relative;
-    margin-top: 50px;
+    margin-top: 14px;
 }
 
 .search-container2 {
@@ -917,7 +937,7 @@ input, textarea, select {
 
 .search-input {
     padding: 10px 20px 10px 40px; /* Space for the icon */
-    width: 100%;
+    width: 57%;
     border: 1px solid #ccc;
     border-radius: 20px;
     font-size: 16px;
