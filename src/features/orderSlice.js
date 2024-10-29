@@ -17,13 +17,18 @@ const initialState = {
   next_page: null,
   total: 0,
   total_pages: 0,
-  product: [],
 
+  product: [],
   productPage: 1,
   productTotalPages: 0,
 
-  invoicePage: 1,
-  invoiceTotalPage: 0
+  invoiceCurrentPage: 1,
+  invoicePerPage: 10,
+  invoiceTotalPages: 0,
+
+  orderCurrentPage: 1,
+  orderPerPage: 10,
+  orderTotalPages: 0,
 
 }
 
@@ -120,11 +125,14 @@ const createOrderSlice = createSlice({
       clearStatusUpdate: (state) => {
         state.success = false;
       },
+      setOrderPage: (state, action) => {
+        state.orderCurrentPage = action.payload;
+      },
+      setInvoicePage: (state, action) => {
+        state.invoiceCurrentPage = action.payload;
+      },
       setPageProduct: (state, action) => {
         state.productPage = action.payload;
-      },
-      setPageInvoice: (state, action) => {
-        state.invoicePage = action.payload;
       }
     },
     extraReducers: (builder) => {
@@ -136,15 +144,11 @@ const createOrderSlice = createSlice({
           .addCase(getOrder.fulfilled, (state, action) => {
             state.isLoading = false;
             const data = action.payload;
-
             state.order = data.data || [];
-            state.currentPage = data.page || 1;
-            state.per_page = data.per_page || 10;
-            state.pre_page = data.pre_page || null;
-            state.next_page = data.next_page || null;
-            state.total = data.total || 0;
-            state.total_pages = data.total_pages || 0;
-          })
+            state.orderCurrentPage = data.page || 1;
+            state.orderPerPage = data.per_page || 10;
+            state.orderTotalPages = data.total_pages || 0;
+          })    
           .addCase(getOrder.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.payload || 'Something went wrong';
@@ -180,15 +184,10 @@ const createOrderSlice = createSlice({
           .addCase(productItem.fulfilled, (state, action) => {
             state.isLoading = false;
             const data = action.payload;
-
             state.product = data.data || [];
             state.productPage = data.page || 1;
-            state.per_page = data.per_page || 10;
-            state.pre_page = data.pre_page || null;
-            state.next_page = data.next_page || null;
-            state.total = data.total || 0;
             state.productTotalPages = data.total_pages || 0;
-          })
+          })    
           .addCase(productItem.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.payload;
@@ -200,15 +199,11 @@ const createOrderSlice = createSlice({
           .addCase(allInvoice.fulfilled, (state, action) => {
             state.isLoading = false;
             const data = action.payload;
-
             state.invoiceData = data.data || [];
-            state.invoicePage = data.page || 1;
-            state.per_page = data.per_page || 10;
-            state.pre_page = data.pre_page || null;
-            state.next_page = data.next_page || null;
-            state.total = data.total || 0;
-            state.invoiceTotalPage = data.total_pages || 0;
-          })
+            state.invoiceCurrentPage = data.page || 1;
+            state.invoicePerPage = data.per_page || 10;
+            state.invoiceTotalPages = data.total_pages || 0;
+          })    
           .addCase(allInvoice.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.payload;
@@ -216,5 +211,5 @@ const createOrderSlice = createSlice({
     }
 });
 
-export const { clearStatusUpdate, setPageProduct, setPageInvoice } = createOrderSlice.actions; 
+export const { clearStatusUpdate, setOrderPage, setInvoicePage, setPageProduct } = createOrderSlice.actions;
 export default createOrderSlice.reducer;

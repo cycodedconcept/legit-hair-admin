@@ -534,7 +534,7 @@ const disableAll = async (e) => {
                 <span className="search-icon">&#128269;</span>
               </div>
             </div>
-            <div className="col-sm-12 col-md-12 col-lg-3 mt-3 mt-lg-5">
+            <div className="col-sm-12 col-md-12 col-lg-3 mt-3 mt-lg-3 text-left">
               <button className="pro-btn" onClick={showModal}>+ Create Company</button>
             </div>
           </div>
@@ -588,7 +588,7 @@ const disableAll = async (e) => {
             </div>
             <div>
                 {enable ? (
-                  <button className='el2-btn mb-2 mb-lg-0' onClick={disableAll}>Enable</button>
+                  <button className='el2-btn mb-2 mb-lg-0 mx-lg-2' onClick={disableAll}>Enable</button>
                 ) : ''}
 
                 {disable ? (
@@ -604,7 +604,7 @@ const disableAll = async (e) => {
                 <div>Error: {error?.message || 'Something went wrong'}</div>
             ) : (
                 <>
-                {filteredCategories?.map((category) => (
+                {/* {filteredCategories?.map((category) => (
                     <div className="col-sm-12 col-md-12 col-lg-4 mb-3" key={category.categories.id}>
                     <div style={{ border: '1px solid #FF962E', borderRadius: '15px', padding: '10px' }}>
                         <div className="d-flex justify-content-between">
@@ -639,7 +639,51 @@ const disableAll = async (e) => {
                         </div>
                     </div>
                     </div>
-                ))}
+                ))} */}
+                <table className="my-table">
+                  <thead>
+                    <tr>
+                      <th>Check</th>
+                      <th>Company</th>
+                      <th>Product</th>
+                      <th>Status</th>
+                      <th>Subcategories</th>
+                      <th>More</th>
+                      <th>Bulk Price Change</th>
+                      <th>Change Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredCategories?.map((category) => (
+                      <tr key={category.categories.id}>
+                        <td>
+                          <label className="custom-checkbox">
+                            <input type="checkbox" name="options" checked={selectedCategoryIds.includes(category.categories.id)} 
+                            onChange={() => handleCheckboxChange(category.categories.id)} />
+                            <span className="checkmark"></span>
+                          </label>
+                        </td>
+                        <td>{category.categories.category_name}</td>
+                        <td>{category.products}</td>
+                        <td className={category.categories.status === 1 ? 'Enable' : 'Disable'}>
+                          {category.categories.status === 1 ? 'Enable' : 'Disable'}
+                        </td>
+                        <td>
+                          <button className="pro-btn mt-3" onClick={() => getCat(category.categories.id)}>Subcategories</button>
+                        </td>
+                        <td>
+                          <button className="pro-btn mt-3" onClick={() => myDetails(category.categories.id)}>More</button>
+                        </td>
+                        <td>
+                          <button className='pro-btn' onClick={() => modalPrice(category.categories.id)}>bulk price change</button>
+                        </td>
+                        <td>
+                          <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
                 </>
             )}
             {renderPagination()}
@@ -665,75 +709,65 @@ const disableAll = async (e) => {
                 ) : viewCategoryDetails?.length > 0 ? (
                     viewCategoryDetails.map((detail) => (
                         <div key={detail.id}>
-                            <div className="d-block d-lg-flex justify-content-between">
-                                <div className='mb-3 doub'>
-                                    <p><b>Product Name</b></p>
-                                    <small>{detail.product_name}</small>
+                            <div className="">
+                                <div className='mb-3 doub d-flex justify-content-between'>
+                                  <p>Product Name:</p>
+                                  <small>{detail.product_name}</small>
                                 </div>
-                                <div className='doub'>
-                                    <p><b>Product Price</b></p>
-                                    <small>₦{detail.price}</small>
+                                <div className='doub d-flex justify-content-between'>
+                                    <p>Product Price:</p>
+                                    <small>₦{Number(detail.price).toLocaleString()}</small>
                                 </div>
-                                <div className='doub'>
-                                    <p><b>Product Number</b></p>
+                                <div className='doub d-flex justify-content-between'>
+                                    <p>Product Number:</p>
                                     <small>{detail.product_number}</small>
                                 </div>
                             </div>
-                            <div className="d-flex justify-content-between">
-                                <div className='text-center mb-3'>
-                                    <p><b>Product Discount</b></p>
-                                    <small>₦{detail.discount}</small>
+                            <div className="">
+                                <div className='mb-3 d-flex justify-content-between'>
+                                    <p>Product Discount:</p>
+                                    <small>₦{Number(detail.discount).toLocaleString()}</small>
                                 </div>
-                                <div className='text-center'>
-                                    <p><b>Product Rating</b></p>
+                                <div className='text-center d-flex justify-content-between'>
+                                    <p>Product Rating:</p>
                                     <small>{detail.total_rating}</small>
                                 </div>
                             </div>
                             <div className="row mt-5">
-                                <div className="col-sm-12 col-md-12 col-lg-6">
-                                    <h5 className='text-center'>Product Images</h5>
-                                    <div className="row mt-3">
-                                    {detail?.images && detail.images.length > 0 ? (
-                                        detail.images.map((image, index) => (
-                                            <div className="col-sm-12 col-md-12 col-lg-4" key={index}>
-                                                <img src={image.filename} alt="image" className='w-100 w-lg-50'/>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p>No images found</p>
-                                    )}
+                              {detail?.images && detail.images.length > 0 ? (
+                                  detail.images.map((image, index) => (
+                                      <div className="col-sm-12 col-md-12 col-lg-4 text-center" key={index}>
+                                          <img src={image.filename} alt="Thumbnail" className='img-thumbnail' style={{width: '100px'}}/>
+                                      </div>
+                                  ))
+                              ) : (
+                                  <p>No images found</p>
+                              )}
 
-                                    </div>
-                                </div>
-                                <div className="col-sm-12 col-md-12 col-lg-6">
-                                    <h5 className='text-center'>Product Inches</h5>
-                                    {detail?.inches && detail.inches.length > 0 ? (
-                                        detail.inches.map((inch, index) => 
-                                            <div key={index}>
-                                                <div className="d-flex justify-content-between">
-                                                    <p>Inches:</p>
-                                                    <small>{inch.inche}</small>
-                                                </div>
-                                                <div className="d-flex justify-content-between">
-                                                    <p>Price:</p>
-                                                    <small>₦{inch.price}</small>
-                                                </div>
-                                                <div className="d-flex justify-content-between">
-                                                    <p>Discount:</p>
-                                                    <small>₦{inch.discount}</small>
-                                                </div>
-                                                {index !== detail.inches.length - 1 && (
-                                                    <hr style={{border: '1px solid #FF962E'}}/>
-                                                )}
-                                            </div>
-                                        )
-                                    ) : (
-                                        <p className='text-center'>No inches records found</p>
-                                    )}
-
-                                </div>
                             </div>
-                            <hr style={{border: '1px solid #FF962E'}}/>
+                            <table className="my-table my-5">
+                              <thead>
+                                <tr>
+                                  <th>Inches</th>
+                                  <th>Price</th>
+                                  <th>Discount</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {detail?.inches && detail.inches.length > 0 ? (
+                                  detail.inches.map((inch, index) => 
+                                    <tr key={index}>
+                                      <td>{inch.inche}</td>
+                                      <td>₦{Number(inch.price).toLocaleString()}</td>
+                                      <td>₦{Number(inch.discount).toLocaleString()}</td>
+                                    </tr>
+                                  )
+                                ) : (
+                                  <p className='text-center'>No inches records found</p>
+                                )}
+                              </tbody>
+                            </table>
+                            <hr style={{border: '1px solid #FF962E'}} />
                         </div>
                     ))
                 ) : (

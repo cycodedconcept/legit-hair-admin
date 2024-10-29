@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrder, fetchDetails, updateStatus, clearStatusUpdate, allInvoice, setPageInvoice } from '../features/orderSlice';
+import { getOrder, fetchDetails, updateStatus, clearStatusUpdate, allInvoice, setOrderPage, setInvoicePage } from '../features/orderSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faCaretRight, 
@@ -20,33 +20,53 @@ const Order = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [deliveryStatus, setDeliveryStatus] = useState('');
   const [productView, setProductView] = useState(true);
-  const [showInvoice, setShowInvoice] = useState(true); 
+  const [showInvoice, setShowInvoice] = useState(true);
+  const [view, setView] = React.useState('orders');
+  const [showButton, setShowButton] = useState(true);
 
   const dispatch = useDispatch();
-  const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status, invoiceData, invoicePage, invoiceTotalPage } = useSelector((state) => state.order);
+  const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status, invoiceData, orderCurrentPage,
+    orderTotalPages,
+    invoiceCurrentPage,
+    invoiceTotalPages, } = useSelector((state) => state.order);
 
   const token = localStorage.getItem("key");
   const moid = localStorage.getItem("moid");
 
 
+  // useEffect(() => {
+  //   if (token) {
+  //     dispatch(getOrder({ page: currentPage, token }));
+  //   }
+  // }, [dispatch, currentPage, token]);
+
   useEffect(() => {
-    if (token) {
-      dispatch(getOrder({ page: currentPage, token }));
+    if (view === 'orders') {
+      dispatch(getOrder({ token, page: orderCurrentPage }));
+    } else if (view === 'invoices') {
+      dispatch(allInvoice({ token, page: invoiceCurrentPage }));
     }
-  }, [dispatch, currentPage, token]);
+  }, [dispatch, token, view, orderCurrentPage, invoiceCurrentPage]);
 
 
 
 
   const viewDetails = (id) => {
     setShow(false);
+    setShowButton(false);
     dispatch(fetchDetails({ token, id }));
   };
 
+  
   const handlePageChange = (page) => {
-    setPageInvoice(page);
-    dispatch(getOrder({ page, token }));
+    if (view === 'orders') {
+      dispatch(setOrderPage(page));
+    } else if (view === 'invoices') {
+      dispatch(setInvoicePage(page));
+    }
   };
+
+  
 
 
 
@@ -68,6 +88,7 @@ const Order = () => {
 
   const changeView = () => {
     setShow(true);
+    setShowButton(true);
   }
 
   const changeProduct = () => {
@@ -133,12 +154,14 @@ const Order = () => {
     <>
     {productView ? (
       <>
-       <div className="text-left mt-5 mt-lg-3">
+      {showButton ? (
+        <div className="text-left my-5 mt-lg-3">
           <button className='pro-btn my-3 mx-lg-3' onClick={ecom}>Create Manual Order</button>
           <button className='pro-btn my-3 mx-lg-3' onClick={evoice}>View All Invoice</button>
           <button className="pro-btn my-3 mx-lg-3" onClick={ivoice}>View Orders</button>
-
         </div>
+        ) : ''}
+       
         {show ? (
         isLoading ? (
           <div>Loading...</div>
@@ -148,76 +171,64 @@ const Order = () => {
           <>
           {showInvoice ? (
           <>
-            <div className="outer-wrapper mt-5">
-              <div className="table-wrapper">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th style={{width: '250px'}}>Delivery Country</th>
-                      <th style={{width: '250px'}}>Delivery State</th>
-                      <th style={{width: '250px'}}>Delivery Address</th>
-                      <th>Date</th>
-                      <th>Date Delivered</th>
-                      <th style={{width: '250px'}}>Delivery Landmark</th>
-                      <th>Order ID</th>
-                      <th>Amount Paid</th>
-                      <th>Payment Method</th>
-                      <th>Payment Status</th>
-                      <th>Details</th>
+            <table className="my-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Amount Paid</th>
+                  <th>Payment Method</th>
+                  <th>Payment Status</th>
+                  <th>Date</th>
+                  <th>Delivery Status</th>
+                  <th>View</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {order && order.length > 0 ? (
+                  order.map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.order_id}</td>
+                      <td>₦{Number(item.amount_paid).toLocaleString()}</td>
+                      <td>{item.payment_method}</td>
+                      <td>{item.date}</td>
+                      <td>{item.date_delivered}</td>
+                      <td>
+                        <button className={item.payment_status}>
+                          {item.payment_status}
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          style={{
+                            backgroundColor: '#FF962E',
+                            color: '#fff',
+                            outline: 'none',
+                            border: '0',
+                            borderRadius: '10px',
+                          }}
+                          onClick={() => viewDetails(item.id)}
+                        >
+                          View More
+                        </button>
+                      </td>
+                      <td><FontAwesomeIcon icon={faEdit} onClick={() => displayModal(item.id)}/></td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {order && order.length > 0 ? (
-                      order.map((item) => (
-                        <tr key={item.id}>
-                          <td>{item.delivery_country}</td>
-                          <td>{item.delivery_state}</td>
-                          <td>{item.delivery_address}</td>
-                          <td>{item.date}</td>
-                          <td>{item.date_delivered}</td>
-                          <td>{item.delivery_landmark}</td>
-                          <td>{item.order_id}</td>
-                          <td>₦{Number(item.amount_paid).toLocaleString()}</td>
-                          <td>{item.payment_method}</td>
-                          <td>
-                            <button className={item.payment_status}>
-                              {item.payment_status}
-                            </button>
-                          </td>
-                          <td>
-                            <button
-                              style={{
-                                backgroundColor: '#FF962E',
-                                color: '#fff',
-                                outline: 'none',
-                                border: '0',
-                                borderRadius: '10px',
-                              }}
-                              onClick={() => viewDetails(item.id)}
-                            >
-                              View More
-                            </button>
-                          </td>
-                          <td><FontAwesomeIcon icon={faEdit} onClick={() => displayModal(item.id)}/></td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="11">No order available</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-
-              </div>
-            </div>
-            {total_pages > 1 && (
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="11">No order available</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            {view === 'orders' && orderTotalPages > 1 && (
               <div className="pagination">
-                {Array.from({ length: total_pages }, (_, i) => (
+                {Array.from({ length: orderTotalPages }, (_, i) => (
                   <button
                     key={i + 1}
                     onClick={() => handlePageChange(i + 1)}
-                    disabled={currentPage === i + 1}
+                    disabled={orderCurrentPage === i + 1}
                     className="mx-1"
                     style={{
                       backgroundColor: '#FF962E',
@@ -230,12 +241,13 @@ const Order = () => {
                 ))}
               </div>
             )}
+
           </>
           ) : (
           <>
             <div className="outer-wrapper">
               <div className="table-wrapper">
-                <table className="table">
+                <table className="my-table">
                   <thead>
                     <tr>
                       <th>Invoice Number</th>
@@ -277,13 +289,13 @@ const Order = () => {
                 </table>
               </div>
             </div>
-            {invoiceTotalPage > 1 && (
+            {view === 'invoices' && invoiceTotalPages > 1 && (
               <div className="pagination">
-                {Array.from({ length: invoiceTotalPage }, (_, i) => (
+                {Array.from({ length: invoiceTotalPages }, (_, i) => (
                   <button
                     key={i + 1}
                     onClick={() => handlePageChange(i + 1)}
-                    disabled={invoicePage === i + 1}
+                    disabled={invoiceCurrentPage === i + 1}
                     className="mx-1"
                     style={{
                       backgroundColor: '#FF962E',
@@ -308,121 +320,87 @@ const Order = () => {
                 <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Details</p>
             </div>
 
-            <div className="d-block d-md-flex d-lg-flex justify-content-between">
-                <div>
-                    <p>Delivery Date</p>
+            <div>
+                <div className='d-flex justify-content-between'>
+                    <p>Delivery Date:</p>
                     <div className='d-flex'>
                         <FontAwesomeIcon icon={faCalendar} style={{color: '#FF962E'}}/>
                         <p className='cc mx-2'>{orderDetails.date}</p>
                     </div>
                 </div>
-                <div>
-                    <p>Order Number</p>
+                <div className='d-flex justify-content-between'>
+                    <p>Order Number:</p>
                     <div className='d-flex'>
                         <FontAwesomeIcon icon={faListAlt} style={{color: '#FF962E'}}/>
                         <p className='cc mx-2'>{orderDetails.order_id}</p>
                     </div>
                 </div>
-                <div>
-                    <p>Payment Type</p>
+                <div className='d-flex justify-content-between'>
+                    <p>Payment Type:</p>
                     <p className='cc'>{orderDetails.payment_status}</p>
                 </div>
-                <div>
-                    <p>Payment Type</p>
+                <div className='d-flex justify-content-between'>
+                    <p>Payment Type:</p>
                     <p className='cc'>{orderDetails.payment_method}</p>
                 </div>
 
-                <div>
-                    <p>Order Status</p>
+                <div className='d-flex justify-content-between'>
+                    <p>Order Status:</p>
                     <p className={orderDetails.delivery_status}>{orderDetails.delivery_status}</p>
                 </div>
             </div>
-
-            <div className="row mt-4">
-                <div className="col-sm-12 col-md-12 col-lg-8 sp p-3">
-                    {orderDetails?.product?.map((order) => 
-                        <>
-                            <div className='d-flex justify-content-between mb-3'>
-                                <h4 className='mb-5' style={{color: '#FF962E'}}>Product Details</h4>
-                                <div>
-                                <p>Category Name</p>
-                                <p style={{color: '#FF962E'}}>{order.category_name}</p>
-                                </div>
-                            </div>
-                            <hr style={{border: '1px solid #FF962E'}}/>
-                            <div className='d-flex justify-content-between'>
-                                <p>Product Amount:</p>
-                                <p>₦{order.product_amount}</p>
-                            </div>
-                            <div className='d-flex justify-content-between'>
-                                <p>Product Inches:</p>
-                                <p>{order.inches}</p>
-                            </div>
-                            <div className='d-flex justify-content-between'>
-                                <div>
-                                    <p>Initial Amount</p>
-                                    <p className='text-center'>₦{order.initial_amount}</p>
-                                </div>
-                                <div>
-                                    <p>Order Quantity</p>
-                                    <p className='text-center'>{order.order_quantity}</p>
-                                </div>
-                                <div>
-                                    <p>Discounted</p>
-                                    <p className='text-center'>{order.discounted}</p>
-                                </div>
-                            </div>
-                            <hr style={{border: '1px solid #FF962E'}}/>
-
-                            <h5 className='mb-3' style={{color: '#FF962E'}}>Product Images:</h5>
-                            <div className='d-flex justify-content-between'>
-                                {order.images?.map((image, index) =>
-                                  <img src={image.filename} alt="image" className='w-25' key={index}/> 
-                                )}
-                            </div>
-                        </>
-                    )}
-
-                    <hr style={{border: '1px solid #FF962E'}}/>
-                    <h5 className='mb-3' style={{color: '#FF962E'}}>Delivery Information</h5>
-                    <div className='d-flex justify-content-between mt-3'>
-                        <p>Delivery Country:</p>
-                        <small>{orderDetails?.delivery_country}</small>
-                    </div>
-                    <div className='d-flex justify-content-between'>
-                        <p>Delivery State:</p>
-                        <small>{orderDetails?.delivery_state}</small>
-                    </div>
-                    <div className='d-flex justify-content-between'>
-                        <p>Delivery Landmark:</p>
-                        <small>{orderDetails?.delivery_landmark}</small>
-                    </div>
-                    <div className='d-flex justify-content-between'>
-                        <p>Delivery Address:</p>
-                        <small>{orderDetails?.delivery_address}</small>
-                    </div>
+              {orderDetails?.product?.map((image, index) => 
+                <div key={index} className="d-flex justify-content-between">
+                  {image.images?.map((img) =>
+                    <img src={img.filename} alt="Thumbnail" className="img-thumbnail w-25 p-3"/> 
+                  )}
                 </div>
-                <div className="col-sm-12 col-md-12 col-lg-4 p-3">
-                    <h5>Ordered By</h5>
+              )}
+            
+            <table className="my-table my-5">
+              <thead>
+                <tr>
+                  <th>Company Name</th>
+                  <th>Product Amount</th>
+                  <th>Initial Amount</th>
+                  <th>Inches</th>
+                  <th>Quantity</th>
+                  <th>Discounted</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderDetails?.product?.map((order) =>
+                  <tr>
+                    <td>{order.category_name}</td>
+                    <td>₦{Number(order.product_amount).toLocaleString()}</td>
+                    <td>₦{Number(order.initial_amount).toLocaleString()}</td>
+                    <td>{order.inches}</td>
+                    <td>{order.order_quantity}</td>
+                    <td>{order.discounted === 0 ? "No" : "Yes"}</td>
+                  </tr> 
+                )}
+              </tbody>
+            </table>
 
-                    <div className='d-flex justify-content-between'>
-                      <p><FontAwesomeIcon icon={faUserAlt} style={{color: '#FF962E'}}/></p>
-                      <small>{orderDetails?.ordered_by?.name}</small>
-                    </div>
-                    <div className='d-flex justify-content-between'>
-                      <p><FontAwesomeIcon icon={faEnvelope} style={{color: '#FF962E'}}/></p>
-                      <small>{orderDetails?.ordered_by?.email}</small>
-                    </div>
-                    <div className='d-flex justify-content-between'>
-                      <p><FontAwesomeIcon icon={faMobile} style={{color: '#FF962E'}}/></p>
-                      <small>{orderDetails?.ordered_by?.phone_number}</small>
-                    </div>
-                    
-                    <div className='d-flex justify-content-between'>
-                       <p><FontAwesomeIcon icon={faUserCheck} style={{color: '#FF962E'}}/></p>
-                       <small>{orderDetails?.ordered_by?.account_status}</small>
-                    </div>
-                </div>
+            <h5>Ordered By</h5>
+            <div className='d-flex justify-content-between'>
+              <p><FontAwesomeIcon icon={faUserAlt} style={{color: '#FF962E'}}/></p>
+              <small>{orderDetails?.ordered_by?.name}</small>
+            </div>
+            <div className='d-flex justify-content-between'>
+              <p><FontAwesomeIcon icon={faEnvelope} style={{color: '#FF962E'}}/></p>
+              <small>{orderDetails?.ordered_by?.email}</small>
+            </div>
+            <div className='d-flex justify-content-between'>
+              <p><FontAwesomeIcon icon={faMobile} style={{color: '#FF962E'}}/></p>
+              <small>{orderDetails?.ordered_by?.phone_number}</small>
+            </div>
+            
+            <div className='d-flex justify-content-between'>
+                <p><FontAwesomeIcon icon={faUserCheck} style={{color: '#FF962E'}}/></p>
+                <small className={
+                  orderDetails?.ordered_by?.account_status === 0 ? 'Inactive' : 'Active'
+                }>{orderDetails?.ordered_by?.account_status === 0 ? 'Inactive' : 'Active'}</small>
             </div>
           </>
       )}

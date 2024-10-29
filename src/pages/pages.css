@@ -97,7 +97,7 @@ header {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     position: fixed;
     left: 235px;
-    width: calc(100% - 145px);
+    width: calc(100% - 235px);
     top: 0;
     z-index: 100;
     transition: left 300ms;
@@ -498,6 +498,14 @@ tbody tr td:last-child {
     color: #FF962E;
     background: #fff;
     border: 0!important;
+}
+
+.Enable {
+    color: #4CAF50;
+}
+
+.Disable {
+    color: crimson;
 }
 
 .active {

@@ -537,7 +537,7 @@ const Products = () => {
 
                   <div className="row">
                     {productDetails.images.map((image) =>
-                      <div className="col-sm-12 col-md-12 col-lg-4 d-flex justify-content-center">
+                      <div className="col-sm-4 col-md-12 col-lg-4 d-flex justify-content-center">
                         <div style={{
                             backgroundImage: `url(${image.filename})`,
                             backgroundRepeat: 'no-repeat',
@@ -551,7 +551,7 @@ const Products = () => {
                     )}
                   </div>
                   <hr style={{border: '1px solid #FF962E'}}/>
-                  <table className='table'>
+                  <table className='my-table'>
                     <thead>
                       <tr>
                         <th>Inches</th>
