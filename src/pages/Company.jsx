@@ -39,9 +39,11 @@ const Company = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
   const [categories, setCategories] = useState([]);
-  const [categoryHierarchy, setCategoryHierarchy] = useState([
-    { level: 0, selectedCategory: '', subcategories: [] }
-  ]);
+  // const [categoryHierarchy, setCategoryHierarchy] = useState([
+  //   { level: 0, selectedCategory: '', subcategories: [] }
+  // ]);
+  
+  
   const [after, setAfter] = useState(false);
 
   
@@ -127,6 +129,11 @@ const Company = () => {
     setModalVisible(false);
     setMode(false);
     setAfter(false);
+    localStorage.removeItem("main");
+    localStorage.removeItem("selectedCategory");
+    localStorage.removeItem("cname");
+    setCatv('')
+
   };
 
   const newCategory = (e) => {
@@ -211,13 +218,34 @@ const Company = () => {
     }
   };
 
+  // const getCat = (id) => {
+  //   localStorage.setItem("main", id);
+  //     if (token) {
+  //       console.log(id);
+  //       setMode(true);
+  //       dispatch(fetchSubcategories({token, id}))
+  //     }
+  // }
+
   const getCat = (id) => {
-      if (token) {
-          console.log(id);
-          setMode(true);
-          dispatch(fetchSubcategories({token, id}))
-      }
-  }
+    localStorage.setItem("main", id);
+    if (token) {
+      console.log(id);
+      setMode(true);
+      dispatch(fetchSubcategories({ token, id }))
+        .then((response) => {
+          const subcategories = response.payload;
+          
+          if (subcategories.length > 0) {
+            // Update hierarchy only if subcategories exist
+            const newHierarchy = [...categoryHierarchy];
+            newHierarchy.push({ level: newHierarchy.length, selectedCategory: '', subcategories });
+            setCategoryHierarchy(newHierarchy);
+          }
+        });
+    }
+  };
+  
 
   const handlePageChange = (page) => {
     if (currentPage !== page) {
@@ -415,59 +443,134 @@ const disableAll = async (e) => {
   //   );
   // };
 
+  // const saveToLocalStorage = (selectedId) => {
+  //   localStorage.setItem('selectedCategory', selectedId);
+  // };
+
+  // const handleCategoryChange = async (event, level) => {
+  //   const selectedValue = event.target.value;
+
+  //   saveToLocalStorage(selectedValue);
+
+  //   const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_sub_category?cat_id=${selectedValue}`, {
+  //     headers: { 
+  //       Authorization: `Bearer ${token}` 
+  //   },
+  //   });
+  //   const subcategories = response.data;
+
+  //   const newHierarchy = [...categoryHierarchy];
+  //   newHierarchy[level].selectedCategory = selectedValue;
+  //   newHierarchy[level].subcategories = subcategories;
+
+  //   if (subcategories.length > 0) {
+  //     newHierarchy[level + 1] = { level: level + 1, selectedCategory: '', subcategories: [] };
+  //   } else {
+  //     newHierarchy.length = level + 1;
+  //   }
+
+  //   setCategoryHierarchy(newHierarchy);
+  // };
+
+  const [categoryHierarchy, setCategoryHierarchy] = useState([
+    { level: 0, selectedCategory: '', subcategories: subCategories }
+  ]);
+
   const saveToLocalStorage = (selectedId) => {
     localStorage.setItem('selectedCategory', selectedId);
   };
-
+  
+  // const handleCategoryChange = async (event, level) => {
+  //   const selectedValue = event.target.value;
+  //   saveToLocalStorage(selectedValue);
+  
+  //   const response = await axios.get(
+  //     `https://testbackendproject.pluralcode.academy/admin/get_sub_category?cat_id=${selectedValue}`, 
+  //     { headers: { Authorization: `Bearer ${token}` }}
+  //   );
+  //   const subcategories = response.data;
+  
+  //   const newHierarchy = [...categoryHierarchy];
+  //   newHierarchy[level].selectedCategory = selectedValue;
+  //   newHierarchy[level].subcategories = subcategories;
+  
+  //   if (subcategories.length > 0) {
+  //     newHierarchy[level + 1] = { level: level + 1, selectedCategory: '', subcategories: [] };
+  //   } else {
+  //     newHierarchy.length = level + 1;
+  //   }
+  
+  //   setCategoryHierarchy(newHierarchy);
+  // };
+  
   const handleCategoryChange = async (event, level) => {
     const selectedValue = event.target.value;
-
     saveToLocalStorage(selectedValue);
-
-    const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_sub_category?cat_id=${selectedValue}`, {
-      headers: { 
-        Authorization: `Bearer ${token}` 
-    },
-    });
+  
+    // Find the name of the selected category
+    const selectedCategoryName = categoryHierarchy[level].subcategories.find(
+      (subcategory) => subcategory.id === Number(selectedValue)
+    )?.category_name || "Category not found";
+  
+    console.log("Selected Value:", selectedValue); // Debug log
+    console.log("Selected Category Name:", selectedCategoryName); // Log the selected category name
+    localStorage.setItem("cname", selectedCategoryName)
+  
+    // Fetch subcategories for the selected value
+    const response = await axios.get(
+      `https://testbackendproject.pluralcode.academy/admin/get_sub_category?cat_id=${selectedValue}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     const subcategories = response.data;
-
-    const newHierarchy = [...categoryHierarchy];
-    newHierarchy[level].selectedCategory = selectedValue;
-    newHierarchy[level].subcategories = subcategories;
-
+  
+    // Copy the hierarchy up to the current level
+    const newHierarchy = categoryHierarchy.slice(0, level + 1);
+  
+    // Update the current level with the selected category and subcategories
+    newHierarchy[level] = {
+      ...newHierarchy[level],
+      selectedCategory: selectedValue,
+      subcategories: subcategories.length > 0 ? subcategories : []
+    };
+  
+    // Add a new level if subcategories are present
     if (subcategories.length > 0) {
       newHierarchy[level + 1] = { level: level + 1, selectedCategory: '', subcategories: [] };
-    } else {
-      newHierarchy.length = level + 1;
     }
-
+  
     setCategoryHierarchy(newHierarchy);
   };
-
+  
+  
+  
   const handleSubmit = () => {
     const storedCategory = localStorage.getItem('selectedCategory');
-    console.log(storedCategory)
+    const mainId = localStorage.getItem("main");
     
-    if (catv) {
-      dispatch(createCategory({token, cat_name: catv, cat_parent_id: storedCategory}));
+    const catParentId = storedCategory || mainId;
+    console.log(catv, catParentId)
+  
+    if (catv && catParentId) {
+      dispatch(createCategory({ token, cat_name: catv, cat_parent_id: catParentId }));
       Swal.fire({
         icon: 'success',
         title: 'Category added successfully!',
         showConfirmButton: false,
         timer: 3000
       });
-
+  
       setCatv('');
       hideModal();
       dispatch(fetchCompanyCategory({ token, page: 1 }));
-    }else {
+    } else {
       Swal.fire({
-          icon: 'error',
-          title: 'Failed to add category',
-          showConfirmButton: true,
+        icon: 'error',
+        title: 'Failed to add category',
+        showConfirmButton: true,
       });
     }
-  }
+  };
+  
 
   const modalPrice = (id) => {
     setAfter(true);
@@ -829,8 +932,7 @@ const disableAll = async (e) => {
                       </div>
                       <div className="modal-body">
                           <label>Subcategory Name</label>
-                          {/* <CategorySelect /> */}
-                          {categoryHierarchy.map((categoryLevel, index) => (
+                          {/* {categoryHierarchy.map((categoryLevel, index) => (
                             <div key={index}>
                               <select onChange={(event) => handleCategoryChange(event, index)} value={categoryLevel.selectedCategory} className='mb-3'>
                                 <option value="">Select Category</option>
@@ -848,7 +950,30 @@ const disableAll = async (e) => {
                                   ))}
                               </select>
                             </div>
+                          ))} */}
+
+                          {categoryHierarchy.map((categoryLevel, index) => (
+                            <div key={index}>
+                              {categoryLevel.subcategories && categoryLevel.subcategories.length > 0 && (
+                                <>
+                                  <select
+                                    onChange={(event) => handleCategoryChange(event, index)}
+                                    value={categoryLevel.selectedCategory}
+                                    className="mb-3"
+                                  >
+                                    <option value="">Select Category</option>
+                                    {categoryLevel.subcategories.map((subcategory) => (
+                                      <option key={subcategory.id} value={subcategory.id}>
+                                        {subcategory.category_name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </>
+                              )}
+                            </div>
                           ))}
+
+                          <p>{localStorage.getItem("cname")}</p>
 
                           <label className='mt-3'>New Name</label>
                           <input type="text" placeholder='category name' value={catv} onChange={(e) => setCatv(e.target.value)}/>

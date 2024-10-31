@@ -27,27 +27,52 @@ const Report = () => {
     setOrder(false);
     setProduct(false);
     
-    if (value === 'customers') {
-      setCustomer(true);
-    }
-    else if (value === 'orders') {
-      setOrder(true);
-    }
-    else if (value === 'products') {
-      setProduct(true);
-    } 
+    
     setShow(false)
   }
+
+  // const handleStatusChange = (e) => {
+  //   const value = e.target.value;
+  //   setMyValue(value);
+
+  //   setCustomer(false);
+  //   setOrder(false);
+  //   setProduct(false);
+    
+  //   if (value === 'customers' && token) {
+  //     setCustomer(true);
+  //     dispatch(getCustomerReport({token, item: myValue}));
+  //   }
+  //   else if (value === 'orders' && token) {
+  //     setOrder(true);
+  //     dispatch(getCustomerReport({token, item: myValue}));
+  //   }
+  //   else if (value === 'products' && token) {
+  //     dispatch(getCustomerReport({token, item: myValue}));
+  //     setProduct(true);
+  //   } 
+  //   setShow(true)
+  // }
 
 
   const getReport = (e) => {
     e.preventDefault();
     setShow(true);
+    if (myValue === 'customers') {
+      setCustomer(true);
+    }
+    else if (myValue === 'orders') {
+      setOrder(true);
+    }
+    else if (myValue === 'products') {
+      setProduct(true);
+    }
     
     if (token) {
       dispatch(getCustomerReport({token, item: myValue}));
     }
   }
+  
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -82,7 +107,14 @@ const Report = () => {
     "Total Amount": item.totalAmountPaid,
     "Order ID": item.orderId,
     "Date Delivered": item.dateDelivered,
+    "Products Ordered": item.productsOrdered
+      .map(product => 
+        `Name: ${product.productName}, Price: ${product.productPrice}, Inches: ${product.inches}, Quantity: ${product.OrderQuantity}, Discounted: ${product.discounted}, Company: ${product.companyName}`
+      )
+      .join("\n") // Join products with a newline or any separator you prefer
   }));
+  
+  
 
   const productData = currentItems?.map(item => ({
     "Product Name": item.name,
@@ -97,41 +129,51 @@ const Report = () => {
 
   return (
     <>
-    <div className="text-left mt-5 mt-lg-3">
-      {customer && (
-        <button className='pro-btn' onClick={() => downloadExcel(customerData, 'Customers')}>
-          <FontAwesomeIcon icon={faFileExcel} className="mx-2"/>Customers Export to Excel
-        </button>
-      )}
-
-      {order && (
-        <button className='pro-btn' onClick={() => downloadExcel(orderData, 'Orders')}>
-          <FontAwesomeIcon icon={faFileExcel} className="mx-2"/>Orders Export to Excel
-        </button>
-      )}
-
-      {product && (
-        <button className='pro-btn' onClick={() => downloadExcel(productData, 'Products')}>
-          <FontAwesomeIcon icon={faFileExcel} className="mx-2"/>Products Export to Excel
-        </button>
-      )}
-    </div>
-
-    <form style={{ width: '100%' }} onSubmit={getReport}>
-        <div className="form-group mb-4">
-          <label>Select Report</label>
-          <select className='w-100' name='report_type' value={myValue} onChange={handleStatusChange}>
-            <option value="">--Choose Option--</option>
-            <option value="customers">Customers</option>
-            <option value="products">Products</option>
-            <option value="orders">Orders</option>
-          </select>
-          <button className='log-btn mt-3'>Get Report</button>
+    <form style={{ width: '100%', padding: '0' }} onSubmit={getReport} className="mt-5 mt-lg-3">
+      <div className="row">
+        <div className="col-sm-12 col-md-12 col-lg-4">
+          <div className="form-group mb-4">
+            <label>Select Report</label>
+            <select className='w-100' name='report_type' value={myValue} onChange={handleStatusChange}>
+              <option value="">--Choose Option--</option>
+              <option value="customers">Customers</option>
+              <option value="products">Products</option>
+              <option value="orders">Orders</option>
+            </select>
+          </div>
         </div>
+        <div className="col-sm-12 col-md-12 col-lg-4">
+          <button className='pro-btn' style={{marginTop: '40px'}}>Get Report</button>
+          
+        </div>
+        <div className="col-sm-12 col-md-12 col-lg-4">
+        <div className="text-left" style={{marginTop: '40px'}}>
+            {customer && (
+              <button className='pro-btn' onClick={() => downloadExcel(customerData, 'Customers')}>
+                <FontAwesomeIcon icon={faFileExcel} className="mx-2"/>Customers Export to Excel
+              </button>
+            )}
+
+            {order && (
+              <button className='pro-btn' onClick={() => downloadExcel(orderData, 'Orders')}>
+                <FontAwesomeIcon icon={faFileExcel} className="mx-2"/>Orders Export to Excel
+              </button>
+            )}
+
+            {product && (
+              <button className='pro-btn' onClick={() => downloadExcel(productData, 'Products')}>
+                <FontAwesomeIcon icon={faFileExcel} className="mx-2"/>Products Export to Excel
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
       </form>
 
+      
 
-      <div className='bodija'>
+
+      <div className='mt-5'>
       {show ? (
         <>
          {isLoading ? (
@@ -141,36 +183,32 @@ const Report = () => {
       ) : (
         <>
           {myValue === 'customers' && (
-            <div className="outer-wrapper" style={{maxWidth: '100%'}}>
-              <div className="table-wrapper">
-                <table className="table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Status</th>
+            <table className="my-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentItems?.length > 0 ? (
+                currentItems.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.name}</td>
+                    <td>{item.email}</td>
+                    <td>{item.phone_number}</td>
+                    <td>{item.account_status}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {currentItems?.length > 0 ? (
-                    currentItems.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.name}</td>
-                        <td>{item.email}</td>
-                        <td>{item.phone_number}</td>
-                        <td>{item.account_status}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="4">No customers found</td>
-                    </tr>
-                  )}
-                </tbody>
-                </table>
-              </div>
-            </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">No customers found</td>
+                </tr>
+              )}
+            </tbody>
+            </table>
             
           )}
 
@@ -179,61 +217,28 @@ const Report = () => {
             {currentItems.length > 0 ? (
               currentItems.map((item, index) => (
                 <>
-                <div className="d-block d-lg-flex justify-content-between mb-5">
-                  <div className='mb-3 doub'>
-                    <p style={{color: '#FF962E'}}>Customer Name:</p>
-                    <p>{item.customerName}</p>
-                  </div>
-                  <div className='mb-3 doub'>
-                    <p style={{color: '#FF962E'}}>Delivery Date:</p>
-                    <p>{item.date}</p>
-                  </div>
-                  <div className='mb-3 doub'>
-                    <p style={{color: '#FF962E'}}>Payment Status:</p>
-                    <button className={item.paymentStatus}>{item.paymentStatus}</button>
-                  </div>
-                  <div className='mb-3 doub'>
-                    <p style={{color: '#FF962E'}}>Payment Method:</p>
-                    <p>{item.paymentMethod}</p>
+                <div className="row">
+                  <div className="col-sm-12 col-md-12 col-lg-6" style={{borderRight: '1px solid #FF962E', borderRadius: '20px' }}>
+                    <div className='mb-3 d-flex justify-content-between'>
+                      <p style={{color: '#FF962E'}}>Customer Name:</p>
+                      <p>{item.customerName}</p>
+                    </div>
+                    <div className='mb-3 d-flex justify-content-between'>
+                      <p style={{color: '#FF962E'}}>Delivery Date:</p>
+                      <p>{item.date}</p>
+                    </div>
+                    <div className='mb-3 d-flex justify-content-between'>
+                      <p style={{color: '#FF962E'}}>Payment Status:</p>
+                      <button className={item.paymentStatus}>{item.paymentStatus}</button>
+                    </div>
+                    <div className='mb-3 d-flex justify-content-between'>
+                      <p style={{color: '#FF962E'}}>Payment Method:</p>
+                      <p>{item.paymentMethod}</p>
+                    </div>
                   </div>
                   
-                </div>
-                <div className="row">
-                  <div className="col-sm-12 col-md-12 col-lg-7" style={{borderRight: '1px solid #FF962E', borderRadius: '20px'}}>
-                    {item.productsOrdered.map((product) =>
-                    <>
-                      <div className="d-flex justify-content-between">
-                        <p>Product Name:</p>
-                        <small style={{width: '370px'}}>{product.productName}</small>
-                      </div>
-
-                      <div className="d-flex justify-content-between">
-                        <p>Product Price:</p>
-                        <small>₦{product.productPrice}</small>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <p>Inches:</p>
-                        <small>{product.inches}</small>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <p>Order Quantity:</p>
-                        <small>{product.orderQuantity}</small>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <p>Discounted:</p>
-                        <small>{product.discounted}</small>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <p>Company Name:</p>
-                        <small>{product.companyName}</small>
-                      </div>
-
-                      </>
-                      
-                    )}
-                  </div>
-                  <div className="col-sm-12 col-md-12 col-lg-5">
-                    <div className="d-flex justify-content-between mb-3">
+                  <div className="col-sm-12 col-md-12 col-lg-6">
+                  <div className="d-flex justify-content-between mb-3">
                       <p>Delivery Country:</p>
                       <small style={{width: '200px'}}>{item.deliveryCountry}</small>
                     </div>
@@ -263,6 +268,30 @@ const Report = () => {
                     </div>
                   </div>
                 </div>
+                <table className="my-table my-5">
+                  <thead>
+                    <tr>
+                      <th style={{width: '250px', textAlign: 'left'}}>Product Name</th>
+                      <th>Price</th>
+                      <th>Inches</th>
+                      <th>Quantity</th>
+                      <th>Discounted</th>
+                      <th>Company</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {item.productsOrdered.map((product, index) => 
+                      <tr key={index}>
+                        <td style={{width: '250px', textAlign: 'left'}}>{product.productName}</td>
+                        <td>₦{Number(product.productPrice).toLocaleString()}</td>
+                        <td>{product.inches}</td>
+                        <td>{product.orderQuantity}</td>
+                        <td>{product.discounted}</td>
+                        <td>{product.companyName}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
                 {index !== currentItems.length - 1 && (
                     <hr style={{border: '1px solid #FF962E'}}/>
                 )}
@@ -278,46 +307,42 @@ const Report = () => {
           )}
 
           {myValue === 'products' && (
-            <div className="outer-wrapper">
-              <div className="table-wrapper">
-                <table className="table">
-                <thead>
-                  <tr>
-                    <th style={{width: '250px'}}>Product Name</th>
-                    <th>Product Price</th>
-                    <th>Product Discount</th>
-                    <th style={{width: '250px'}}>Product Description</th>
-                    <th>Product Number</th>
-                    <th>Product Stock</th>
-                    <th>Order Count</th>
-                    <th>Product Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentItems?.length > 0 ? (
-                    currentItems.map((item) => {
-                      return (
-                        <tr key={item.id}>
-                          <td>{item.name}</td>
-                          <td>₦{item.price}</td>
-                          <td>₦{item.discount}</td>
-                          <td>{item.product_description}</td>
-                          <td>{item.product_number}</td>
-                          <td>{item.stock}</td>
-                          <td>{item.orderCount}</td>
-                          <td>{item.date_added}</td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan="2">No orders found</td>
+            <table className="my-table">
+            <thead>
+              <tr>
+                <th style={{width: '250px', textAlign: 'left'}}>Product Name</th>
+                <th>Product Price</th>
+                <th>Product Discount</th>
+                <th style={{width: '250px', textAlign: 'left'}}>Product Description</th>
+                <th>Product Number</th>
+                <th>Product Stock</th>
+                <th>Order Count</th>
+                <th>Product Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentItems?.length > 0 ? (
+                currentItems.map((item) => {
+                  return (
+                    <tr key={item.id}>
+                      <td style={{textAlign: 'left'}}>{item.name}</td>
+                      <td>₦{item.price}</td>
+                      <td>₦{item.discount}</td>
+                      <td style={{textAlign: 'left'}}>{item.product_description}</td>
+                      <td>{item.product_number}</td>
+                      <td>{item.stock}</td>
+                      <td>{item.orderCount}</td>
+                      <td>{item.date_added}</td>
                     </tr>
-                  )}
-                </tbody>
-                </table>
-              </div>
-            </div>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="2">No orders found</td>
+                </tr>
+              )}
+            </tbody>
+            </table>
             
           )}
           

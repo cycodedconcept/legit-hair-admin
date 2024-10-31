@@ -166,7 +166,7 @@ const Customer = () => {
     {more ? (
       <>
         <div className="d-flex justify-content-between mt-5 mb-4 mt-lg-3 mb-lg-4">
-        <div className="sts-btn p-2 w-100">
+        <div className="sts-btn p-2">
           <button
             onClick={() => { 
                 handleButtonClick('all');
@@ -228,33 +228,34 @@ const Customer = () => {
             <div>Error: {error?.message || 'Something went wrong'}</div> 
           ) : (
             <>
-              {filterUser.map((fill) => (
-                <div className="col-sm-12 col-md-12 col-lg-4 mb-3" key={fill.id}>
-                  <div style={{ border: '1px solid #FF962E', borderRadius: '15px', padding: '10px' }}>
-                    <div className="d-flex justify-content-between">
-                      <label className="custom-checkbox">
-                        <input type="checkbox" name="options" />
-                        <span className="checkmark"></span>
-                      </label>
-                      <button className="el3-btn mt-3" onClick={() => myOrders(fill.id)}>view orders</button>
-                    </div>
-                    
-                    <div className="mt-5">
-                      <p style={{ marginBottom: '0rem', textAlign: 'center' }}>{fill.name}</p>
-                      <p className={fill.account_status === 1 ? 'Active' : 'Blocked'} style={{ textAlign: 'center' }}>
-                        {fill.account_status === 1 ? 'Active' : 'Blocked'}
-                      </p>
-                    </div>
-                    <hr style={{borderTop: '1px dashed black'}}/>
-                        <p className='text-center'>{fill.email}</p>
-                        <p className='text-center'>{fill.phone_number}</p>
-                        <div className='mt-3 text-left'>
-                          <button onClick={() => switchStatus(fill.id, token)} className={fill.account_status === 1 ? 'deactivate' : 'activate'}>{fill.account_status === 1 ? 'Block' : 'Activate'}</button>
-                        </div>
-                  </div>
-                </div>
-                
-              ))}
+              <table className="my-table">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Customer Email</th>
+                    <th>Phone Number</th>
+                    <th>Status</th>
+                    <th>Change Status</th>
+                    <th style={{width: '20%'}}>View More</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filterUser.map((fill) => (
+                    <tr key={fill.id}>
+                      <td>{fill.name}</td>
+                      <td>{fill.email}</td>
+                      <td>{fill.phone_number}</td>
+                      <td className={fill.account_status === 1 ? 'Active' : 'Blocked'}>{fill.account_status === 1 ? 'Active' : 'Blocked'}</td>
+                      <td>
+                        <button onClick={() => switchStatus(fill.id, token)} className={fill.account_status === 1 ? 'deactivate' : 'activate'}>{fill.account_status === 1 ? 'Block' : 'Activate'}</button>
+                      </td>
+                      <td>
+                        <button className="pro-btn mt-3" onClick={() => myOrders(fill.id)}>view orders</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </>
           )
         }
@@ -276,26 +277,26 @@ const Customer = () => {
             ) : userOrders.length > 0 ? (
                 userOrders?.map((user) => (
                   <div key={user.id}>
-                    <div className="d-block d-lg-flex justify-content-between mb-5">
-                      <div className='mb-3 doub'>
+                    <div>
+                      <div className='mb-3 doub d-flex justify-content-between'>
                         <p><b>Date</b></p>
                         <small>{user.date}</small>
                       </div>
-                      <div className='doub'>
+                      <div className='doub d-flex justify-content-between'>
                         <p><b>Payment Status</b></p>
                         <small>{user.payment_status}</small>
                       </div>
-                      <div className='doub'>
+                      <div className='doub d-flex justify-content-between'>
                         <p><b>Payment Method</b></p>
                         <small>{user.payment_method}</small>
                       </div>
-                      <div className='doub mb-3 mb-lg-0'>
+                      <div className='doub d-flex justify-content-between'>
+                        <p><b>Amount Paid</b></p>
+                        <small>₦{Number(user.amount_paid).toLocaleString()}</small>
+                      </div>
+                      <div className='doub mb-3 mb-lg-0 d-flex justify-content-between'>
                         <p><b>Delivery Status</b></p>
                         <small className={user.delivery_status}>{user.delivery_status}</small>
-                      </div>
-                      <div className='doub'>
-                        <p><b>Amount Paid</b></p>
-                        <small>₦{user.amount_paid}</small>
                       </div>
                     </div>
                     <div className="row">
@@ -331,37 +332,32 @@ const Customer = () => {
                       </div>
                     </div>
                     <div className="product-section my-5">
-                      <h5 className='text-center mb-3'><b>Product Details</b></h5>
-                      {user.product && JSON.parse(user.product).length > 0 ? (
-                        JSON.parse(user.product).map((prod, index) => 
-                          <div key={index}>
-                            <div className="d-block d-lg-flex justify-content-between mb-3">
-                              <div className='doub'>
-                                <p><b>Product Amount</b></p>
-                                <small>₦{prod.product_amount}</small>
-                              </div>
-                              <div className='doub'>
-                                <p><b>Inches</b></p>
-                                <small>{prod.inches}</small>
-                              </div>
-                              <div className='doub'>
-                                <p><b>Initial Amount</b></p>
-                                <small>₦{prod.initial_amount}</small>
-                              </div>
-                              <div className='doub'>
-                                <p><b>Discounted</b></p>
-                                <small>{prod.discounted ? 'Yes' : 'No'}</small>
-                              </div>
-                              <div className='doub'>
-                                <p><b>Order Quantity</b></p>
-                                <small>{prod.order_quantity}</small>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      ) : (
-                        <p className='text-center'>No product record found</p>
-                      )}
+                      <table className="my-table">
+                        <thead>
+                          <tr>
+                            <th>Product Amount</th>
+                            <th>Initial Amount</th>
+                            <th>Discounted</th>
+                            <th>Inches</th>
+                            <th>Order Quantity</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {user.product && JSON.parse(user.product).length > 0 ? (
+                            JSON.parse(user.product).map((prod, index) =>
+                             <tr key={index}>
+                               <td>₦{Number(prod.product_amount).toLocaleString()}</td>
+                               <td>₦{Number(prod.initial_amount).toLocaleString()}</td>
+                               <td>{prod.discounted ? 'Yes' : 'No'}</td>
+                               <td>{prod.inches}</td>
+                               <td>{prod.order_quantity}</td>
+                             </tr> 
+                            )
+                          ) : (
+                            <p className='text-center'>No product record found</p>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
                     <hr style={{border: '1px solid #FF962E'}}/>
                   </div>
@@ -441,30 +437,34 @@ const Customer = () => {
                       </div>
                     </div>
                     <h4 className='text-center mb-4 mt-4'>Product Information</h4>
+                    <table className="my-table">
+                        <thead>
+                          <tr>
+                            <th>Product Amount</th>
+                            <th>Initial Amount</th>
+                            <th>Discounted</th>
+                            <th>Inches</th>
+                            <th>Order Quantity</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {orderDetails.product && orderDetails.product.length > 0 ? (
+                              orderDetails.product.map((prod, index) =>
+                                <tr key={index}>
+                                  <td>₦{Number(prod.product_amount).toLocaleString()}</td>
+                                  <td>₦{Number(prod.initial_amount).toLocaleString()}</td>
+                                  <td>{prod.discounted ? 'Yes' : 'No'}</td>
+                                  <td>{prod.inches}</td>
+                                  <td>{prod.order_quantity}</td>
+                                </tr> 
+                              )
+                            ) : (
+                              <p className='text-center'>No product record found</p>
+                            )}
+                        </tbody>
+                    </table>
                     {orderDetails.product.map((prod, index) => (
                     <div key={index}>
-                      <div className="d-block d-lg-flex justify-content-between">
-                        <div className='doub'>
-                          <p><b>Product Amount</b></p>
-                          <small>₦{prod.product_amount}</small>
-                        </div>
-                        <div className='doub'>
-                          <p><b>Inches</b></p>
-                          <small>{prod.inches}"</small>
-                        </div>
-                        <div className='doub'>
-                          <p><b>Initial Amount</b></p>
-                          <small>₦{prod.initial_amount}</small>
-                        </div>
-                        <div className='doub'>
-                          <p><b>Discounted</b></p>
-                          <small>{prod.discounted ? 'Yes' : 'No'}</small>
-                        </div>
-                        <div className='doub'>
-                          <p><b>Order Quantity</b></p>
-                          <small>{prod.order_quantity}</small>
-                        </div>
-                      </div>
                       <div className="images mt-5">
                         <div className="row">
                           {prod.images.map((img, imgIndex) => (
