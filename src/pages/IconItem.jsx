@@ -7,13 +7,14 @@ const IconItem = ({ itemCount = 0, onClick }) => {
     <div className="relative inline-block cursor-pointer" onClick={onClick}>
       <FontAwesomeIcon
         icon={faShoppingCart}
-        className="text-[#FF962E] text-2xl hover:text-[#e07f1a] transition-colors"
+        className="w-100"
+        style={{fontSize: '25px', cursor: 'pointer'}}
       />
       {itemCount > 0 && (
         <div 
           className="absolute -top-3 -right-3 bg-red-500 text-white text-xs 
-                     rounded-full h-6 min-w-6 flex items-center justify-center px-1.5
-                     border-2 border-white shadow-sm"
+            rounded-full h-6 min-w-6 flex items-center justify-center px-1.5
+            border-2 border-white shadow-sm"
         >
           {itemCount > 99 ? '99+' : itemCount}
         </div>

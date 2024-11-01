@@ -386,10 +386,17 @@ tbody tr td:last-child {
     padding: 10px;
     text-align: right;
     z-index: 100;
-    border-top: 1px solid #ccc; /* optional */
-  }
+    border-top: 1px solid #ccc;
+}
   
-  
+.sticky-bottom {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    padding: 1rem; 
+    z-index: 10;
+}
+   
 
 .scroll-bg {
     margin: 10% auto;
@@ -823,6 +830,7 @@ input, textarea, select {
     max-width: 100%;
     max-height: 100vh;
     overflow-y: auto;
+
 }
 
 .f-btn {
@@ -1236,6 +1244,19 @@ input, textarea, select {
     display: inline-block;
   }
   /*  */
+
+/* Target only the radio button input */
+.lint {
+    width: 17% !important; /* Adjust width */
+    height: 8% !important; /* Adjust height */
+    accent-color: #af4c4e; /* Color for supported browsers */
+    cursor: pointer;
+}
+
+
+
+  
+  
 
   
   

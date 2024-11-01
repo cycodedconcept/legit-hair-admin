@@ -19,7 +19,9 @@ const initialState = {
     data: {},
     spinItem: false,
     redirect_url: '',
-    invoiceData: []
+    invoiceData: [],
+    land: [],
+    countryData: []
 }
 
 export const createInvoice = createAsyncThunk(
@@ -68,6 +70,34 @@ export const getInvoiceData = createAsyncThunk(
           return rejectWithValue(error.response?.data || 'Something went wrong');
         }
     }
+);
+
+export const getLandMark = createAsyncThunk(
+  'commerce/getLandMark',
+  async ({stateItem},{ rejectWithValue }) => {
+    try {
+      const response = await axios.get(`https://testbackendproject.pluralcode.academy/user/get_landmark?state=${stateItem}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Something went wrong');
+    }
+  }
+)
+
+export const getCountries = createAsyncThunk(
+  'commerce/getCountries',
+  async (_, { rejectWithValue}) => {
+    try {
+      const response = await axios.get('https://countriesnow.space/api/v0.1/countries/states', {
+        headers: {
+          'Content-Type': 'application/json',
+      }
+      })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
 )
 
 const commerceSlice = createSlice({
@@ -100,6 +130,37 @@ const commerceSlice = createSlice({
             state.invoiceData = action.payload;
           })
           .addCase(getInvoiceData.rejected, (state, action) => {
+            state.success = false;
+            state.error = action.payload || 'Something went wrong';
+          })
+          .addCase(getLandMark.pending, (state) => {
+            state.success = false;
+            state.error = null;
+          })
+          .addCase(getLandMark.fulfilled, (state, action) => {
+            state.success = true;
+            state.land = action.payload;
+          })
+          .addCase(getLandMark.rejected, (state, action) => {
+            state.success = false;
+            state.error = action.payload || 'Something went wrong';
+          })
+          .addCase(getCountries.pending, (state) => {
+            state.success = false;
+            state.error = null;
+          })
+          .addCase(getCountries.fulfilled, (state, action) => {
+            state.success = true;
+            state.countryData = action.payload;
+
+            if (action.payload && Array.isArray(action.payload.data)) {
+              localStorage.setItem('fetchedData', JSON.stringify(action.payload.data));
+          } else {
+              console.error("Fetched data is not in the expected format:", action.payload);
+          }
+      
+          })
+          .addCase(getCountries.rejected, (state, action) => {
             state.success = false;
             state.error = action.payload || 'Something went wrong';
           })

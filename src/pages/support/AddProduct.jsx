@@ -38,9 +38,62 @@ const AddProduct = () => {
     const token = localStorage.getItem('key');
     
 
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    
+    //     const formData = new FormData();
+    //     formData.append('product_name', productName);
+    //     formData.append('price', price);
+    //     formData.append('product_description', productDescription);
+    //     formData.append('discount', discount);
+    //     formData.append('stock', stock);
+    //     formData.append('category_id', categoryId);
+    //     formData.append('inches', JSON.stringify(inches)); 
+    //     images.forEach((file) => formData.append('images', file));
+    //     formData.append('status', status);
+    
+    //     dispatch(createProduct({formData, token})).then(() => {
+    //         Swal.fire({
+    //             title: "Success",
+    //             text: "Product created successfully!",
+    //             icon: "success",
+    //             button: "OK",
+    //         }).then(() => {
+    //             setProductName('');
+    //             setPrice('');
+    //             setProductDescription('');
+    //             setDiscount('');
+    //             setStock('');
+    //             setCategoryId('');
+    //             setInches([{ inche: 0, price: 0, discount: 0 }]);
+    //             setImages([]);
+    //             setStatus('1');
+    //         });
+    //     }).catch((error) => {
+    //         console.error(error);
+    //     });
+    
+    // };
+    
     const handleSubmit = (e) => {
         e.preventDefault();
     
+        // Check if inches array contains an object matching the main price and discount
+        const matchingInch = inches.find(
+            (inch) => inch.price === parseInt(price) && inch.discount === parseInt(discount)
+        );
+    
+        if (!matchingInch) {
+            Swal.fire({
+                title: "Error",
+                text: "The inches array must contain an item with a price and discount matching the main price and discount.",
+                icon: "error",
+                button: "OK",
+            });
+            return;
+        }
+    
+        // Proceed with submission if matching object is found
         const formData = new FormData();
         formData.append('product_name', productName);
         formData.append('price', price);
@@ -52,27 +105,28 @@ const AddProduct = () => {
         images.forEach((file) => formData.append('images', file));
         formData.append('status', status);
     
-        dispatch(createProduct({formData, token})).then(() => {
-            Swal.fire({
-                title: "Success",
-                text: "Product created successfully!",
-                icon: "success",
-                button: "OK",
-            }).then(() => {
-                setProductName('');
-                setPrice('');
-                setProductDescription('');
-                setDiscount('');
-                setStock('');
-                setCategoryId('');
-                setInches([{ inche: 0, price: 0, discount: 0 }]);
-                setImages([]);
-                setStatus('1');
+        dispatch(createProduct({ formData, token }))
+            .then(() => {
+                Swal.fire({
+                    title: "Success",
+                    text: "Product created successfully!",
+                    icon: "success",
+                    button: "OK",
+                }).then(() => {
+                    setProductName('');
+                    setPrice('');
+                    setProductDescription('');
+                    setDiscount('');
+                    setStock('');
+                    setCategoryId('');
+                    setInches([{ inche: 0, price: 0, discount: 0 }]);
+                    setImages([]);
+                    setStatus('1');
+                });
+            })
+            .catch((error) => {
+                console.error(error);
             });
-        }).catch((error) => {
-            console.error(error);
-        });
-    
     };
     
   return (
@@ -142,11 +196,11 @@ const AddProduct = () => {
                         <input
                             type="text"
                             name="input1"
-                            value={inches[index]?.inche || ''} // Ensure you access inches correctly
+                            value={inches[index]?.inche || ''}
                             onChange={(e) => {
                                 const newInches = [...inches];
-                                newInches[index] = { ...newInches[index], inche: parseInt(e.target.value, 10) || 0 }; // Update only the 'inche' field
-                                setInches(newInches); // Set the new inches array
+                                newInches[index] = { ...newInches[index], inche: parseInt(e.target.value, 10) || 0 };
+                                setInches(newInches);
                             }}
                             placeholder="Inches"
                             className='mx-2'
@@ -154,11 +208,11 @@ const AddProduct = () => {
                         <input
                             type="number"
                             name="input2"
-                            value={inches[index]?.price || ''} // Ensure you access inches correctly
+                            value={inches[index]?.price || ''}
                             onChange={(e) => {
                                 const newInches = [...inches];
-                                newInches[index] = { ...newInches[index], price: parseInt(e.target.value, 10) || 0 }; // Update only the 'price' field
-                                setInches(newInches); // Set the new inches array
+                                newInches[index] = { ...newInches[index], price: parseInt(e.target.value, 10) || 0 };
+                                setInches(newInches);
                             }}             
                             placeholder="Price"
                             className='mx-2'
@@ -166,11 +220,11 @@ const AddProduct = () => {
                         <input
                             type="number"
                             name="input3"
-                            value={inches[index]?.discount || ''} // Ensure you access inches correctly
+                            value={inches[index]?.discount || ''}
                             onChange={(e) => {
                                 const newInches = [...inches];
-                                newInches[index] = { ...newInches[index], discount: parseInt(e.target.value, 10) || 0 }; // Update only the 'discount' field
-                                setInches(newInches); // Set the new inches array
+                                newInches[index] = { ...newInches[index], discount: parseInt(e.target.value, 10) || 0 };
+                                setInches(newInches); 
                             }}
                             placeholder="Discount"
                             className='mx-2'

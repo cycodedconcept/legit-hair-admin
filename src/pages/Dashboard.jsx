@@ -91,7 +91,7 @@ useEffect(() => {
       <input type="checkbox" id="nav-toggle"/>
       <Sidebar onButtonClick={handleButtonClick} activeContent={activeContent}/>
       <div className="main-content mt-2 mt-lg-5 p-3">
-        <header className='d-flex justify-content-between'>
+        <header className='d-flex justify-content-between p-3'>
           <div className="head-left d-flex">
             <label htmlFor="nav-toggle">
               <span className="las la-bars" style={{fontSize: '32px'}}></span>
