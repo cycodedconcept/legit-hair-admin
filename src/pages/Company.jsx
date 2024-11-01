@@ -925,13 +925,13 @@ const disableAll = async (e) => {
                 <div className="modal-overlay">
                     <div className="modal-content2">
                       <div className="head-mode">
-                        <h3> Add Subcategories</h3>
+                        <h3> Add Categories & Subcategories</h3>
                         <button className="modal-close" onClick={hideModal}>
                             &times;
                         </button>
                       </div>
                       <div className="modal-body">
-                          <label>Subcategory Name</label>
+                        <p>{localStorage.getItem("cname")}</p>
                           {/* {categoryHierarchy.map((categoryLevel, index) => (
                             <div key={index}>
                               <select onChange={(event) => handleCategoryChange(event, index)} value={categoryLevel.selectedCategory} className='mb-3'>
@@ -973,7 +973,6 @@ const disableAll = async (e) => {
                             </div>
                           ))}
 
-                          <p>{localStorage.getItem("cname")}</p>
 
                           <label className='mt-3'>New Name</label>
                           <input type="text" placeholder='category name' value={catv} onChange={(e) => setCatv(e.target.value)}/>
