@@ -177,8 +177,8 @@ const Order = () => {
                   <th>Order ID</th>
                   <th>Amount Paid</th>
                   <th>Payment Method</th>
-                  <th>Payment Status</th>
                   <th>Date</th>
+                  <th>Date Delivered</th>
                   <th>Delivery Status</th>
                   <th>View</th>
                   <th>Details</th>
