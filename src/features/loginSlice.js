@@ -14,7 +14,7 @@ export const submitForm = createAsyncThunk(
     'login',
     async ({ login, password }, { rejectWithValue }) => {
         try {
-            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/login-admin', {
+            const response = await axios.post('https://legithairng.com/backend/admin/login-admin', {
                 login,
                 password
             }, {

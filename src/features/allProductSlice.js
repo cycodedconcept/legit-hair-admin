@@ -22,7 +22,7 @@ export const fetchAllProducts = createAsyncThunk(
     async ({ page, token }, { rejectWithValue }) => {
         try {
             const response = await axios.get(
-                `https://testbackendproject.pluralcode.academy/admin/admin_get_product?page=${page}`,
+                `https://legithairng.com/backend/admin/admin_get_product?page=${page}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ export const getProductDetails = createAsyncThunk(
     'products/getDetails',
     async ({id, token}, { rejectWithValue}) => {
         try {
-            const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/product_details?product_id=${id}`, {
+            const response = await axios.get(`https://legithairng.com/backend/admin/product_details?product_id=${id}`, {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
@@ -59,7 +59,7 @@ export const updateProduct = createAsyncThunk(
     'products/getUpdateProduct',
     async ({formData, token}, {rejectWithValue}) => {
         try {
-            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/update_product', formData, {
+            const response = await axios.post('https://legithairng.com/backend/admin/update_product', formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -79,7 +79,7 @@ export const fetchDetails = createAsyncThunk(
         console.log("Starting fetchDetails with searchValue:", searchValue);
         
         const response = await axios.get(
-          `https://testbackendproject.pluralcode.academy/admin/admin_get_product?search_value=${searchValue}&page=${page}`, 
+          `https://legithairng.com/backend/admin/admin_get_product?search_value=${searchValue}&page=${page}`, 
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -102,7 +102,7 @@ export const fetchDetails = createAsyncThunk(
     'product/updateStatus',
     async ({ token, id}, { rejectWithValue}) => {
       try {
-        const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/product_status?product_id=${id}`,
+        const response = await axios.get(`https://legithairng.com/backend/admin/product_status?product_id=${id}`,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
@@ -121,7 +121,7 @@ export const fetchDetails = createAsyncThunk(
       'products/viewByCategory',
       async ({token, id, page}, { rejectWithValue}) => {
           try {
-              const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/view_category_product?cat_id=${id}&page=${page}`, {
+              const response = await axios.get(`https://legithairng.com/backend/admin/view_category_product?cat_id=${id}&page=${page}`, {
                     headers: {
                       Authorization: `Bearer ${token}`,
                     },

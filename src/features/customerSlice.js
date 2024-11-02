@@ -26,7 +26,7 @@ export const getUsers = createAsyncThunk(
     'customers/users',
     async ({token, page}, { rejectWithValue}) => {
         try {
-            const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/allusers?page=${page}`, {
+            const response = await axios.get(`https://legithairng.com/backend/admin/allusers?page=${page}`, {
                 headers: { 
                     Authorization: `Bearer ${token}` 
                 },
@@ -46,7 +46,7 @@ export const disableUser = createAsyncThunk(
   'customers/disableUser',
   async ({token, user_id}, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/disable_user?user_id=${user_id}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/disable_user?user_id=${user_id}`, {
         headers: { 
           Authorization: `Bearer ${token}` 
         },
@@ -62,7 +62,7 @@ export const getUserOrder = createAsyncThunk(
   'customers/getUserOrder',
   async ({token, user_id}, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/user_order?user_id=${user_id}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/user_order?user_id=${user_id}`, {
         headers: { 
           Authorization: `Bearer ${token}` 
         },
@@ -78,7 +78,7 @@ export const getOrderDetails = createAsyncThunk(
   'customers/details',
   async ({token, order_id}, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/orders_details?order_id=${order_id}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/orders_details?order_id=${order_id}`, {
         headers: { 
           Authorization: `Bearer ${token}` 
         }

@@ -34,7 +34,7 @@ export const createInvoice = createAsyncThunk(
          customer_name, customer_phonenumber, customer_email, redirect_url
         }, { rejectWithValue }) => {
         try {
-            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/create_invoice', {
+            const response = await axios.post('https://legithairng.com/backend/admin/create_invoice', {
                 products, delivery_address, 
                 delivery_state, delivery_country, 
                 amount_paid, additional_information, 
@@ -60,7 +60,7 @@ export const getInvoiceData = createAsyncThunk(
     'commerce/getInvoiceData',
     async ({token, invoice_id}, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_invoice_data?invoiceid=${invoice_id}`, {
+            const response = await axios.get(`https://legithairng.com/backend/admin/get_invoice_data?invoiceid=${invoice_id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -76,7 +76,7 @@ export const getLandMark = createAsyncThunk(
   'commerce/getLandMark',
   async ({stateItem},{ rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/user/get_landmark?state=${stateItem}`);
+      const response = await axios.get(`https://legithairng.com/backend/user/get_landmark?state=${stateItem}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Something went wrong');

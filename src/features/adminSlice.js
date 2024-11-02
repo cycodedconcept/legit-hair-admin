@@ -26,7 +26,7 @@ export const adminUser = createAsyncThunk(
     'admin/createAdminUser',
     async ({token, rawData}, { rejectWithValue }) => {
         try {
-            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/create_admin_user',
+            const response = await axios.post('https://legithairng.com/backend/admin/create_admin_user',
                 rawData,
             {
                 headers: { 
@@ -45,7 +45,7 @@ export const getMenus = createAsyncThunk(
     'admin/getAllMenus',
     async ({token}, { rejectWithValue }) => {
         try {
-           const response = await axios.get('https://testbackendproject.pluralcode.academy/admin/get_menu', {
+           const response = await axios.get('https://legithairng.com/backend/admin/get_menu', {
                 headers: { 
                     Authorization: `Bearer ${token}` 
                 } 
@@ -61,7 +61,7 @@ export const assignMenu = createAsyncThunk(
     'admin/asignMenu',
     async ({token, menuData}, { rejectWithValue }) => {
         try {
-            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/assign_menu', 
+            const response = await axios.post('https://legithairng.com/backend/admin/assign_menu', 
             menuData,
             {
                 headers: { 
@@ -79,7 +79,7 @@ export const updateBankDetails = createAsyncThunk(
     'admin/updateDetails',
     async ({token, rawBank}, { rejectWithValue }) => {
         try {
-            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/update_bank_details',
+            const response = await axios.post('https://legithairng.com/backend/admin/update_bank_details',
               rawBank,
             {
                 headers: { 
@@ -97,7 +97,7 @@ export const updateOnline = createAsyncThunk(
     'admin/updateOnline',
     async ({token, rawOnline}, { rejectWithValue }) => {
         try {
-            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/update_online_payment', 
+            const response = await axios.post('https://legithairng.com/backend/admin/update_online_payment', 
               rawOnline, 
             {
                 headers: { 
@@ -115,7 +115,7 @@ export const showUsers = createAsyncThunk(
     'admin/users',
     async ({token}, {rejectWithValue}) => {
         try {
-            const response = await axios.get('https://testbackendproject.pluralcode.academy/admin/get_admin_user', {
+            const response = await axios.get('https://legithairng.com/backend/admin/get_admin_user', {
                 headers: { 
                     Authorization: `Bearer ${token}` 
                 }

@@ -11,7 +11,7 @@ export const getCustomerReport = createAsyncThunk(
     'report/getCustomerReport',
     async ({token, item}, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/reports?type=${item}`, {
+            const response = await axios.get(`https://legithairng.com/backend/admin/reports?type=${item}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

@@ -12,7 +12,7 @@ export const createProduct = createAsyncThunk(
   async ({formData, token}, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        'https://testbackendproject.pluralcode.academy/admin/create_product',
+        'https://legithairng.com/backend/admin/create_product',
         formData,
         {
           headers: {

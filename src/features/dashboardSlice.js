@@ -12,7 +12,7 @@ export const getGraph = createAsyncThunk(
     'dashboard/graphs',
     async ({token}, { rejectWithValue }) => {
         try {
-            const response = await axios.get('https://testbackendproject.pluralcode.academy/admin/orders_graph', {
+            const response = await axios.get('https://legithairng.com/backend/admin/orders_graph', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -28,7 +28,7 @@ export const adminBoard = createAsyncThunk(
     'dashboard/dashboardDetails',
     async ({token}, { rejectWithValue }) => {
         try {
-            const response = await axios.get('https://testbackendproject.pluralcode.academy/admin/admin_dashboard', {
+            const response = await axios.get('https://legithairng.com/backend/admin/admin_dashboard', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

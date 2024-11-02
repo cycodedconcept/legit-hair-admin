@@ -36,7 +36,7 @@ export const getOrder = createAsyncThunk(
   'orders/fetchOrders',
   async ({token, page}, {rejectWithValue}) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_orders?page=${page}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/get_orders?page=${page}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,7 +52,7 @@ export const fetchDetails = createAsyncThunk(
     'orders/fetchDetails',
     async ({token, id}, {rejectWithValue}) => {
         try {
-            const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/orders_details?order_id=${id}`, {
+            const response = await axios.get(`https://legithairng.com/backend/admin/orders_details?order_id=${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -68,7 +68,7 @@ export const updateStatus = createAsyncThunk(
     'orders/changeStatus',
     async ({ token, order_id, delivery_status }, {rejectWithValue}) => {
         try {
-            const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/update_delivery_status', {
+            const response = await axios.post('https://legithairng.com/backend/admin/update_delivery_status', {
                 order_id,
                 delivery_status
             },
@@ -90,7 +90,7 @@ export const productItem = createAsyncThunk(
   'orders/productItem',
   async ({token, page}, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/admin_get_product?page=${page}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/admin_get_product?page=${page}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -106,7 +106,7 @@ export const allInvoice = createAsyncThunk(
   'orders/allInvoice',
   async ({token}, { rejectWithValue }) => {
     try {
-      const response = await axios.get("https://testbackendproject.pluralcode.academy/admin/get_all_invoice", {
+      const response = await axios.get("https://legithairng.com/backend/admin/get_all_invoice", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -40,7 +40,7 @@ export const fetchCategories = createAsyncThunk(
   'categories/fetchCategories',
   async (token, { rejectWithValue }) => {
     try {
-      const response = await axios.get('https://testbackendproject.pluralcode.academy/admin/admin_get_all_categories', {
+      const response = await axios.get('https://legithairng.com/backend/admin/admin_get_all_categories', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -56,7 +56,7 @@ export const fetchSubcategories = createAsyncThunk(
   'categories/fetchSubcategories',
   async ({token, id}, {rejectWithValue}) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_sub_category?cat_id=${id}`,{
+      const response = await axios.get(`https://legithairng.com/backend/admin/get_sub_category?cat_id=${id}`,{
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -72,7 +72,7 @@ export const fetchCompanyCategory = createAsyncThunk(
   'categories/fetchCompanyCategory',
   async ({ token, page }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_categories?page=${page}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/get_categories?page=${page}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -86,7 +86,7 @@ export const suspendProduct = createAsyncThunk(
   'categories/suspendProduct',
   async ({token, id}, {rejectWithValue}) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/suspend_product_categories?cat_id=${id}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/suspend_product_categories?cat_id=${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -102,7 +102,7 @@ export const fetchCategoryStatus = createAsyncThunk(
   'categories/categoryStatus',
   async ({ token, statusId, page }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_categories?status=${statusId}&page=${page}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/get_categories?status=${statusId}&page=${page}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -116,7 +116,7 @@ export const fetchSearchValue = createAsyncThunk(
   'categories/searchValue',
   async ({ token, catId, searchValue, page }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/get_categories?cat_id=${catId}&search_value=${searchValue}&page=${page}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/get_categories?cat_id=${catId}&search_value=${searchValue}&page=${page}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -131,7 +131,7 @@ export const viewDetails = createAsyncThunk(
   'categories/viewDetails',
   async ({ token, catId, page }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/view_category_product?cat_id=${catId}&page=${page}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/view_category_product?cat_id=${catId}&page=${page}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -145,7 +145,7 @@ export const catForm = createAsyncThunk(
   'categories/createCategory', 
   async({token, cat_name}, {rejectWithValue}) => {
     try {
-      const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/create_category', {
+      const response = await axios.post('https://legithairng.com/backend/admin/create_category', {
         cat_name
       }, {
         headers: { 
@@ -163,7 +163,7 @@ export const createCategory = createAsyncThunk(
   'categories/createCategories',
   async ({token, cat_name, cat_parent_id}, { rejectWithValue }) => {
     try {
-      const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/create_category', {
+      const response = await axios.post('https://legithairng.com/backend/admin/create_category', {
         cat_name,
         cat_parent_id
       },{
@@ -182,7 +182,7 @@ export const bulkSuspend = createAsyncThunk(
   'categories/bulksuspend',
   async ({token, cat_idarray}, { rejectWithValue }) => {
     try {
-      const response = await axios.post('https://testbackendproject.pluralcode.academy/admin/bulk_cat_suspend', {
+      const response = await axios.post('https://legithairng.com/backend/admin/bulk_cat_suspend', {
         cat_idarray
       }, {
         headers: {
@@ -200,7 +200,7 @@ export const bulkPrice = createAsyncThunk(
   'categories/bulkPriceUpdate',
   async ({token, id, percentage}, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://testbackendproject.pluralcode.academy/admin/bulk_update_company_prices?cat_id=${id}&percentage=${percentage}`, {
+      const response = await axios.get(`https://legithairng.com/backend/admin/bulk_update_company_prices?cat_id=${id}&percentage=${percentage}`, {
         headers: { 
           Authorization: `Bearer ${token}` 
         }
