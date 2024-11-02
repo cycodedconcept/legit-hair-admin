@@ -93,7 +93,7 @@ header {
     background: #fff;
     display: flex;
     /* justify-content: space-between; */
-    padding: 0.5rem 1.5rem;
+    /* padding: 0.5rem 1.5rem; */
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     position: fixed;
     left: 235px;
@@ -1252,6 +1252,38 @@ input, textarea, select {
     accent-color: #af4c4e; /* Color for supported browsers */
     cursor: pointer;
 }
+
+
+
+
+/*  */
+.table-container {
+    overflow-x: auto;
+  }
+  
+  .my-table {
+    width: 100%;
+    min-width: 1000px; 
+    border-collapse: collapse;
+  }
+  
+  .my-table th, .my-table td {
+    padding: 8px;
+    /* text-align: left; */
+    border: 1px solid #ddd;
+  }
+  
+  @media (max-width: 768px) {
+    .search-input, .search-input2 {
+        width: 100%;
+    }
+    .sts-btn {
+        margin: 20px 0;
+    }
+  }
+
+
+  
 
 
 

@@ -642,8 +642,8 @@ const disableAll = async (e) => {
             </div>
           </div>
   
-          <div className="d-flex justify-content-between mt-4 mb-5 mt-lg-4 mb-lg-4">
-            <div className="sts-btn p-2">
+          <div className="d-block d-lg-flex justify-content-between mt-4 mb-5 mt-lg-4 mb-lg-4">
+            <div className="sts-btn p-2 p-sm-0">
               <button
                 onClick={() => { 
                     handleButtonClick('all');
@@ -691,7 +691,7 @@ const disableAll = async (e) => {
             </div>
             <div>
                 {enable ? (
-                  <button className='el2-btn mb-2 mb-lg-0 mx-lg-2' onClick={disableAll}>Enable</button>
+                  <button className='el2-btn mb-2 mb-lg-0 mx-lg-2 mx-2' onClick={disableAll}>Enable</button>
                 ) : ''}
 
                 {disable ? (
@@ -707,86 +707,53 @@ const disableAll = async (e) => {
                 <div>Error: {error?.message || 'Something went wrong'}</div>
             ) : (
                 <>
-                {/* {filteredCategories?.map((category) => (
-                    <div className="col-sm-12 col-md-12 col-lg-4 mb-3" key={category.categories.id}>
-                    <div style={{ border: '1px solid #FF962E', borderRadius: '15px', padding: '10px' }}>
-                        <div className="d-flex justify-content-between">
-                            <label className="custom-checkbox">
-                                <input type="checkbox" name="options" checked={selectedCategoryIds.includes(category.categories.id)} 
-                                onChange={() => handleCheckboxChange(category.categories.id)} />
-                                <span className="checkmark"></span>
-                            </label>
-                            <button className="el3-btn mt-3" onClick={() => getCat(category.categories.id)}>Subcategories</button>
-                            <button className="el3-btn mt-3" onClick={() => myDetails(category.categories.id)}>More</button>
-                        </div>
-                      
-                        <div className="mt-5">
-                          <p style={{ marginBottom: '0rem', textAlign: 'center' }}>{category.categories.category_name}</p>
-                          <p className={category.categories.status === 1 ? 'enable' : 'disable'} style={{ textAlign: 'center' }}>
-                              {category.categories.status === 1 ? 'Enable' : 'Disable'}
-                          </p>
-                        </div>
-
-                        <div className="text-center">
-                          <button className='pro-btn' onClick={() => modalPrice(category.categories.id)}>bulk price change</button>
-                        </div>
-                        <hr style={{borderTop: '1px dashed #FF962E'}}/>
-                        <div className='d-flex justify-content-between'>
-                            <div>
-                                <p>Products</p>
-                                <p>{category.products}</p>
-                            </div>
-                            <div className='mt-3'>
-                              <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                ))} */}
-                <table className="my-table">
-                  <thead>
-                    <tr>
-                      <th>Check</th>
-                      <th>Company</th>
-                      <th>Product</th>
-                      <th>Status</th>
-                      <th>Subcategories</th>
-                      <th>More</th>
-                      <th>Bulk Price Change</th>
-                      <th>Change Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredCategories?.map((category) => (
-                      <tr key={category.categories.id}>
-                        <td>
-                          <label className="custom-checkbox">
-                            <input type="checkbox" name="options" checked={selectedCategoryIds.includes(category.categories.id)} 
-                            onChange={() => handleCheckboxChange(category.categories.id)} />
-                            <span className="checkmark"></span>
-                          </label>
-                        </td>
-                        <td>{category.categories.category_name}</td>
-                        <td>{category.products}</td>
-                        <td className={category.categories.status === 1 ? 'Enable' : 'Disable'}>
-                          {category.categories.status === 1 ? 'Enable' : 'Disable'}
-                        </td>
-                        <td>
-                          <button className="pro-btn mt-3" onClick={() => getCat(category.categories.id)}>Subcategories</button>
-                        </td>
-                        <td>
-                          <button className="pro-btn mt-3" onClick={() => myDetails(category.categories.id)}>More</button>
-                        </td>
-                        <td>
-                          <button className='pro-btn' onClick={() => modalPrice(category.categories.id)}>bulk price change</button>
-                        </td>
-                        <td>
-                          <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
-                        </td>
+                <div className="table-container">
+                  <table className="my-table">
+                    <thead>
+                      <tr>
+                        <th>Check</th>
+                        <th>Company</th>
+                        <th>Product</th>
+                        <th>Status</th>
+                        <th>Subcategories</th>
+                        <th>More</th>
+                        <th>Bulk Price Change</th>
+                        <th>Change Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {filteredCategories?.map((category) => (
+                        <tr key={category.categories.id}>
+                          <td>
+                            <label className="custom-checkbox">
+                              <input type="checkbox" name="options" checked={selectedCategoryIds.includes(category.categories.id)} 
+                              onChange={() => handleCheckboxChange(category.categories.id)} />
+                              <span className="checkmark"></span>
+                            </label>
+                          </td>
+                          <td>{category.categories.category_name}</td>
+                          <td>{category.products}</td>
+                          <td className={category.categories.status === 1 ? 'Enable' : 'Disable'}>
+                            {category.categories.status === 1 ? 'Enable' : 'Disable'}
+                          </td>
+                          <td>
+                            <button className="pro-btn mt-3" onClick={() => getCat(category.categories.id)}>Subcategories</button>
+                          </td>
+                          <td>
+                            <button className="pro-btn mt-3" onClick={() => myDetails(category.categories.id)}>More</button>
+                          </td>
+                          <td>
+                            <button className='pro-btn' onClick={() => modalPrice(category.categories.id)}>bulk price change</button>
+                          </td>
+                          <td>
+                            <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                
                 </>
             )}
             {renderPagination()}
@@ -848,28 +815,30 @@ const disableAll = async (e) => {
                               )}
 
                             </div>
-                            <table className="my-table my-5">
-                              <thead>
-                                <tr>
-                                  <th>Inches</th>
-                                  <th>Price</th>
-                                  <th>Discount</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {detail?.inches && detail.inches.length > 0 ? (
-                                  detail.inches.map((inch, index) => 
-                                    <tr key={index}>
-                                      <td>{inch.inche}</td>
-                                      <td>₦{Number(inch.price).toLocaleString()}</td>
-                                      <td>₦{Number(inch.discount).toLocaleString()}</td>
-                                    </tr>
-                                  )
-                                ) : (
-                                  <p className='text-center'>No inches records found</p>
-                                )}
-                              </tbody>
-                            </table>
+                            <div className="table-container">
+                              <table className="my-table my-5">
+                                <thead>
+                                  <tr>
+                                    <th>Inches</th>
+                                    <th>Price</th>
+                                    <th>Discount</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {detail?.inches && detail.inches.length > 0 ? (
+                                    detail.inches.map((inch, index) => 
+                                      <tr key={index}>
+                                        <td>{inch.inche}</td>
+                                        <td>₦{Number(inch.price).toLocaleString()}</td>
+                                        <td>₦{Number(inch.discount).toLocaleString()}</td>
+                                      </tr>
+                                    )
+                                  ) : (
+                                    <p className='text-center'>No inches records found</p>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
                             <hr style={{border: '1px solid #FF962E'}} />
                         </div>
                     ))

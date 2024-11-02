@@ -1,6 +1,6 @@
 function getSuccessMessage() {
     const params = new URLSearchParams(window.location.search);
-    const invoiceid = params.get('invoiceid');
+    const invoiceid = params.get('reference');
 
     const suMethod = {
         method: 'GET'

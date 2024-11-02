@@ -132,7 +132,7 @@ const Product = () => {
     ): ''}
     
     {search ? (
-      <div className="row">
+      <div className="row mt-5 mt-lg-3">
       <div className="col-sm-12 col-md-12 col-lg-5">
         <div className="search-container">
           <input type="text" placeholder="Search Order..." className="search-input" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
@@ -176,83 +176,85 @@ const Product = () => {
 
       {wal ? (
         <div>
-          <table className="my-table">
-            <thead>
-              <tr>
-                <th>Product Image</th>
-                <th style={{width: '250px'}}>Product Name</th>
-                <th>Product Price</th>
-                <th>Discounts</th>
-                <th>Product Number</th>
-                <th>Status Setting</th>
-                <th>Product Settings</th>
-              </tr>
-            </thead>
-            <tbody>
-            {alter ? (
-              searchDetails && searchDetails.data?.length > 0 ? (
-                searchDetails.data.map((search) => (
-                  <tr key={search.id}>
-                    <td>
-                      <img
-                        src={typeof search.images[0]?.filename === 'string' ? search.images[0]?.filename : 'default_image.png'}
-                        width={80} className="img-thumbnail" alt="Thumbnail" style={{boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}
-                      />
-                    </td>
-                    <td style={{textAlign: 'left'}}>{search.product_name}</td>
-                    <td>{search.price}</td>
-                    <td>{search.discount}</td>
-                    <td>{search.product_number}</td>
-                    <td><button className='btn-status' onClick={() => switchStatus(search.id, token)}>Change Status</button></td>
-                    <td style={{ cursor: 'pointer' }}>
-                      <FontAwesomeIcon 
-                        icon={faEdit} 
-                        style={{ color: '#FF962E' }} 
-                        onClick={() => showTheModal(search.id, token)} 
-                      /> 
-                      Edit
-                    </td>
-                  </tr>
-                ))
-              ) : (
+          <div className="table-container">
+            <table className="my-table">
+              <thead>
                 <tr>
-                  <td colSpan="7">No products available</td>
+                  <th>Product Image</th>
+                  <th style={{width: '250px'}}>Product Name</th>
+                  <th>Product Price</th>
+                  <th>Discounts</th>
+                  <th>Product Number</th>
+                  <th>Status Setting</th>
+                  <th>Product Settings</th>
                 </tr>
-              )
-            ) : (
-              viewDetails && viewDetails.data?.length > 0 ? (
-                viewDetails.data.map((view) => (
-                  <tr key={view.id}>
-                    <td>
-                      <img
-                        src={typeof view.images[0]?.filename === 'string' ? view.images[0]?.filename : 'default_image.png'}
-                        width={80} className="img-thumbnail" alt="Thumbnail" style={{boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}
-                      />
-                    </td>
-                    <td style={{textAlign: 'left'}}>{view.product_name}</td>
-                    <td>₦{Number(view.price).toLocaleString()}</td>
-                    <td>₦{Number(view.discount).toLocaleString()}</td>
-                    <td>{view.product_number}</td>
-                    <td><button className='btn-status' onClick={() => switchStatus(view.id, token)}>Change Status</button></td>
-                    <td style={{ cursor: 'pointer' }}>
-                      <FontAwesomeIcon 
-                        icon={faEdit} 
-                        style={{ color: '#FF962E' }} 
-                        onClick={() => showTheModal(view.id, token)} 
-                      /> 
-                      Edit
-                    </td>
+              </thead>
+              <tbody>
+              {alter ? (
+                searchDetails && searchDetails.data?.length > 0 ? (
+                  searchDetails.data.map((search) => (
+                    <tr key={search.id}>
+                      <td>
+                        <img
+                          src={typeof search.images[0]?.filename === 'string' ? search.images[0]?.filename : 'default_image.png'}
+                          width={80} className="img-thumbnail" alt="Thumbnail" style={{boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}
+                        />
+                      </td>
+                      <td style={{textAlign: 'left'}}>{search.product_name}</td>
+                      <td>{search.price}</td>
+                      <td>{search.discount}</td>
+                      <td>{search.product_number}</td>
+                      <td><button className='btn-status' onClick={() => switchStatus(search.id, token)}>Change Status</button></td>
+                      <td style={{ cursor: 'pointer' }}>
+                        <FontAwesomeIcon 
+                          icon={faEdit} 
+                          style={{ color: '#FF962E' }} 
+                          onClick={() => showTheModal(search.id, token)} 
+                        /> 
+                        Edit
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7">No products available</td>
                   </tr>
-                ))
+                )
               ) : (
-                <tr>
-                  <td colSpan="7">No products available</td>
-                </tr>
-              )
-            )}
+                viewDetails && viewDetails.data?.length > 0 ? (
+                  viewDetails.data.map((view) => (
+                    <tr key={view.id}>
+                      <td>
+                        <img
+                          src={typeof view.images[0]?.filename === 'string' ? view.images[0]?.filename : 'default_image.png'}
+                          width={80} className="img-thumbnail" alt="Thumbnail" style={{boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}
+                        />
+                      </td>
+                      <td style={{textAlign: 'left'}}>{view.product_name}</td>
+                      <td>₦{Number(view.price).toLocaleString()}</td>
+                      <td>₦{Number(view.discount).toLocaleString()}</td>
+                      <td>{view.product_number}</td>
+                      <td><button className='btn-status' onClick={() => switchStatus(view.id, token)}>Change Status</button></td>
+                      <td style={{ cursor: 'pointer' }}>
+                        <FontAwesomeIcon 
+                          icon={faEdit} 
+                          style={{ color: '#FF962E' }} 
+                          onClick={() => showTheModal(view.id, token)} 
+                        /> 
+                        Edit
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7">No products available</td>
+                  </tr>
+                )
+              )}
 
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
 
         {total_pages > 1 && (
             <div className="pagination">

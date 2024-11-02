@@ -91,14 +91,14 @@ useEffect(() => {
       <input type="checkbox" id="nav-toggle"/>
       <Sidebar onButtonClick={handleButtonClick} activeContent={activeContent}/>
       <div className="main-content mt-2 mt-lg-5 p-3">
-        <header className='d-flex justify-content-between p-3'>
+        <header className='d-flex gap-5'>
           <div className="head-left d-flex">
             <label htmlFor="nav-toggle">
-              <span className="las la-bars" style={{fontSize: '32px'}}></span>
+              <span className="las la-bars" style={{fontSize: '32px', lineHeight: '1.4'}}></span>
             </label>
-            <h3 style={{ lineHeight: '1.2'}} className="mx-3 vega">{upperLetter(activeContent)}</h3>
+            <h3 style={{ lineHeight: '1.7'}} className="mx-3 vega">{upperLetter(activeContent)}</h3>
           </div>
-          <div className="head-right">
+          <div className="head-right mt-2 mr-5" >
             <div style={{ position: 'relative' }}>
             <IconItem 
               itemCount={cartItems.length} 

@@ -228,6 +228,7 @@ const Customer = () => {
             <div>Error: {error?.message || 'Something went wrong'}</div> 
           ) : (
             <>
+            <div className="table-container">
               <table className="my-table">
                 <thead>
                   <tr>
@@ -256,6 +257,8 @@ const Customer = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+              
             </>
           )
         }
@@ -332,32 +335,35 @@ const Customer = () => {
                       </div>
                     </div>
                     <div className="product-section my-5">
-                      <table className="my-table">
-                        <thead>
-                          <tr>
-                            <th>Product Amount</th>
-                            <th>Initial Amount</th>
-                            <th>Discounted</th>
-                            <th>Inches</th>
-                            <th>Order Quantity</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {user.product && JSON.parse(user.product).length > 0 ? (
-                            JSON.parse(user.product).map((prod, index) =>
-                             <tr key={index}>
-                               <td>₦{Number(prod.product_amount).toLocaleString()}</td>
-                               <td>₦{Number(prod.initial_amount).toLocaleString()}</td>
-                               <td>{prod.discounted ? 'Yes' : 'No'}</td>
-                               <td>{prod.inches}</td>
-                               <td>{prod.order_quantity}</td>
-                             </tr> 
-                            )
-                          ) : (
-                            <p className='text-center'>No product record found</p>
-                          )}
-                        </tbody>
-                      </table>
+                      <div className="table-container">
+                        <table className="my-table">
+                          <thead>
+                            <tr>
+                              <th>Product Amount</th>
+                              <th>Initial Amount</th>
+                              <th>Discounted</th>
+                              <th>Inches</th>
+                              <th>Order Quantity</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {user.product && JSON.parse(user.product).length > 0 ? (
+                              JSON.parse(user.product).map((prod, index) =>
+                              <tr key={index}>
+                                <td>₦{Number(prod.product_amount).toLocaleString()}</td>
+                                <td>₦{Number(prod.initial_amount).toLocaleString()}</td>
+                                <td>{prod.discounted ? 'Yes' : 'No'}</td>
+                                <td>{prod.inches}</td>
+                                <td>{prod.order_quantity}</td>
+                              </tr> 
+                              )
+                            ) : (
+                              <p className='text-center'>No product record found</p>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                      
                     </div>
                     <hr style={{border: '1px solid #FF962E'}}/>
                   </div>
@@ -437,32 +443,35 @@ const Customer = () => {
                       </div>
                     </div>
                     <h4 className='text-center mb-4 mt-4'>Product Information</h4>
-                    <table className="my-table">
-                        <thead>
-                          <tr>
-                            <th>Product Amount</th>
-                            <th>Initial Amount</th>
-                            <th>Discounted</th>
-                            <th>Inches</th>
-                            <th>Order Quantity</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                            {orderDetails.product && orderDetails.product.length > 0 ? (
-                              orderDetails.product.map((prod, index) =>
-                                <tr key={index}>
-                                  <td>₦{Number(prod.product_amount).toLocaleString()}</td>
-                                  <td>₦{Number(prod.initial_amount).toLocaleString()}</td>
-                                  <td>{prod.discounted ? 'Yes' : 'No'}</td>
-                                  <td>{prod.inches}</td>
-                                  <td>{prod.order_quantity}</td>
-                                </tr> 
-                              )
-                            ) : (
-                              <p className='text-center'>No product record found</p>
-                            )}
-                        </tbody>
-                    </table>
+                    <div className="table-container">
+                      <table className="my-table">
+                          <thead>
+                            <tr>
+                              <th>Product Amount</th>
+                              <th>Initial Amount</th>
+                              <th>Discounted</th>
+                              <th>Inches</th>
+                              <th>Order Quantity</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                              {orderDetails.product && orderDetails.product.length > 0 ? (
+                                orderDetails.product.map((prod, index) =>
+                                  <tr key={index}>
+                                    <td>₦{Number(prod.product_amount).toLocaleString()}</td>
+                                    <td>₦{Number(prod.initial_amount).toLocaleString()}</td>
+                                    <td>{prod.discounted ? 'Yes' : 'No'}</td>
+                                    <td>{prod.inches}</td>
+                                    <td>{prod.order_quantity}</td>
+                                  </tr> 
+                                )
+                              ) : (
+                                <p className='text-center'>No product record found</p>
+                              )}
+                          </tbody>
+                      </table>
+                    </div>
+                    
                     {orderDetails.product.map((prod, index) => (
                     <div key={index}>
                       <div className="images mt-5">

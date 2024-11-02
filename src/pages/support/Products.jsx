@@ -185,7 +185,8 @@ const Products = () => {
         <div>Error: {error?.message || 'Something went wrong'}</div>
       ) : (
         <>
-          <table className='my-table'>
+         <div className="table-container">
+         <table className='my-table'>
             <thead>
               <tr>
                 <th>Product Image</th>
@@ -238,6 +239,8 @@ const Products = () => {
               )}
             </tbody>
           </table>
+         </div>
+          
 
           {total_pages > 1 && (
             <div className="pagination">

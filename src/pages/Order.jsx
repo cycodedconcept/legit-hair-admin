@@ -171,6 +171,7 @@ const Order = () => {
           <>
           {showInvoice ? (
           <>
+          <div className="table-container">
             <table className="my-table">
               <thead>
                 <tr>
@@ -222,6 +223,8 @@ const Order = () => {
                 )}
               </tbody>
             </table>
+          </div>
+            
             {view === 'orders' && orderTotalPages > 1 && (
               <div className="pagination">
                 {Array.from({ length: orderTotalPages }, (_, i) => (
@@ -245,8 +248,7 @@ const Order = () => {
           </>
           ) : (
           <>
-            <div className="outer-wrapper">
-              <div className="table-wrapper">
+              <div className="table-container">
                 <table className="my-table">
                   <thead>
                     <tr>
@@ -288,7 +290,6 @@ const Order = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
             {view === 'invoices' && invoiceTotalPages > 1 && (
               <div className="pagination">
                 {Array.from({ length: invoiceTotalPages }, (_, i) => (

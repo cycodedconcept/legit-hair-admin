@@ -108,7 +108,7 @@ const Report = () => {
     "Order ID": item.orderId,
     "Date Delivered": item.dateDelivered,
     "Products Ordered": item.productsOrdered
-      .map(product => 
+      ?.map(product => 
         `Name: ${product.productName}, Price: ${product.productPrice}, Inches: ${product.inches}, Quantity: ${product.OrderQuantity}, Discounted: ${product.discounted}, Company: ${product.companyName}`
       )
       .join("\n") // Join products with a newline or any separator you prefer
@@ -183,7 +183,8 @@ const Report = () => {
       ) : (
         <>
           {myValue === 'customers' && (
-            <table className="my-table">
+            <div className='table-container'>
+              <table className="my-table">
             <thead>
               <tr>
                 <th>Name</th>
@@ -209,6 +210,8 @@ const Report = () => {
               )}
             </tbody>
             </table>
+            </div>
+            
             
           )}
 
@@ -268,30 +271,33 @@ const Report = () => {
                     </div>
                   </div>
                 </div>
-                <table className="my-table my-5">
-                  <thead>
-                    <tr>
-                      <th style={{width: '250px', textAlign: 'left'}}>Product Name</th>
-                      <th>Price</th>
-                      <th>Inches</th>
-                      <th>Quantity</th>
-                      <th>Discounted</th>
-                      <th>Company</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {item.productsOrdered.map((product, index) => 
-                      <tr key={index}>
-                        <td style={{width: '250px', textAlign: 'left'}}>{product.productName}</td>
-                        <td>₦{Number(product.productPrice).toLocaleString()}</td>
-                        <td>{product.inches}</td>
-                        <td>{product.orderQuantity}</td>
-                        <td>{product.discounted}</td>
-                        <td>{product.companyName}</td>
+                <div className="table-container">
+                  <table className="my-table my-5">
+                    <thead>
+                      <tr>
+                        <th style={{width: '250px', textAlign: 'left'}}>Product Name</th>
+                        <th>Price</th>
+                        <th>Inches</th>
+                        <th>Quantity</th>
+                        <th>Discounted</th>
+                        <th>Company</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {item.productsOrdered.map((product, index) => 
+                        <tr key={index}>
+                          <td style={{width: '250px', textAlign: 'left'}}>{product.productName}</td>
+                          <td>₦{Number(product.productPrice).toLocaleString()}</td>
+                          <td>{product.inches}</td>
+                          <td>{product.orderQuantity}</td>
+                          <td>{product.discounted}</td>
+                          <td>{product.companyName}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                
                 {index !== currentItems.length - 1 && (
                     <hr style={{border: '1px solid #FF962E'}}/>
                 )}
@@ -307,42 +313,45 @@ const Report = () => {
           )}
 
           {myValue === 'products' && (
-            <table className="my-table">
-            <thead>
-              <tr>
-                <th style={{width: '250px', textAlign: 'left'}}>Product Name</th>
-                <th>Product Price</th>
-                <th>Product Discount</th>
-                <th style={{width: '250px', textAlign: 'left'}}>Product Description</th>
-                <th>Product Number</th>
-                <th>Product Stock</th>
-                <th>Order Count</th>
-                <th>Product Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentItems?.length > 0 ? (
-                currentItems.map((item) => {
-                  return (
-                    <tr key={item.id}>
-                      <td style={{textAlign: 'left'}}>{item.name}</td>
-                      <td>₦{item.price}</td>
-                      <td>₦{item.discount}</td>
-                      <td style={{textAlign: 'left'}}>{item.product_description}</td>
-                      <td>{item.product_number}</td>
-                      <td>{item.stock}</td>
-                      <td>{item.orderCount}</td>
-                      <td>{item.date_added}</td>
+            <div className="table-container">
+                <table className="my-table">
+                <thead>
+                  <tr>
+                    <th style={{width: '250px', textAlign: 'left'}}>Product Name</th>
+                    <th>Product Price</th>
+                    <th>Product Discount</th>
+                    <th style={{width: '250px', textAlign: 'left'}}>Product Description</th>
+                    <th>Product Number</th>
+                    <th>Product Stock</th>
+                    <th>Order Count</th>
+                    <th>Product Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentItems?.length > 0 ? (
+                    currentItems.map((item) => {
+                      return (
+                        <tr key={item.id}>
+                          <td style={{textAlign: 'left'}}>{item.name}</td>
+                          <td>₦{item.price}</td>
+                          <td>₦{item.discount}</td>
+                          <td style={{textAlign: 'left'}}>{item.product_description}</td>
+                          <td>{item.product_number}</td>
+                          <td>{item.stock}</td>
+                          <td>{item.orderCount}</td>
+                          <td>{item.date_added}</td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan="2">No orders found</td>
                     </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="2">No orders found</td>
-                </tr>
-              )}
-            </tbody>
-            </table>
+                  )}
+                </tbody>
+                </table>
+            </div>
+            
             
           )}
           
