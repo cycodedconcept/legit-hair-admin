@@ -139,12 +139,12 @@ const DynamicInvoiceTable = ({ data }) => {
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
+    <div className="table-container">
+      <table className="my-table">
         <thead>
           <tr className="bg-gray-100">
             {customHeaders.map(({ key, label }) => (
-              <th key={key} className="p-2 border text-left font-medium">
+              <th key={key} className="border font-medium" style={{width: '100px'}}>
                 {label}
               </th>
             ))}

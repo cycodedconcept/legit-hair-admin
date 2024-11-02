@@ -166,7 +166,7 @@ const tableHeaders = ['Product Name', 'Inches', 'Quantity', 'Price', 'Discounted
   };
 
   return (
-    <div className='invoice-container' ref={invoiceRef}>
+    <div className='p-2' ref={invoiceRef}>
       <div className="d-flex justify-content-between">
           <div>
              <img src={logoUrl} alt="Company Logo" className="w-50" />
