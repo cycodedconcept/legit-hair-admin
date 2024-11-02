@@ -1268,7 +1268,7 @@ input, textarea, select {
   
   .my-table {
     width: 100%;
-    min-width: 750px; 
+    min-width: 900px; 
     border-collapse: collapse;
   }
   

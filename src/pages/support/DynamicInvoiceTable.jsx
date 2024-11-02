@@ -140,11 +140,11 @@ const DynamicInvoiceTable = ({ data }) => {
 
   return (
     <div className="table-container">
-      <table className="my-table">
+      <table className="" style={{minWidth: '600px', width: '100%'}}>
         <thead>
           <tr className="bg-gray-100">
             {customHeaders.map(({ key, label }) => (
-              <th key={key} className="border font-medium" style={{width: '100px'}}>
+              <th key={key} className="border font-medium" style={{width: '80px'}}>
                 {label}
               </th>
             ))}

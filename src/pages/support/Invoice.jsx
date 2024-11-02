@@ -166,8 +166,8 @@ const tableHeaders = ['Product Name', 'Inches', 'Quantity', 'Price', 'Discounted
   };
 
   return (
-    <div className='p-2' ref={invoiceRef}>
-      <div className="d-flex justify-content-between">
+    <div className='p-5' ref={invoiceRef}>
+      <div className="d-flex justify-content-between py-5 px-3">
           <div>
              <img src={logoUrl} alt="Company Logo" className="w-50" />
           </div>
@@ -176,7 +176,7 @@ const tableHeaders = ['Product Name', 'Inches', 'Quantity', 'Price', 'Discounted
             <p>Date: <strong>{new Date().toLocaleDateString()}</strong></p>
           </div>
       </div>
-      <div className="invoice-details">
+      <div className="invoice-details py-5 px-3">
         <p><strong>Billed To:</strong></p>
         <p>{invoiceData.customer_name}</p>
         <p>{invoiceData.delivery_address}</p>
