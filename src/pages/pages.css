@@ -1043,6 +1043,10 @@ input, textarea, select {
         grid-column-gap: 1rem;
     }
 
+    header {
+        padding: 3px 5px;
+    }
+
     .card-single {
         margin-bottom: 1rem;
     }
@@ -1071,16 +1075,13 @@ input, textarea, select {
         margin-left: 0;
     }
 
-    .head-right {
-        display: none;
-    }
-
     .pro-btn {
         width: 100%;
         margin-left: 0;
     }
     .vega {
         font-size: 20px;
+        line-height: 2.1;
     }
     .cat {
         width: 100%;
@@ -1088,6 +1089,10 @@ input, textarea, select {
     .doub {
         display: flex;
         justify-content: space-between;
+    }
+    .head-right {
+        margin-top: 0.7rem !important;
+        margin-right: 26px;
     }
 }
 

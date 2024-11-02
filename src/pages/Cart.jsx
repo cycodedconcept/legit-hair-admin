@@ -350,7 +350,7 @@ const handleSubmit = async (e) => {
                   <div className="col-sm-12 col-md-12 col-lg-6">
                     <p className='my-3'>{item.product_name}</p>
 
-                    <div className='d-flex gap-5'>
+                    <div className='d-block d-lg-flex gap-5'>
                       <p><span style={{ color: '#FF962E' }}>Price:</span> ₦{item.product_amount.toLocaleString()}</p>
                       <p><span style={{ color: '#FF962E' }}>Inches:</span>{item.inches}</p>
                       <p><span style={{ color: '#FF962E' }}>  Quantity:</span>{item.order_quantity}</p>
@@ -362,8 +362,8 @@ const handleSubmit = async (e) => {
             ))}
             <hr style={{ border: '2px solid #FF962E', margin: '20px 0' }} />
 
-            <div className='d-flex justify-content-between mt-3'>
-              <button className='pro-btn' onClick={cartModal}>Generate Invoice</button>
+            <div className='d-block d-lg-flex justify-content-between mt-3'>
+              <button className='pro-btn mb-5 mb-lg-0' onClick={cartModal}>Generate Invoice</button>
               <h4><span style={{ color: '#FF962E' }}>Total:</span> ₦{total.toLocaleString()}</h4>
             </div>
         </>

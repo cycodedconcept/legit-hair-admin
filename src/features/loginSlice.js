@@ -40,6 +40,14 @@ const formLoginSlice = createSlice({
     reducers: {
         setLoginFormData: (state, action) => {
           state[action.payload.field] = action.payload.value;
+        },
+        resetLoginState: (state) => {
+            // Reset to initial state
+            state.login = '';
+            state.password = '';
+            state.spinItem = false;
+            state.error = null;
+            state.successful = false;
         }
     },
     extraReducers: (builder) => {
@@ -60,5 +68,5 @@ const formLoginSlice = createSlice({
     }
 })
 
-export const { setLoginFormData } = formLoginSlice.actions;
+export const { setLoginFormData, resetLoginState } = formLoginSlice.actions;
 export default formLoginSlice.reducer;
