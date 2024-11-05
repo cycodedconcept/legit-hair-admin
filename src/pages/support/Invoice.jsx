@@ -35,7 +35,7 @@ const tableHeaders = ['Product Name', 'Inches', 'Quantity', 'Price', 'Discounted
     // Create a clone of the invoice div to modify for PDF
     const invoiceClone = invoiceRef.current.cloneNode(true);
 
-    localStorage.removeItem('cart');
+    localStorage.removeItem('landmark_price');
 
     
     // Remove the buttons from the clone

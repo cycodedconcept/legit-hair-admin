@@ -6,7 +6,7 @@ function getSuccessMessage() {
         method: 'GET'
     }
 
-    const url = `https://testbackendproject.pluralcode.academy/admin/verify_invoice_payment?invoiceid=${invoiceid}`;
+    const url = `https://legithairng.com/backend/admin/verify_invoice_payment?invoiceid=${invoiceid}`;
 
     fetch(url, suMethod)
     .then(response => response.json())

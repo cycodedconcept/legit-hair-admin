@@ -4,7 +4,7 @@ import axios from 'axios';
 const initialState = {
   order: {},
   orderDetails: {},
-  invoiceData: {},
+  invoicedata: {},
   isLoading: false,
   error: null,
   order_id: '',
@@ -199,7 +199,7 @@ const createOrderSlice = createSlice({
           .addCase(allInvoice.fulfilled, (state, action) => {
             state.isLoading = false;
             const data = action.payload;
-            state.invoiceData = data.data || [];
+            state.invoicedata = data.data || [];
             state.invoiceCurrentPage = data.page || 1;
             state.invoicePerPage = data.per_page || 10;
             state.invoiceTotalPages = data.total_pages || 0;

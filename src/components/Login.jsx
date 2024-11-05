@@ -83,12 +83,12 @@ const Login = () => {
 
   useEffect(() => {
     if (successful) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Login Successful',
-        text: 'You have been redirected to the dashboard.',
-        confirmButtonColor: '#FF962E'
-      });
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Login Successful',
+      //   text: 'You have been redirected to the dashboard.',
+      //   confirmButtonColor: '#FF962E'
+      // });
       navigate('/dashboard');
     }
   }, [successful, navigate]);

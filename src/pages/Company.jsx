@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
+import { getProductDetails, selectProductDetails } from '../features/allProductSlice';
 import {
   fetchCompanyCategory,
   fetchCategoryStatus,
@@ -39,12 +40,8 @@ const Company = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
   const [categories, setCategories] = useState([]);
-  // const [categoryHierarchy, setCategoryHierarchy] = useState([
-  //   { level: 0, selectedCategory: '', subcategories: [] }
-  // ]);
-  
-  
   const [after, setAfter] = useState(false);
+  const [vm, setVm] = useState(false);
 
   
 
@@ -68,6 +65,8 @@ const Company = () => {
     cat_parent_id,
     percentage
   } = useSelector((state) => state.categories);
+  const productDetails = useSelector(selectProductDetails);
+
 
   let token = localStorage.getItem("key");
 
@@ -129,6 +128,7 @@ const Company = () => {
     setModalVisible(false);
     setMode(false);
     setAfter(false);
+    setVm(false);
     localStorage.removeItem("main");
     localStorage.removeItem("selectedCategory");
     localStorage.removeItem("cname");
@@ -507,33 +507,27 @@ const disableAll = async (e) => {
     const selectedValue = event.target.value;
     saveToLocalStorage(selectedValue);
   
-    // Find the name of the selected category
     const selectedCategoryName = categoryHierarchy[level].subcategories.find(
       (subcategory) => subcategory.id === Number(selectedValue)
     )?.category_name || "Category not found";
   
-    console.log("Selected Value:", selectedValue); // Debug log
-    console.log("Selected Category Name:", selectedCategoryName); // Log the selected category name
+    console.log("Selected Category Name:", selectedCategoryName);
     localStorage.setItem("cname", selectedCategoryName)
   
-    // Fetch subcategories for the selected value
     const response = await axios.get(
-      `https://testbackendproject.pluralcode.academy/admin/get_sub_category?cat_id=${selectedValue}`,
+      `https://legithairng.com/backend/admin/get_sub_category?cat_id=${selectedValue}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const subcategories = response.data;
   
-    // Copy the hierarchy up to the current level
     const newHierarchy = categoryHierarchy.slice(0, level + 1);
   
-    // Update the current level with the selected category and subcategories
     newHierarchy[level] = {
       ...newHierarchy[level],
       selectedCategory: selectedValue,
       subcategories: subcategories.length > 0 ? subcategories : []
     };
   
-    // Add a new level if subcategories are present
     if (subcategories.length > 0) {
       newHierarchy[level + 1] = { level: level + 1, selectedCategory: '', subcategories: [] };
     }
@@ -619,6 +613,11 @@ const disableAll = async (e) => {
         confirmButtonColor: '#FF962E'
       });
     }
+  }
+
+  const pDetails = (id) => {
+    setVm(true)
+    dispatch(getProductDetails({id, token}))
   }
   return (
     <>
@@ -716,15 +715,14 @@ const disableAll = async (e) => {
                         <th>Product</th>
                         <th>Status</th>
                         <th>Subcategories</th>
-                        <th>More</th>
                         <th>Bulk Price Change</th>
                         <th>Change Status</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredCategories?.map((category) => (
-                        <tr key={category.categories.id}>
-                          <td>
+                        <tr key={category.categories.id} onClick={() => myDetails(category.categories.id)}>
+                          <td onClick={(e) => e.stopPropagation()}>
                             <label className="custom-checkbox">
                               <input type="checkbox" name="options" checked={selectedCategoryIds.includes(category.categories.id)} 
                               onChange={() => handleCheckboxChange(category.categories.id)} />
@@ -736,17 +734,16 @@ const disableAll = async (e) => {
                           <td className={category.categories.status === 1 ? 'Enable' : 'Disable'}>
                             {category.categories.status === 1 ? 'Enable' : 'Disable'}
                           </td>
-                          <td>
+                          <td onClick={(e) => e.stopPropagation()}>
                             <button className="pro-btn mt-3" onClick={() => getCat(category.categories.id)}>Subcategories</button>
                           </td>
-                          <td>
-                            <button className="pro-btn mt-3" onClick={() => myDetails(category.categories.id)}>More</button>
-                          </td>
-                          <td>
+                          <td onClick={(e) => e.stopPropagation()}>
                             <button className='pro-btn' onClick={() => modalPrice(category.categories.id)}>bulk price change</button>
                           </td>
-                          <td>
-                            <button onClick={() => switchStatus(category.categories.id, token)} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
+                          <td onClick={(e) => e.stopPropagation()}>
+                            <button onClick={() => {
+                              switchStatus(category.categories.id, token)
+                              }} className={category.categories.status === 1 ? 'deactivate' : 'activate'}>{category.categories.status === 1 ? 'Disable' : 'Activate'}</button>
                           </td>
                         </tr>
                       ))}
@@ -771,7 +768,7 @@ const disableAll = async (e) => {
                 <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Details</p>
             </div>
 
-            <div className="category-details">
+            {/* <div className="category-details">
                 {isLoading ? (
                 <p>Loading details...</p>
                 ) : error ? (
@@ -845,8 +842,81 @@ const disableAll = async (e) => {
                 ) : (
                 <p className='text-center'>No details available for this category.</p>
                 )}
-            </div>
+            </div> */}
+            <div className="category-details">
+              {isLoading ? (
+                <p>Loading details...</p>
+              ) : error ? (
+                <p>Error: {error.message || 'Failed to load details'}</p>
+              ) : viewCategoryDetails?.length > 0 ? (
+                <div className="table-container">
+                  <table className="my-table">
+                    <thead>
+                      <tr>
+                        <th>Product Name</th>
+                        <th>Product Price</th>
+                        <th>Product Number</th>
+                        <th>Product Discount</th>
+                        <th>Product Rating</th>
+                        <th>Product Image</th>
+                        <th>Inches</th>
+                        <th>Inch Price</th>
+                        <th>Inch Discount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {viewCategoryDetails.map((detail) => (
+                        <tr key={detail.id} onClick={() => pDetails(detail.id)}>
+                          <td>{detail.product_name}</td>
 
+                          <td>₦{Number(detail.price).toLocaleString()}</td>
+
+                          <td>{detail.product_number}</td>
+
+                          <td>₦{Number(detail.discount).toLocaleString()}</td>
+
+                          <td>{detail.total_rating}</td>
+
+                          <td>
+                          {detail.images && detail.images.length > 0 ? (
+                            <img
+                              src={detail.images[0].filename}
+                              alt="Thumbnail"
+                              className="img-thumbnail"
+                              style={{ width: '100px', margin: '5px' }}
+                            />
+                          ) : (
+                            <p>No images found</p>
+                          )}
+
+                          </td>
+
+                          <td colSpan="3">
+                            {detail.inches && detail.inches.length > 0 ? (
+                              <table>
+                                <tbody>
+                                  {detail.inches.map((inch, index) => (
+                                    <tr key={index}>
+                                      <td>{inch.inche}</td>
+                                      <td>₦{Number(inch.price).toLocaleString()}</td>
+                                      <td>₦{Number(inch.discount).toLocaleString()}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            ) : (
+                              <p>No inches records found</p>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-center">No details available for this category.</p>
+              )}
+            </div>
             {renderViewDetailsPagination()}
         </div>
         )}
@@ -901,26 +971,6 @@ const disableAll = async (e) => {
                       </div>
                       <div className="modal-body">
                         <p>{localStorage.getItem("cname")}</p>
-                          {/* {categoryHierarchy.map((categoryLevel, index) => (
-                            <div key={index}>
-                              <select onChange={(event) => handleCategoryChange(event, index)} value={categoryLevel.selectedCategory} className='mb-3'>
-                                <option value="">Select Category</option>
-                                {index === 0 &&
-                                  subCategories.map((category) => (
-                                    <option key={category.id} value={category.id}>
-                                      {category.category_name}
-                                    </option>
-                                  ))}
-                                {index > 0 &&
-                                  categoryHierarchy[index - 1].subcategories.map((subcategory) => (
-                                    <option key={subcategory.id} value={subcategory.id}>
-                                      {subcategory.category_name}
-                                    </option>
-                                  ))}
-                              </select>
-                            </div>
-                          ))} */}
-
                           {categoryHierarchy.map((categoryLevel, index) => (
                             <div key={index}>
                               {categoryLevel.subcategories && categoryLevel.subcategories.length > 0 && (
@@ -983,6 +1033,114 @@ const disableAll = async (e) => {
                       }
                     </button>
                   </form>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : ''}
+
+        {vm ? (
+          <>
+            <div className="modal-overlay">
+              <div className="modal-content2" style={{width: '900px'}}>
+                <div className="head-mode">
+                    <h3>Product Details</h3>
+                    <button className="modal-close" onClick={hideModal}>
+                      &times;
+                    </button>
+                </div>
+                <div className="modal-body">
+                  {isLoading ? (
+                    <div>Loading...</div>
+                  ) : error ? (
+                    <div>Error: {error?.message || 'Something went wrong'}</div>
+                  ) : (
+                    <div className="">
+                      <div className='d-flex justify-content-between'>
+                        <p>Product Name: </p>
+                        <small style={{width: '250px'}}>{productDetails.product_name}</small>
+                      </div>
+                      <hr style={{border: '1px solid #FF962E'}}/>
+                      <div className='d-flex justify-content-between'>
+                        <p>Price: </p>
+                        <small>₦{Number(productDetails.main_price).toLocaleString()}</small>
+                      </div>
+                      <div className='d-flex justify-content-between'>
+                        <p>Discount: </p>
+                        <small>₦{Number(productDetails.main_price_discount).toLocaleString()}</small>
+                      </div>
+                      <div className='d-flex justify-content-between'>
+                        <p>Date Added: </p>
+                        <small>{productDetails.date_added}</small>
+                      </div>
+                      <div className='d-flex justify-content-between'>
+                        <p>Stock: </p>
+                        <small>{productDetails.stock}</small>
+                      </div>
+                      <div className='d-flex justify-content-between'>
+                        <p>Product Number: </p>
+                        <small>{productDetails.product_number}</small>
+                      </div>
+                      <div className='d-flex justify-content-between'>
+                        <p>Number Ordered: </p>
+                        <small>{productDetails.total_number_ordered}</small>
+                      </div>
+                      <div className='d-flex justify-content-between'>
+                        <p>Category Name: </p>
+                        <small>{productDetails.category_name}</small>
+                      </div>
+                      <div className='d-flex justify-content-between'>
+                        <p>Status: </p>
+                        <small className={productDetails.status === 0 ? 'Inactive' : 'Active'}><b>{productDetails.status === 0 ? 'Inactive' : 'Active'}</b></small>
+                      </div>
+                      <hr style={{border: '1px solid #FF962E'}}/>
+
+                      <div className="row">
+                        {productDetails.images.map((image) =>
+                          <div className="col-sm-4 col-md-12 col-lg-4 d-flex justify-content-center">
+                            <div style={{
+                                backgroundImage: `url(${image.filename})`,
+                                backgroundRepeat: 'no-repeat',
+                                backgroundSize: 'contain',
+                                width: '100%',
+                                height: '150px',
+                                borderRadius: '20px',
+                              }}>
+                            </div>
+                          </div> 
+                        )}
+                      </div>
+                      <hr style={{border: '1px solid #FF962E'}}/>
+                      <div className="table-container">
+                      <table className='my-table'>
+                        <thead>
+                          <tr>
+                            <th>Inches</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {productDetails.inches && productDetails.inches.length > 0 ? (
+                            productDetails.inches.map((inche) =>
+                              <tr>
+                                <td>{inche.inche}</td>
+                                <td>₦{Number(inche.price).toLocaleString()}</td>
+                                <td>₦{Number(inche.discount).toLocaleString()}</td>
+                              </tr> 
+                            )
+                          ): (
+                            <tr>
+                              <td colSpan="7">No inches available</td>
+                            </tr>
+                          )} 
+                        </tbody>
+                      </table>
+                      </div>
+                      <hr style={{border: '1px solid #FF962E'}}/>
+                      <small>{productDetails.product_description}</small>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

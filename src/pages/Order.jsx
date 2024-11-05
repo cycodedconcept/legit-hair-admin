@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOrder, fetchDetails, updateStatus, clearStatusUpdate, allInvoice, setOrderPage, setInvoicePage } from '../features/orderSlice';
+import { getInvoiceData } from '../features/commerceSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faCaretRight, 
@@ -14,6 +15,8 @@ import {
  } from '@fortawesome/free-solid-svg-icons';
  import Swal from 'sweetalert2';
  import Commerce from './support/Commerce';
+ import { Carousel } from 'react-bootstrap';
+
 
 const Order = () => {
   const [show, setShow] = useState(true);
@@ -23,12 +26,14 @@ const Order = () => {
   const [showInvoice, setShowInvoice] = useState(true);
   const [view, setView] = React.useState('orders');
   const [showButton, setShowButton] = useState(true);
+  const [vi, setVi] = useState(false)
 
   const dispatch = useDispatch();
-  const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status, invoiceData, orderCurrentPage,
+  const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status, invoicedata, orderCurrentPage,
     orderTotalPages,
     invoiceCurrentPage,
     invoiceTotalPages, } = useSelector((state) => state.order);
+    const { invoiceData } = useSelector((state) => state.commerce)
 
   const token = localStorage.getItem("key");
   const moid = localStorage.getItem("moid");
@@ -80,6 +85,7 @@ const Order = () => {
   const hideModal = () => {
     setModalVisible(false);
     setDeliveryStatus('');
+    setVi(false);
   };
 
   const handleStatusChange = (e) => {
@@ -150,6 +156,11 @@ const Order = () => {
     setShowInvoice(true)
   }
 
+  const idetails = (id) => {
+    setVi(true);
+    dispatch(getInvoiceData({token, invoice_id: id}))
+  }
+
   return (
     <>
     {productView ? (
@@ -181,14 +192,14 @@ const Order = () => {
                   <th>Date</th>
                   <th>Date Delivered</th>
                   <th>Delivery Status</th>
-                  <th>View</th>
+                  {/* <th>View</th> */}
                   <th>Details</th>
                 </tr>
               </thead>
               <tbody>
                 {order && order.length > 0 ? (
                   order.map((item) => (
-                    <tr key={item.id}>
+                    <tr key={item.id} onClick={() => viewDetails(item.id)} style={{cursor: 'pointer'}}>
                       <td>{item.order_id}</td>
                       <td>₦{Number(item.amount_paid).toLocaleString()}</td>
                       <td>{item.payment_method}</td>
@@ -199,21 +210,7 @@ const Order = () => {
                           {item.payment_status}
                         </button>
                       </td>
-                      <td>
-                        <button
-                          style={{
-                            backgroundColor: '#FF962E',
-                            color: '#fff',
-                            outline: 'none',
-                            border: '0',
-                            borderRadius: '10px',
-                          }}
-                          onClick={() => viewDetails(item.id)}
-                        >
-                          View More
-                        </button>
-                      </td>
-                      <td><FontAwesomeIcon icon={faEdit} onClick={() => displayModal(item.id)}/></td>
+                      <td onClick={(e) => e.stopPropagation()}><FontAwesomeIcon icon={faEdit} onClick={() => displayModal(item.id)}/></td>
                     </tr>
                   ))
                 ) : (
@@ -266,9 +263,9 @@ const Order = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {invoiceData && invoiceData.length > 0 ? (
-                      invoiceData.map((item) => (
-                        <tr key={item.id}>
+                    {invoicedata && invoicedata.length > 0 ? (
+                      invoicedata.map((item) => (
+                        <tr key={item.id} onClick={() => idetails(item.invoicenumber)}>
                           <td>{item.invoicenumber}</td>
                           <td>{item.customer_name}</td>
                           <td>{item.customer_email}</td>
@@ -321,35 +318,62 @@ const Order = () => {
                 <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Details</p>
             </div>
 
-            <div>
-                <div className='d-flex justify-content-between'>
-                    <p>Delivery Date:</p>
-                    <div className='d-flex'>
-                        <FontAwesomeIcon icon={faCalendar} style={{color: '#FF962E'}}/>
-                        <p className='cc mx-2'>{orderDetails.date}</p>
-                    </div>
-                </div>
-                <div className='d-flex justify-content-between'>
-                    <p>Order Number:</p>
-                    <div className='d-flex'>
-                        <FontAwesomeIcon icon={faListAlt} style={{color: '#FF962E'}}/>
-                        <p className='cc mx-2'>{orderDetails.order_id}</p>
-                    </div>
-                </div>
-                <div className='d-flex justify-content-between'>
-                    <p>Payment Type:</p>
-                    <p className='cc'>{orderDetails.payment_status}</p>
-                </div>
-                <div className='d-flex justify-content-between'>
-                    <p>Payment Type:</p>
-                    <p className='cc'>{orderDetails.payment_method}</p>
-                </div>
+            <div className="row mb-4">
+              <div className="col-sm-12 col-md-12 col-lg-6" style={{borderRight: '1px solid #FF962E', borderRadius: '20px'}}>
+                <div>
+                  <div className='d-flex justify-content-between'>
+                      <p>Delivery Date:</p>
+                      <div className='d-flex'>
+                          <FontAwesomeIcon icon={faCalendar} style={{color: '#FF962E'}}/>
+                          <p className='cc mx-2'>{orderDetails.date}</p>
+                      </div>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                      <p>Order Number:</p>
+                      <div className='d-flex'>
+                          <FontAwesomeIcon icon={faListAlt} style={{color: '#FF962E'}}/>
+                          <p className='cc mx-2'>{orderDetails.order_id}</p>
+                      </div>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                      <p>Payment Status:</p>
+                      <p className='cc'>{orderDetails.payment_status}</p>
+                  </div>
+                  <div className='d-flex justify-content-between'>
+                      <p>Payment Method:</p>
+                      <p className='cc'>{orderDetails.payment_method}</p>
+                  </div>
 
-                <div className='d-flex justify-content-between'>
-                    <p>Order Status:</p>
-                    <p className={orderDetails.delivery_status}>{orderDetails.delivery_status}</p>
+                  <div className='d-flex justify-content-between'>
+                      <p>Order Status:</p>
+                      <p className={orderDetails.delivery_status}>{orderDetails.delivery_status}</p>
+                  </div>
                 </div>
+              </div>
+              <div className="col-sm-12 col-md-12 offset-lg-1 col-lg-5">
+                <h5 className='text-center'>Ordered By</h5>
+                <div className='d-flex justify-content-between'>
+                  <p><FontAwesomeIcon icon={faUserAlt} style={{color: '#FF962E'}}/></p>
+                  <small>{orderDetails?.ordered_by?.name}</small>
+                </div>
+                <div className='d-flex justify-content-between'>
+                  <p><FontAwesomeIcon icon={faEnvelope} style={{color: '#FF962E'}}/></p>
+                  <small>{orderDetails?.ordered_by?.email}</small>
+                </div>
+                <div className='d-flex justify-content-between'>
+                  <p><FontAwesomeIcon icon={faMobile} style={{color: '#FF962E'}}/></p>
+                  <small>{orderDetails?.ordered_by?.phone_number}</small>
+                </div>
+                
+                <div className='d-flex justify-content-between'>
+                    <p><FontAwesomeIcon icon={faUserCheck} style={{color: '#FF962E'}}/></p>
+                    <small className={
+                      orderDetails?.ordered_by?.account_status === 0 ? 'Inactive' : 'Active'
+                    }>{orderDetails?.ordered_by?.account_status === 0 ? 'Inactive' : 'Active'}</small>
+                </div>
+              </div>
             </div>
+
               {orderDetails?.product?.map((image, index) => 
                 <div key={index} className="d-flex justify-content-between">
                   {image.images?.map((img) =>
@@ -357,8 +381,9 @@ const Order = () => {
                   )}
                 </div>
               )}
-            
-            <table className="my-table my-5">
+
+              <div className="table-container">
+              <table className="my-table my-5">
               <thead>
                 <tr>
                   <th>Company Name</th>
@@ -382,27 +407,7 @@ const Order = () => {
                 )}
               </tbody>
             </table>
-
-            <h5>Ordered By</h5>
-            <div className='d-flex justify-content-between'>
-              <p><FontAwesomeIcon icon={faUserAlt} style={{color: '#FF962E'}}/></p>
-              <small>{orderDetails?.ordered_by?.name}</small>
-            </div>
-            <div className='d-flex justify-content-between'>
-              <p><FontAwesomeIcon icon={faEnvelope} style={{color: '#FF962E'}}/></p>
-              <small>{orderDetails?.ordered_by?.email}</small>
-            </div>
-            <div className='d-flex justify-content-between'>
-              <p><FontAwesomeIcon icon={faMobile} style={{color: '#FF962E'}}/></p>
-              <small>{orderDetails?.ordered_by?.phone_number}</small>
-            </div>
-            
-            <div className='d-flex justify-content-between'>
-                <p><FontAwesomeIcon icon={faUserCheck} style={{color: '#FF962E'}}/></p>
-                <small className={
-                  orderDetails?.ordered_by?.account_status === 0 ? 'Inactive' : 'Active'
-                }>{orderDetails?.ordered_by?.account_status === 0 ? 'Inactive' : 'Active'}</small>
-            </div>
+              </div>
           </>
       )}
 
@@ -443,9 +448,122 @@ const Order = () => {
       <Commerce />
       </>
     )}
+
+    {vi ? (
+      <>
+      <div className="modal-overlay">
+        <div className="modal-content2" style={{ width: '900px' }}>
+          <div className="head-mode">
+            <h3>Invoice Details</h3>
+            <button className="modal-close" onClick={hideModal}>
+              &times;
+            </button>
+          </div>
+          <div className="modal-body">
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : error ? (
+              <div>Error: {error?.message || 'Something went wrong'}</div>
+            ) : (
+              <div>
+                <div className="table-container">
+                  <table className="my-table">
+                    <thead>
+                      <tr>
+                        <th>Customer Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Product Amount</th>
+                        <th>Order Quantity</th>
+                        <th>Discounted</th>
+                        <th>Initial Amount</th>
+                        <th>Images</th>
+                        <th>Amount Paid</th>
+                        <th>Delivery State</th>
+                        <th>Landmark</th>
+                        <th>Address</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {invoiceData?.products?.map((product, index) => (
+                        <tr key={index}>
+                          {index === 0 && (
+                            <>
+                              <td rowSpan={invoiceData.products.length}>
+                                {invoiceData.customer_name}
+                              </td>
+                              <td rowSpan={invoiceData.products.length}>
+                                {invoiceData.customer_email}
+                              </td>
+                              <td rowSpan={invoiceData.products.length}>
+                                {invoiceData.customer_phonenumber}
+                              </td>
+                            </>
+                          )}
+                          <td>₦{Number(product.product_amount).toLocaleString()}</td>
+                          <td>{product.order_quantity}</td>
+                          <td>₦{Number(product.discounted).toLocaleString()}</td>
+                          <td>₦{Number(product.initial_amount).toLocaleString()}</td>
+                          <td>
+                            <Carousel indicators={false}>
+                              {product.images.map((image, imgIndex) => (
+                                <Carousel.Item key={imgIndex}>
+                                  <img
+                                    src={image.filename}
+                                    alt={`Product Image ${imgIndex + 1}`}
+                                    style={{
+                                      width: '100px',
+                                      height: 'auto',
+                                      borderRadius: '5px',
+                                      objectFit: 'cover',
+                                    }}
+                                  />
+                                </Carousel.Item>
+                              ))}
+                            </Carousel>
+                          </td>
+                          {index === 0 && (
+                            <>
+                              <td rowSpan={invoiceData.products.length}>
+                                ₦{Number(invoiceData.amount_paid).toLocaleString()}
+                              </td>
+                              <td rowSpan={invoiceData.products.length}>
+                                {invoiceData.delivery_state}
+                              </td>
+                              <td rowSpan={invoiceData.products.length}>
+                                {invoiceData.delivery_landmark}
+                              </td>
+                              <td rowSpan={invoiceData.products.length}>
+                                {invoiceData.delivery_address}
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                      ))}
+                      {invoiceData.products.length === 0 && (
+                        <tr>
+                          <td colSpan="12" className="text-center">
+                            No products found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+
+      </>
+    ) : ''}
       
     </>
   );
 };
 
 export default Order;
+
+

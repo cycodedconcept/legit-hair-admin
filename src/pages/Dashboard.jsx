@@ -317,9 +317,9 @@ const Dashboard = () => {
           <FontAwesomeIcon 
           icon={faRightFromBracket}
             onClick={handleLogout} 
-            className="btn btn-danger"
+            className="btn btn-danger m-2"
             disabled={isLoggingOut}
-            style={{ backgroundColor: '#FF962E' }}
+            style={{ backgroundColor: '#FF962E', fontSize: '10px' }}
           />
             {/* {isLoggingOut ? (
               <>

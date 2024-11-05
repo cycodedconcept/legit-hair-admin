@@ -318,13 +318,8 @@ const addToCart = (productToAdd) => {
                                 <small>{item.product_name.length > maxLength ? item.product_name.slice(0, maxLength) + "..." : item.product_name}</small>
                                 <p style={{color: '#FF962E'}}>₦{item.price.toLocaleString()}</p>
                             </div>
-                            {/* <div className="card-footer-item p-3 ml-0">
-                                <button className='el2-btn w-100' onClick={() => proDetails(item.id)}><FontAwesomeIcon icon={faShoppingCart} className="mx-2" />View More</button>
-                            </div> */}
                             <div className="card-footer-item p-3 ml-0">
-                                <button className='el2-btn w-100' onClick={() => proDetails(item.id)}>
-                                    View Details
-                                </button>
+                                <button className='el2-btn w-100' onClick={() => proDetails(item.id)}><FontAwesomeIcon icon={faShoppingCart} className="mx-2" />View More</button>
                             </div>
                         </div>
                     </div>
@@ -378,13 +373,17 @@ const addToCart = (productToAdd) => {
                       <p>stock: {productDetails.stock}</p>
                     </div>
 
-                    <label htmlFor="inches" className='mt-5'>Select inches</label>
-                    <select id="inches" value={selectedInch} onChange={handleInchChange}>
-                        <option value="">--select inches--</option>
-                        {productDetails?.inches?.map((inch, index) => (
-                            <option value={inch.inche} key={index}>{inch.inche}</option>
-                        ))}
-                    </select>
+                    {productDetails.inches && productDetails.inches.length > 0 && (
+                        <>
+                            <label htmlFor="inches" className="mt-5">Select inches</label>
+                            <select id="inches" value={selectedInch} onChange={handleInchChange}>
+                            <option value="">--select inches--</option>
+                            {productDetails.inches.map((inch, index) => (
+                                <option value={inch.inche} key={index}>{inch.inche}</option>
+                            ))}
+                            </select>
+                        </>
+                        )}
                     <div className="d-flex align-items-center mt-3">
                         <button 
                         onClick={() => handleQuantityChange('decrease')}

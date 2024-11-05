@@ -78,7 +78,6 @@ const AddProduct = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
     
-        // Check if inches array contains an object matching the main price and discount
         const matchingInch = inches.find(
             (inch) => inch.price === parseInt(price) && inch.discount === parseInt(discount)
         );

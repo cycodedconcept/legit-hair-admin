@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createInvoice, getInvoiceData, getLandMark, getCountries } from '../features/commerceSlice';
 import Invoice from './support/Invoice';
 import Swal from 'sweetalert2';
+import { useCart } from './CartContext'
 
 
 const Cart = () => {
+  const { clearCart } = useCart();
   const dispatch = useDispatch();
   let token = localStorage.getItem("key");
   const { data, success, error, spinItem, products, delivery_address, 
@@ -109,10 +111,12 @@ const Cart = () => {
         break;
       case 'landmark':
         setLandmark(value);
-        const selectedLandmark = land.find((ln) => ln.landmark_name === value);
-        if (selectedLandmark) {
-          localStorage.setItem('landmark_price', selectedLandmark.landmark_price);
-        }
+        const selectedValue = e.target.value;
+        const [landmarkName, landmarkPrice] = selectedValue.split('-');
+
+        setLandmark(selectedValue); 
+
+        localStorage.setItem('landmark_price', landmarkPrice);
         break;
       case 'payment':
         setPayment(value);
@@ -148,79 +152,6 @@ const Cart = () => {
       dispatch(getLandMark({ stateItem: state }));
     }
   }, [state, dispatch]);
-
-//  const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const cartItem = localStorage.getItem('cart');
-//     const lprice = localStorage.getItem("landmark_price");
-//     const cartView = cartItem ? JSON.parse(cartItem) : [];
-//     const productsToSubmit = cartView.map(({ images, product_name, ...rest }) => rest);
-//     console.log(productsToSubmit)
-//     console.log(token)
-
-
-//     if (!cartItem || !address || !state || !country || !payment || !name || !email || !phone) {
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Missing Information',
-//             text: 'Please fill in all the fields.',
-//             confirmButtonColor: '#FF962E'
-//         });
-//         return;
-//     }
-  
-//     const uniqueId = generateUniqueId();
-//     const roundedAmount = Math.round(total);
-
-//     try {
-//         const result = await dispatch(createInvoice({
-//             token, 
-//             products: productsToSubmit, 
-//             delivery_address: address || "pickup",
-//             delivery_state: state || "pickup",
-//             delivery_country: country || "pickup",
-//             amount_paid: roundedAmount + parseInt(lprice),
-//             payment_method: payment,
-//             invoice_id: uniqueId,
-//             customer_email: email,
-//             customer_name: name,
-//             customer_phonenumber: phone,
-//             delivery_landmark: landmark || "pickup",
-//             additional_information: additional,
-//             redirect_url: "https://legit-hair-admin.vercel.app/success.html"
-//         })).unwrap();
-
-//         if (result) {
-//             Swal.fire({
-//                 icon: 'success',
-//                 title: 'Created Successfully',
-//                 text: 'Order created successfully.',
-//                 confirmButtonColor: '#FF962E'
-//             });
-
-//             dispatch(getInvoiceData({ token, invoice_id: result.invoicenumber }));
-    
-//             setTimeout(() => {
-//                 Swal.close();
-//                 resetForm();
-//                 setModal(false)
-//                 localStorage.setItem("inum", result.invoicenumber);
-//                 localStorage.setItem("liurl", result.data.link);
-//                 setView(false);
-//             }, 3000);
-//         }
-//         else {
-//             throw new Error(result.message || 'Failed to create order.');
-//         }
-//     } catch (err) {
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Error',
-//             text: err.message || 'An error occurred during the submission. Please try again.',
-//             confirmButtonColor: '#FF962E'
-//         });
-//     }
-//  }
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -261,7 +192,7 @@ const handleSubmit = async (e) => {
       customer_phonenumber: phone,
       delivery_landmark: landmark || "pickup",
       additional_information: additional,
-      redirect_url: "https://legit-hair-admin.vercel.app/success.html"
+      redirect_url: "https://legithairng.com/success.html"
   };
 
   localStorage.setItem("tot", invoiceData.amount_paid)
@@ -289,6 +220,7 @@ const handleSubmit = async (e) => {
               localStorage.setItem("inum", result.invoicenumber);
               localStorage.setItem("liurl", result.data.link);
               setView(false);
+              clearCart()
           }, 3000);
       } else {
           throw new Error(result.message || 'Failed to create order.');
@@ -407,7 +339,7 @@ const handleSubmit = async (e) => {
                                 <div className="col-sm-12 col-md-12 col-lg-6 mt-3">
                                     <div className="form-group">
                                         <label htmlFor="customer">Amount</label>
-                                        <input type="text" name=""  className='w-100' value={total} disabled/>
+                                        <input type="text" name=""  className='w-100' value={Math.round(total)} disabled/>
                                     </div>
                                 </div>
                             </div>
@@ -486,11 +418,16 @@ const handleSubmit = async (e) => {
                                           <label htmlFor="customer">Nearest Landmark</label>
                                           {/* <input type="text" name="landmark" className='w-100' value={landmark} onChange={handleChange}/> */}
                                           <select name="landmark" id="" value={landmark} onChange={handleChange}>
-                                            <option>--choose landmark--</option>
-                                            {land.map((ln, index) => 
-                                              <option key={index} value={ln.landmark_name}>{ln.landmark_name}</option>
-                                            )}
-                                          </select>
+                                          <option>--choose landmark--</option>
+                                          {land.map((ln, index) => 
+                                            <option 
+                                              key={index} 
+                                              value={`${ln.landmark_name}-${ln.landmark_price}`}
+                                            >
+                                              {`${ln.landmark_name} - ${ln.landmark_price}`}
+                                            </option>
+                                          )}
+                                        </select>
                                       </div>
                                   </div>
                               </div>

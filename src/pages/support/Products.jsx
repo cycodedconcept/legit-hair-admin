@@ -144,7 +144,6 @@ const Products = () => {
     formData.append('status', inputValues.status);
     formData.append('product_id', getId);
 
-    console.log(inputValues.productName, inputGroups, getId, categoryId)
 
     dispatch(updateProduct({formData, token})).then(() => {
       Swal.fire({
@@ -216,7 +215,7 @@ const Products = () => {
                     <td>
                       <button className='btn-status' 
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevents row click from firing
+                          e.stopPropagation();
                           switchStatus(product.id, token);
                         }}          
                         >Change Status
@@ -245,7 +244,6 @@ const Products = () => {
           {total_pages > 1 && (
             <div className="pagination">
 
-              {/* Previous page button */}
               {currentPage > 1 && (
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -263,7 +261,6 @@ const Products = () => {
               {/* Previous dots if there are more pages before the previous page */}
               {/* {currentPage > 2 && <span className="mx-1">...</span>} */}
 
-              {/* Current page */}
               <button
                 onClick={() => handlePageChange(currentPage)}
                 disabled
@@ -277,7 +274,6 @@ const Products = () => {
                 {currentPage}
               </button>
 
-              {/* Next page if it exists */}
               {currentPage < total_pages && (
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
@@ -292,7 +288,6 @@ const Products = () => {
                 </button>
               )}
 
-              {/* Next dots if there are more pages after the next page */}
               {currentPage < total_pages - 1 && <span className="mx-1">...</span>}
             </div>
           )}
@@ -554,6 +549,7 @@ const Products = () => {
                     )}
                   </div>
                   <hr style={{border: '1px solid #FF962E'}}/>
+                  <div className="table-container">
                   <table className='my-table'>
                     <thead>
                       <tr>
@@ -578,6 +574,7 @@ const Products = () => {
                       )} 
                     </tbody>
                   </table>
+                  </div>
                   <hr style={{border: '1px solid #FF962E'}}/>
                   <small>{productDetails.product_description}</small>
                 </div>

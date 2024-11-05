@@ -1288,9 +1288,21 @@ input, textarea, select {
   }
 
 
+  .status-pending {
+    color: red;
+    font-weight: bold;
+  }
   
-
-
+  .status-processing {
+    color: #FF962E;
+    font-weight: bold;
+  }
+  
+  .status-out-for-processing {
+    color: brown;
+    font-weight: bold;
+  }
+  
 
   
   

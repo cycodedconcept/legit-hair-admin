@@ -237,21 +237,19 @@ const Customer = () => {
                     <th>Phone Number</th>
                     <th>Status</th>
                     <th>Change Status</th>
-                    <th style={{width: '20%'}}>View More</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filterUser.map((fill) => (
-                    <tr key={fill.id}>
+                    <tr key={fill.id} onClick={() => myOrders(fill.id)} style={{cursor: 'pointer'}}>
                       <td>{fill.name}</td>
                       <td>{fill.email}</td>
                       <td>{fill.phone_number}</td>
                       <td className={fill.account_status === 1 ? 'Active' : 'Blocked'}>{fill.account_status === 1 ? 'Active' : 'Blocked'}</td>
-                      <td>
-                        <button onClick={() => switchStatus(fill.id, token)} className={fill.account_status === 1 ? 'deactivate' : 'activate'}>{fill.account_status === 1 ? 'Block' : 'Activate'}</button>
-                      </td>
-                      <td>
-                        <button className="pro-btn mt-3" onClick={() => myOrders(fill.id)}>view orders</button>
+                      <td onClick={(e) => e.stopPropagation()}>
+                        <button onClick={() => {
+                          switchStatus(fill.id, token)
+                        }} className={fill.account_status === 1 ? 'deactivate' : 'activate'}>{fill.account_status === 1 ? 'Block' : 'Activate'}</button>
                       </td>
                     </tr>
                   ))}
@@ -272,107 +270,101 @@ const Customer = () => {
             <p style={{color: '#FF962E', cursor: 'pointer'}} onClick={goBack}>Customer Management</p>
             <p style={{color: '#6E7079'}}><FontAwesomeIcon icon={faCaretRight} style={{color: '#C2C6CE'}}/> View Details</p>
           </div>
+
+          <div className="table-container">
           <div className="order-details">
-            {isLoading ? (
-              <p>Loading orders...</p>
-            ) : error ? (
-              <p>Error: {error.message || 'Failed to load orders'}</p>
-            ) : userOrders.length > 0 ? (
-                userOrders?.map((user) => (
-                  <div key={user.id}>
-                    <div>
-                      <div className='mb-3 doub d-flex justify-content-between'>
-                        <p><b>Date</b></p>
-                        <small>{user.date}</small>
-                      </div>
-                      <div className='doub d-flex justify-content-between'>
-                        <p><b>Payment Status</b></p>
-                        <small>{user.payment_status}</small>
-                      </div>
-                      <div className='doub d-flex justify-content-between'>
-                        <p><b>Payment Method</b></p>
-                        <small>{user.payment_method}</small>
-                      </div>
-                      <div className='doub d-flex justify-content-between'>
-                        <p><b>Amount Paid</b></p>
-                        <small>₦{Number(user.amount_paid).toLocaleString()}</small>
-                      </div>
-                      <div className='doub mb-3 mb-lg-0 d-flex justify-content-between'>
-                        <p><b>Delivery Status</b></p>
-                        <small className={user.delivery_status}>{user.delivery_status}</small>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-sm-12 col-md-12 col-lg-4">
-                        <div className='d-flex justify-content-between mb-3'>
-                            <p style={{color: '#FF962E'}}><b>Order Number:</b></p>
-                            <small>{user.order_id}</small>
-                        </div>
-                        <div className='d-flex justify-content-between'>
-                            <p><b>Date Delivered:</b></p>
-                            <small>{user.date_delivered}</small>
-                        </div>
-                        <div className='d-flex justify-content-between'>
-                            <p><b>Additional Information:</b></p>
-                            <small>{user.additional_information}</small>
-                        </div>
-                        <button className='pro-btn m-0' onClick={() => callDetails(user.id)}>View Order Details</button>
-                      </div>
-                      <div className="col-sm-12 col-md-12 col-lg-8" style={{borderLeft: '1px solid #FF962E', padding: '10px 8px', borderRadius: '10px'}}>
-                        <h5 className='text-center'><b>Delivery Information</b></h5>
-                        <div className='d-flex justify-content-between mb-3'>
-                          <p className='mx-2'><b>Country:</b></p>
-                          <small>{user.delivery_country}</small>
-                        </div>
-                        <div className='d-flex justify-content-between mb-3'>
-                          <p className='mx-2'><b>State:</b></p>
-                          <small>{user.delivery_state}</small>
-                        </div>
-                        <div className='d-flex justify-content-between mb-3'>
-                          <p className='mx-2'><b>Address:</b></p>
-                          <small>{user.delivery_address}</small>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="product-section my-5">
-                      <div className="table-container">
-                        <table className="my-table">
-                          <thead>
-                            <tr>
-                              <th>Product Amount</th>
-                              <th>Initial Amount</th>
-                              <th>Discounted</th>
-                              <th>Inches</th>
-                              <th>Order Quantity</th>
-                            </tr>
-                          </thead>
-                          <tbody>
+              {isLoading ? (
+                <p>Loading orders...</p>
+              ) : error ? (
+                <p>Error: {error.message || 'Failed to load orders'}</p>
+              ) : userOrders.length > 0 ? (
+                <table className="my-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Payment Status</th>
+                      <th>Payment Method</th>
+                      <th>Amount Paid</th>
+                      <th>Delivery Status</th>
+                      <th>Order Number</th>
+                      <th>Date Delivered</th>
+                      <th>Additional Info</th>
+                      <th>Delivery Country</th>
+                      <th>Delivery State</th>
+                      <th>Delivery Address</th>
+                      <th>Products</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userOrders.map((user) => (
+                      <React.Fragment key={user.id}>
+                        <tr onClick={() => callDetails(user.id)}>
+                          <td>{user.date}</td>
+                          <td>{user.payment_status}</td>
+                          <td>{user.payment_method}</td>
+                          <td>₦{Number(user.amount_paid).toLocaleString()}</td>
+                          {/* <td>{user.delivery_status}</td> */}
+                          <td className={`status-${user.delivery_status.toLowerCase().replace(/\s+/g, '-')}`}>
+                            {user.delivery_status}
+                          </td>
+                          <td>{user.order_id}</td>
+                          <td>{user.date_delivered}</td>
+                          <td>{user.additional_information}</td>
+                          <td>{user.delivery_country}</td>
+                          <td>{user.delivery_state}</td>
+                          <td>{user.delivery_address}</td>
+                          <td>
                             {user.product && JSON.parse(user.product).length > 0 ? (
-                              JSON.parse(user.product).map((prod, index) =>
-                              <tr key={index}>
-                                <td>₦{Number(prod.product_amount).toLocaleString()}</td>
-                                <td>₦{Number(prod.initial_amount).toLocaleString()}</td>
-                                <td>{prod.discounted ? 'Yes' : 'No'}</td>
-                                <td>{prod.inches}</td>
-                                <td>{prod.order_quantity}</td>
-                              </tr> 
-                              )
+                              <table className="product-table">
+                                <thead>
+                                  <tr>
+                                    <th>Product Amount</th>
+                                    <th>Initial Amount</th>
+                                    <th>Discounted</th>
+                                    <th>Inches</th>
+                                    <th>Order Quantity</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {JSON.parse(user.product).map((prod, index) => (
+                                    <tr key={index}>
+                                      <td>₦{Number(prod.product_amount).toLocaleString()}</td>
+                                      <td>₦{Number(prod.initial_amount).toLocaleString()}</td>
+                                      <td>{prod.discounted ? 'Yes' : 'No'}</td>
+                                      <td>{prod.inches}</td>
+                                      <td>{prod.order_quantity}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
                             ) : (
-                              <p className='text-center'>No product record found</p>
+                              <p>No product record found</p>
                             )}
-                          </tbody>
-                        </table>
-                      </div>
-                      
-                    </div>
-                    <hr style={{border: '1px solid #FF962E'}}/>
-                  </div>
-                ))
-            ) : (
-              <p className='text-center'>No order available for this user.</p>
-            )
-          }
+                          </td>
+                        </tr>
+                        {/* <tr>
+                          <td colSpan="12" className="view-details-cell">
+                            <button className="pro-btn" onClick={() => callDetails(user.id)}>
+                              View Order Details
+                            </button>
+                          </td>
+                        </tr> */}
+                        <tr>
+                          <td colSpan="12">
+                            <hr style={{ border: '1px solid #FF962E' }} />
+                          </td>
+                        </tr>
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-center">No order available for this user.</p>
+              )}
           </div>
+          </div>
+          
+
           {renderViewOrdersPagination()}
        </div>
       </>
