@@ -82,6 +82,7 @@ const Admin = () => {
           text: 'The user has been created successfully.',
           confirmButtonColor: '#FF962E'
         });
+       dispatch(showUsers({token}));
   
         setTimeout(() => {
             Swal.close();

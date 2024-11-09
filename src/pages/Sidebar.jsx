@@ -48,7 +48,7 @@ const Sidebar = ({ onButtonClick, activeContent }) => {
     return (
         <>
             <div className="sidebar">
-                <img src={Logo} alt="Logo" className='w-75 mx-2 mt-2' />
+                <img src={Logo} alt="Logo" className='w-75 mx-2 mt-2'/>
                 <div className="sidebar-menu">
                     {showMenu}
                 </div>
