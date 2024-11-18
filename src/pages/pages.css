@@ -956,7 +956,7 @@ input, textarea, select {
 
 .search-input {
     padding: 10px 20px 10px 40px; /* Space for the icon */
-    width: 57%;
+    width: 40%;
     border: 1px solid #ccc;
     border-radius: 20px;
     font-size: 16px;
@@ -964,7 +964,7 @@ input, textarea, select {
 
 .search-input2 {
     padding: 10px 20px 10px 40px; /* Space for the icon */
-    width: 60%;
+    width: 70%;
     border: 1px solid #ccc;
     border-radius: 20px;
     font-size: 16px;

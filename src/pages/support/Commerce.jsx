@@ -25,6 +25,8 @@ const Commerce = () => {
   const [quantity, setQuantity] = useState(1);
   const [displayPrice, setDisplayPrice] = useState(productDetails.main_price);
   const [strikethroughPrice, setStrikethroughPrice] = useState(null);
+  const [filterText, setFilterText] = useState('');
+
 
 
   useEffect(() => {
@@ -65,17 +67,14 @@ const Commerce = () => {
     const selectedInchObject = productDetails.inches.find((inch) => String(inch.inche) === String(e.target.value));
 
     if (selectedInchObject) {
-      // If inch has discount, show it as main price and strike through regular price
       if (selectedInchObject.discount) {
         setDisplayPrice(selectedInchObject.discount);
         setStrikethroughPrice(selectedInchObject.price);
       } else {
-        // If no discount, use the regular inch price
         setDisplayPrice(selectedInchObject.price);
         setStrikethroughPrice(null);
       }
     } else {
-      // Fallback to product's main discount or main price
       setDisplayPrice(productDetails.main_price_discount || productDetails.main_price);
       setStrikethroughPrice(productDetails.main_price_discount ? productDetails.main_price : null);
     }
@@ -288,22 +287,26 @@ const addToCart = (productToAdd) => {
     }
   };
 
-//   useEffect(() => {
-//     localStorage.setItem('cart', JSON.stringify(cart));
-//   }, [cart]);
+  const filteredProducts = product.filter((item) =>
+    item.product_name.toLowerCase().includes(filterText.toLowerCase())
+  );
 
   
   return (
     <>
     {details ? (
         <>
+        <div className="text-left">
+          <input type="text" placeholder="Search Product..." className="search-input mb-3" value={filterText} onChange={(e) => setFilterText(e.target.value)}/>
+        </div>
+
           <div className="row mt-5 mt-lg-3">
             {isLoading ? (
                 <div>Loading...</div>
             ) : error ? (
                 <div>Error: {error?.message || 'Something went wrong'}</div>
-            ) : product?.length > 0 ? (
-                product.map((item) => 
+            ) : filteredProducts?.length > 0 ? (
+                filteredProducts.map((item) => 
                     <div className="col-sm-12 col-md-12 col-lg-3 mb-5" key={item.id}>
                         <div className="card-item" style={{boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', borderRadius: '20px'}}>
                             <div className="card-img">
@@ -327,7 +330,7 @@ const addToCart = (productToAdd) => {
             ): (
                 <p className='text-center'>No product available.</p>
             )}
-            </div>
+          </div>
             {renderProductPagination()}
         </>
     ) : (

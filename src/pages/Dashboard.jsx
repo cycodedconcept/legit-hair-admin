@@ -100,7 +100,6 @@ const Dashboard = () => {
     localStorage.setItem('cart', JSON.stringify(newCart));
   };
 
-  // If logging out, show nothing or a loading spinner
   if (isLoggingOut) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
@@ -121,7 +120,7 @@ const Dashboard = () => {
             <label htmlFor="nav-toggle">
               <span className="las la-bars" style={{fontSize: '25px', lineHeight: '1.4'}}></span>
             </label>
-            <p style={{ lineHeight: '1.6'}} className="mx-3 vega">{upperLetter(activeContent)}</p>
+            <p className="mx-3 vega">{upperLetter(activeContent)}</p>
           </div>
           <div className="head-right mt-2 mr-5">
             <div style={{ position: 'relative' }}>

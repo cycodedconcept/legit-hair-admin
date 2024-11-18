@@ -28,6 +28,7 @@ const Order = () => {
   const [showButton, setShowButton] = useState(true);
   const [vi, setVi] = useState(false);
   const [activeButton, setActiveButton] = useState('');
+  const [filterText, setFilterText] = useState('');
 
   const dispatch = useDispatch();
   const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status, invoicedata, orderCurrentPage,
@@ -164,15 +165,27 @@ const Order = () => {
     dispatch(getInvoiceData({token, invoice_id: id}))
   }
 
+  const filteredOrders = order.filter((item) =>
+  (item.order_id && item.order_id.toLowerCase().includes(filterText.toLowerCase())) ||
+  (item.amount_paid && item.amount_paid.toString().includes(filterText)) ||
+  (item.payment_method && item.payment_method.toLowerCase().includes(filterText.toLowerCase())) ||
+  (item.date && item.date.includes(filterText)) ||
+  (item.date_delivered && item.date_delivered.includes(filterText)) ||
+  (item.payment_status && item.payment_status.includes(filterText))
+);
+
+
+
   return (
     <>
     {productView ? (
       <>
       {showButton ? (
-        <div className="text-left my-2 mt-lg-3">
-          <button className='pro-btn my-3 mx-lg-3' onClick={ecom}>Create Manual Order</button>
-          <button className={`or-btn my-3 mx-lg-3 ${activeButton === 'viewInvoices' ? 'active-btn' : ''}`} onClick={evoice}>View All Invoice</button>
-          <button className={`or-btn my-3 mx-lg-3 ${activeButton === 'viewOrders' ? 'active-btn' : ''}`} onClick={ivoice}>View Orders</button>
+        <div className="my-2 mt-lg-3">
+          <input type="text" placeholder="Search Order..." className="search-input" value={filterText} onChange={(e) => setFilterText(e.target.value)}/>
+          <button className={`or-btn my-3 mx-lg-1 ${activeButton === 'viewOrders' ? 'active-btn' : ''}`} onClick={ivoice}>View Orders</button>
+          <button className={`or-btn my-3 mx-lg-1 ${activeButton === 'viewInvoices' ? 'active-btn' : ''}`} onClick={evoice}>View All Invoice</button>
+          <button className='pro-btn my-3 mx-lg-5' onClick={ecom}>Create Manual Order</button>
         </div>
         ) : ''}
        
@@ -185,6 +198,7 @@ const Order = () => {
           <>
           {showInvoice ? (
           <>
+
           <div className="table-container">
             <table className="my-table">
               <thead>
@@ -195,13 +209,12 @@ const Order = () => {
                   <th>Date</th>
                   <th>Date Delivered</th>
                   <th>Delivery Status</th>
-                  {/* <th>View</th> */}
                   <th>Details</th>
                 </tr>
               </thead>
               <tbody>
-                {order && order.length > 0 ? (
-                  order.map((item) => (
+                {filteredOrders && filteredOrders.length > 0 ? (
+                  filteredOrders.map((item) => (
                     <tr key={item.id} onClick={() => viewDetails(item.id)} style={{cursor: 'pointer'}}>
                       <td>{item.order_id}</td>
                       <td>₦{Number(item.amount_paid).toLocaleString()}</td>

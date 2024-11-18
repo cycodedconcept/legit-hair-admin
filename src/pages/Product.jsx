@@ -276,7 +276,7 @@ const Product = () => {
       <div className="row mt-5 mt-lg-3">
       <div className="col-sm-12 col-md-12 col-lg-5">
         <div className="search-container">
-          <input type="text" placeholder="Search Order..." className="search-input" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
+          <input type="text" placeholder="Search Order..." className="search-input2" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
           <span className="search-icon">&#128269;</span>
         </div>
       </div>
