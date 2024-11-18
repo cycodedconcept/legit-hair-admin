@@ -26,7 +26,8 @@ const Order = () => {
   const [showInvoice, setShowInvoice] = useState(true);
   const [view, setView] = React.useState('orders');
   const [showButton, setShowButton] = useState(true);
-  const [vi, setVi] = useState(false)
+  const [vi, setVi] = useState(false);
+  const [activeButton, setActiveButton] = useState('');
 
   const dispatch = useDispatch();
   const { order, currentPage, total_pages, isLoading, error, orderDetails, success, order_id, delivery_status, invoicedata, orderCurrentPage,
@@ -146,6 +147,7 @@ const Order = () => {
 
   const evoice = (e) => {
     e.preventDefault();
+    setActiveButton('viewInvoices');
     if (token) {
       dispatch(allInvoice({token}));
       setShowInvoice(false)
@@ -153,7 +155,8 @@ const Order = () => {
   }
 
   const ivoice = () => {
-    setShowInvoice(true)
+    setShowInvoice(true);
+    setActiveButton('viewOrders');
   }
 
   const idetails = (id) => {
@@ -166,10 +169,10 @@ const Order = () => {
     {productView ? (
       <>
       {showButton ? (
-        <div className="text-left my-5 mt-lg-3">
+        <div className="text-left my-2 mt-lg-3">
           <button className='pro-btn my-3 mx-lg-3' onClick={ecom}>Create Manual Order</button>
-          <button className='pro-btn my-3 mx-lg-3' onClick={evoice}>View All Invoice</button>
-          <button className="pro-btn my-3 mx-lg-3" onClick={ivoice}>View Orders</button>
+          <button className={`or-btn my-3 mx-lg-3 ${activeButton === 'viewInvoices' ? 'active-btn' : ''}`} onClick={evoice}>View All Invoice</button>
+          <button className={`or-btn my-3 mx-lg-3 ${activeButton === 'viewOrders' ? 'active-btn' : ''}`} onClick={ivoice}>View Orders</button>
         </div>
         ) : ''}
        
@@ -540,7 +543,7 @@ const Order = () => {
                           )}
                         </tr>
                       ))}
-                      {invoiceData.products.length === 0 && (
+                      {invoiceData?.products?.length === 0 && (
                         <tr>
                           <td colSpan="12" className="text-center">
                             No products found

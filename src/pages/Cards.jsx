@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { adminBoard } from '../features/dashboardSlice';
-// import { getCustomerReport } from '../features/reportSlice';
 
 import { User, Order } from '../assets/images';
 import { BarChart, Progress } from './Chart';
@@ -103,13 +102,13 @@ const Cards = () => {
     <>
       <div className="dash-cards">
         { cardDisplay }
-        </div>
+      </div>
       <div className="row mt-5">
         <div className="col-sm-12 col-md-12 col-lg-6">
           <BarChart />
-          <div className='text-center mx-5 w-50 mt-5'>
+          <div className='text-center mx-5 w-75 mt-5 p-5' style={{boxShadow: 'rgb(38, 57, 77) 0px 20px 30px -10px'}}>
             <h5 className='mb-3'>Active Customers</h5>
-            <Progress percentage={progress} />
+            <Progress percentage={progress}/>
 
             <hr style={{border: '2px solid #FF962E'}} />
 

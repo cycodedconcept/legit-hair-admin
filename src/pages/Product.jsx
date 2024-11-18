@@ -132,7 +132,7 @@ const Product = () => {
   const renderCategoryOptions = (categories) => {
     return categories.map((category) => (
       <option key={category.id} value={category.id}>
-        {category.name} (Parent ID: {category.parent_category_id ?? 'None'})
+        {category.name}
       </option>
     ));
   };

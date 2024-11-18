@@ -63,7 +63,7 @@ const BarChart = () => {
 const Progress = ({ percentage }) => {
     return (
       <CircularProgressbar  value={percentage}
-      text={`+${percentage}%`}
+      text={`${percentage}%`}
       styles={buildStyles({
         textColor: "#FF962E",
         pathColor: "#FF962E",

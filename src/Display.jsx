@@ -1,29 +1,3 @@
-// import React from 'react';
-// import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-// import Dashboard from './pages/Dashboard';
-// import Login from './components/Login';
-
-// const Display = () => {
-//   const authToken = localStorage.getItem('key');
-
-//   return (
-//     <React.Fragment>
-//       <BrowserRouter>
-//         <Routes>
-//           <Route index element={<Login />} />
-//           <Route
-//             path="/dashboard"
-//             element={authToken ? <Dashboard /> : <Navigate to="/" />}
-//           />
-//         </Routes>
-//       </BrowserRouter>
-//     </React.Fragment>
-//   )
-// }
-
-// export default Display
-
-// Display.jsx
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';

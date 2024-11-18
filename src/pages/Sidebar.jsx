@@ -1,14 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import { Dash, Logo, Order, Roduct, Report, User, Com } from '../assets/images';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import './pages.css';
 
-const Sidebar = ({ onButtonClick, activeContent }) => {
+const Sidebar = ({ onButtonClick, activeContent, onLogout }) => {
     const [menus, setMenus] = useState([]);
 
     useEffect(() => {
         const storedMenus = localStorage.getItem('menus');
         if (storedMenus) {
-            setMenus(JSON.parse(storedMenus)); // Parse the stored menus and set it to state
+            setMenus(JSON.parse(storedMenus));
         }
     }, []);
 
@@ -52,6 +54,13 @@ const Sidebar = ({ onButtonClick, activeContent }) => {
                 <div className="sidebar-menu">
                     {showMenu}
                 </div>
+                <button 
+                    className="sidebar-menu button logout-button" 
+                    onClick={onLogout}
+                >
+                    <FontAwesomeIcon icon={faRightFromBracket} />
+                    <span className='mx-3'>Logout</span>
+                </button>
             </div>
         </>
     );
