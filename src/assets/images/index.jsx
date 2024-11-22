@@ -18,10 +18,8 @@ import Profile from './profile.png';
 import Exp from './exp.png';
 import Filter from './filter.png';
 import Img from './img.png';
-import Cc from './cc.png'
-
-
-
+import Cc from './cc.png';
+import Fil from './fil.png';
 
 export { 
     Logo, Com, Order, 
@@ -31,5 +29,5 @@ export {
     Wig1, Wig2, Wig3, 
     Wig4, Wig5, Bell,
     Profile, Exp, Filter,
-    Img, Cc
+    Img, Cc, Fil
 }

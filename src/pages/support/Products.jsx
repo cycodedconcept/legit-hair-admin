@@ -301,7 +301,7 @@ const Products = () => {
             <div className="head-mode">
               <h3>Update Product</h3>
               <button className="modal-close" onClick={hideModal}>
-                &times;
+               &times;
               </button>
             </div>
 

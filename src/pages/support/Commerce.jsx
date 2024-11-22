@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { productItem, setPageProduct } from '../../features/orderSlice';
-import { getProductDetails } from '../../features/allProductSlice';
+import { getProductDetails, viewCategory, selectViewDetails, selectCurrentPage, selectTotalPages, } from '../../features/allProductSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faCaretRight, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import ImageCarousel from './ImageCarousel';
 import ProductCartButton from './ProductCartButton';
 import Swal from 'sweetalert2';
 import { useCart } from '../CartContext';
+import FilterCategory from './FilterCategory';
+import { Fil } from '../../assets/images'
 
 
 const Commerce = () => {
@@ -20,14 +22,40 @@ const Commerce = () => {
   const { isLoading, error, product, productPage, productTotalPages} = useSelector((state) => state.order);
   const { productDetails } = useSelector((state) => state.allProducts);
 
+  const viewDetails = useSelector(selectViewDetails);
+  const currentPage = useSelector(selectCurrentPage);
+  const total_pages = useSelector(selectTotalPages);
+
   const [details, setDetails] = useState(true);
   const [selectedInch, setSelectedInch] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [displayPrice, setDisplayPrice] = useState(productDetails.main_price);
   const [strikethroughPrice, setStrikethroughPrice] = useState(null);
   const [filterText, setFilterText] = useState('');
+  const [mod, setMod] = useState(false);
+  const [cat, setCat] = useState(true);
+  const [back, setBack] = useState(false);
+
+  //   new state
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setMod(false)
+    dispatch(viewCategory({token, id: selectedCategory, page: 1})); 
+  };
+
+  useEffect(() => {
+    if (selectedCategory) {
+      console.log('Selected category:', selectedCategory);
+    }
+  }, [selectedCategory]);
+
+  //   ends here
 
 
+  const hideModal = () => {
+    setMod(false);
+  };
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -287,51 +315,159 @@ const addToCart = (productToAdd) => {
     }
   };
 
-  const filteredProducts = product.filter((item) =>
-    item.product_name.toLowerCase().includes(filterText.toLowerCase())
-  );
 
+  const filteredProducts = product.filter((item) => {
+    return (
+      item.product_name.toLowerCase().includes(filterText.toLowerCase())
+    );
+  });
+
+  
+
+  const catMode = () => {
+    setMod(true);
+    setCat(false);
+    setBack(true);
+  }
+
+  const showAllProduct = () => {
+    setCat(true);
+    setBack(false);
+  }
   
   return (
     <>
     {details ? (
         <>
-        <div className="text-left">
-          <input type="text" placeholder="Search Product..." className="search-input mb-3" value={filterText} onChange={(e) => setFilterText(e.target.value)}/>
-        </div>
+            <div className="text-left tl">
+              {back ? (
+              <>
+                <button className='pro-btn2' onClick={showAllProduct}><FontAwesomeIcon icon={faCaretLeft} /> Back to all Product</button>
+              </>
+              ) : (
+                <input type="text" placeholder="Search Product..." className="search-input3 mb-3" value={filterText} onChange={(e) => setFilterText(e.target.value)}/>
+              )}
+              <img src={ Fil } alt="" className='fil-img' onClick={() => catMode()}/>
+            </div>
 
-          <div className="row mt-5 mt-lg-3">
-            {isLoading ? (
-                <div>Loading...</div>
-            ) : error ? (
-                <div>Error: {error?.message || 'Something went wrong'}</div>
-            ) : filteredProducts?.length > 0 ? (
-                filteredProducts.map((item) => 
-                    <div className="col-sm-12 col-md-12 col-lg-3 mb-5" key={item.id}>
-                        <div className="card-item" style={{boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', borderRadius: '20px'}}>
-                            <div className="card-img">
-                              {item?.images && item.images.length > 0 ? (
-                                    <img src={item.images[0].filename} alt="image" className='w-100 rounded-pill' />
-                                    ) : (
-                                    <p>No images found</p>
+            {cat ? (
+              <>
+                <div className="row mt-5 mt-lg-3">
+                {isLoading ? (
+                    <div>Loading...</div>
+                ) : error ? (
+                    <div>Error: {error?.message || 'Something went wrong'}</div>
+                ) : filteredProducts?.length > 0 ? (
+                    filteredProducts.map((item) => 
+                        <div className="col-sm-12 col-md-12 col-lg-3 mb-5" key={item.id}>
+                            <div className="card-item" style={{boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', borderRadius: '20px'}}>
+                                <div className="card-img">
+                                {item?.images && item.images.length > 0 ? (
+                                  <img src={item.images[0].filename} alt="image" className='w-100 rounded-pill' />
+                                  ) : (
+                                  <p>No images found</p>
                                 )}
 
-                            </div>
-                            <div className="card-body">
-                                <small>{item.product_name.length > maxLength ? item.product_name.slice(0, maxLength) + "..." : item.product_name}</small>
-                                <p style={{color: '#FF962E'}}>₦{item.price.toLocaleString()}</p>
-                            </div>
-                            <div className="card-footer-item p-3 ml-0">
-                                <button className='el2-btn w-100' onClick={() => proDetails(item.id)}><FontAwesomeIcon icon={faShoppingCart} className="mx-2" />View More</button>
+                                </div>
+                                <div className="card-body">
+                                    <small>{item.product_name.length > maxLength ? item.product_name.slice(0, maxLength) + "..." : item.product_name}</small>
+                                    <p style={{color: '#FF962E'}}>₦{item.price.toLocaleString()}</p>
+                                </div>
+                                <div className="card-footer-item p-3 ml-0">
+                                    <button className='el2-btn w-100' onClick={() => proDetails(item.id)}><FontAwesomeIcon icon={faShoppingCart} className="mx-2" />View More</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )
-            ): (
-                <p className='text-center'>No product available.</p>
+                    )
+                ): (
+                    <p className='text-center'>No product available.</p>
+                )}
+                </div>
+                {renderProductPagination()}
+              </>
+            ) : (
+            <>
+              <div className="row mt-5 mt-lg-3">
+                {isLoading ? (
+                    <div>Loading...</div>
+                ) : error ? (
+                    <div>Error: {error?.message || 'Something went wrong'}</div>
+                ) : viewDetails?.data.length > 0 ? (
+                    viewDetails?.data.map((item) => 
+                        <div className="col-sm-12 col-md-12 col-lg-3 mb-5" key={item.id}>
+                            <div className="card-item" style={{boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', borderRadius: '20px'}}>
+                                <div className="card-img">
+                                {item?.images && item.images.length > 0 ? (
+                                  <img src={item.images[0].filename} alt="image" className='w-100 rounded-pill' />
+                                  ) : (
+                                  <p>No images found</p>
+                                )}
+
+                                </div>
+                                <div className="card-body">
+                                    <small>{item.product_name.length > maxLength ? item.product_name.slice(0, maxLength) + "..." : item.product_name}</small>
+                                    <p style={{color: '#FF962E'}}>₦{item.price.toLocaleString()}</p>
+                                </div>
+                                <div className="card-footer-item p-3 ml-0">
+                                    <button className='el2-btn w-100' onClick={() => proDetails(item.id)}><FontAwesomeIcon icon={faShoppingCart} className="mx-2" />View More</button>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                ): (
+                    <p className='text-center'>No product available.</p>
+                )}
+              </div>
+              {total_pages > 1 && (
+                <div className="pagination">
+
+                  {currentPage > 1 && (
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className="mx-1"
+                      style={{
+                        backgroundColor: '#FF962E',
+                        borderRadius: '10px',
+                        border: '0',
+                      }}
+                    >
+                      {currentPage - 1}
+                    </button>
+                  )}
+
+
+                  <button
+                    onClick={() => handlePageChange(currentPage)}
+                    disabled
+                    className="mx-1"
+                    style={{
+                      backgroundColor: '#FF962E',
+                      borderRadius: '10px',
+                      border: '0',
+                    }}
+                  >
+                    {currentPage}
+                  </button>
+
+                  {currentPage < total_pages && (
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className="mx-1"
+                      style={{
+                        backgroundColor: '#FF962E',
+                        borderRadius: '10px',
+                        border: '0',
+                      }}
+                    >
+                      {currentPage + 1}
+                    </button>
+                  )}
+
+                  {currentPage < total_pages - 1 && <span className="mx-1">...</span>}
+                </div>
+              )}
+            </>
             )}
-          </div>
-            {renderProductPagination()}
         </>
     ) : (
         <>
@@ -421,6 +557,24 @@ const addToCart = (productToAdd) => {
             
         </>
     )}
+
+    {mod ? (
+        <>
+          <div className="modal-overlay">
+              <div className="modal-content2">
+                  <div className="head-mode">
+                      <h3>Select Category</h3>
+                        <button className="modal-close" onClick={hideModal}>
+                        &times;
+                        </button>
+                  </div>
+                  <div className="modal-body">
+                    <FilterCategory onCategorySelect={handleCategorySelect} />
+                  </div>
+              </div>
+          </div>
+        </>
+    ) : ''}
     </>
   )
 }

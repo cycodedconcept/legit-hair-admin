@@ -274,23 +274,23 @@ const Product = () => {
     
     {search ? (
       <div className="row mt-5 mt-lg-3">
-      <div className="col-sm-12 col-md-12 col-lg-5">
-        <div className="search-container">
-          <input type="text" placeholder="Search Order..." className="search-input2" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
-          <span className="search-icon">&#128269;</span>
+        <div className="col-sm-12 col-md-12 col-lg-5">
+          <div className="search-container">
+            <input type="text" placeholder="Search Order..." className="search-input2" value={myValue} onChange={(e) => setMyValue(e.target.value)}/>
+            <span className="search-icon">&#128269;</span>
+          </div>
         </div>
-      </div>
-      <div className="col-sm-12 col-md-12 col-lg-4">
-        <div className='mt-2'>
-          <select value={selectId} onChange={pickChange}>
-            <option value="">Select a Category</option>
-            {categories && renderCategoryOptions(categories)}
-          </select>
+        <div className="col-sm-12 col-md-12 col-lg-4">
+          <div className='mt-2'>
+            <select value={selectId} onChange={pickChange}>
+              <option value="">Select a Category</option>
+              {categories && renderCategoryOptions(categories)}
+            </select>
+          </div>
         </div>
-      </div>
-      <div className="col-sm-12 col-md-12 col-lg-3 mt-3 mb-4 text-left">
-        <button className='pro-btn' onClick={showProductForm}>+ Add Products</button>
-      </div>
+        <div className="col-sm-12 col-md-12 col-lg-3 mt-3 mb-4 text-left">
+          <button className='pro-btn' onClick={showProductForm}>+ Add Products</button>
+        </div>
       </div>
     ): ''}
       
@@ -404,26 +404,11 @@ const Product = () => {
           </div>
 
         {total_pages > 1 && (
-            <div className="pagination">
+          <div className="pagination">
 
-              {currentPage > 1 && (
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className="mx-1"
-                  style={{
-                    backgroundColor: '#FF962E',
-                    borderRadius: '10px',
-                    border: '0',
-                  }}
-                >
-                  {currentPage - 1}
-                </button>
-              )}
-
-
+            {currentPage > 1 && (
               <button
-                onClick={() => handlePageChange(currentPage)}
-                disabled
+                onClick={() => handlePageChange(currentPage - 1)}
                 className="mx-1"
                 style={{
                   backgroundColor: '#FF962E',
@@ -431,26 +416,41 @@ const Product = () => {
                   border: '0',
                 }}
               >
-                {currentPage}
+                {currentPage - 1}
               </button>
+            )}
 
-              {currentPage < total_pages && (
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="mx-1"
-                  style={{
-                    backgroundColor: '#FF962E',
-                    borderRadius: '10px',
-                    border: '0',
-                  }}
-                >
-                  {currentPage + 1}
-                </button>
-              )}
 
-              {currentPage < total_pages - 1 && <span className="mx-1">...</span>}
-            </div>
-          )}
+            <button
+              onClick={() => handlePageChange(currentPage)}
+              disabled
+              className="mx-1"
+              style={{
+                backgroundColor: '#FF962E',
+                borderRadius: '10px',
+                border: '0',
+              }}
+            >
+              {currentPage}
+            </button>
+
+            {currentPage < total_pages && (
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="mx-1"
+                style={{
+                  backgroundColor: '#FF962E',
+                  borderRadius: '10px',
+                  border: '0',
+                }}
+              >
+                {currentPage + 1}
+              </button>
+            )}
+
+            {currentPage < total_pages - 1 && <span className="mx-1">...</span>}
+          </div>
+        )}
         </div>
       ): ''}
 
